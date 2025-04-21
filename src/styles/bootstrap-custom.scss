@@ -1,0 +1,6 @@
+// Substituir variáveis antes do import principal:
+$primary: #4f46e5;
+$font-family-base: 'Inter', sans-serif;
+
+// Agora importa o Bootstrap completo
+@import "bootstrap/scss/bootstrap";
