@@ -4,7 +4,9 @@
     <p class="text-center text-muted mb-4">Compartilhe sua experiência e ajude outras pessoas com dicas e tratamentos.</p>
 
     <div class="text-center mb-4">
-      <router-link to="/enviar" class="btn btn-primary btn-lg px-5">Envie sua jornada</router-link>
+      <button class="btn btn-primary btn-lg px-5" @click="mostrandoFormulario = true">
+        Envie sua jornada
+        </button>
     </div>
 
     <div class="mb-4 text-center">
@@ -50,7 +52,11 @@
         </div>
       </div>
     </div>
-
+    <div v-if="mostrandoFormulario" class="overlay" @click.self="mostrandoFormulario = false">
+      <div class="overlay-content">
+        <FormularioJornada @fechar="mostrandoFormulario = false" />
+      </div>
+    </div>
     <div class="text-center mt-4" v-if="limite < galeria.length">
       <button class="btn btn-outline-primary" @click="limite += 6">Carregar mais</button>
     </div>
@@ -85,9 +91,12 @@
 
 <script setup>
 import { ref } from 'vue';
+import FormularioJornada from '../components/FormularioJornada.vue';
 
 const limite = ref(6);
 const jornadaSelecionada = ref(null);
+
+const mostrandoFormulario = ref(false);
 
 function abrirOverlay(card) {
   jornadaSelecionada.value = card;
@@ -200,4 +209,30 @@ img {
   overflow-y: auto;
   position: relative;
 }
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.overlay-content {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
 </style>
