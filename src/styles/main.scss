@@ -1,0 +1,19 @@
+// sobrescrições (opcional)
+$primary: #3b82f6;
+$font-family-base: 'Open Sans', sans-serif;
+$font-size-base: 1rem;
+
+/*
+// =========================================================
+Customização do tema Argon Dashboard
+*/
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.05rem; // padrão do bootstrap é 1rem (16px), isso dá 16.8px
+    line-height: 1.6;
+    color: #344767; // cor padrão do Argon para textos
+  }
+
+// importar argon
+@import './argon-dashboard.scss';
