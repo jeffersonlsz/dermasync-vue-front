@@ -1,5 +1,5 @@
 <template>
-<nav class="navbar navbar-expand-lg blur sticky-top border-radius-xl top-0 z-index-3 shadow mt-2 py-1 px-4 bg-white">
+<nav class="bg-white blur border-radius-xl mt-2 navbar navbar-expand-lg px-4 py-1 sticky-top top-0 z-index-3">
     <div class="container-fluid">
       <!-- Logo -->
       <RouterLink class="navbar-brand fw-bolder text-dark" to="/">DermaSync</RouterLink>
@@ -25,16 +25,16 @@
       <div class="collapse navbar-collapse" id="navigation">
         <ul class="navbar-nav mx-auto">
           <li class="nav-item">
-            <RouterLink class="nav-link text-sm text-dark me-2 px-3" to="/">Início</RouterLink>
+            <RouterLink class="nav-link text-dark me-2 px-3" to="/">Início</RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link text-sm text-dark me-2 px-3" to="/galeria">Galeria</RouterLink>
+            <RouterLink class="nav-link text-dark me-2 px-3" to="/galeria">Galeria</RouterLink>
           </li>
         </ul>
 
         <ul class="navbar-nav d-lg-block d-none">
-          <li class="nav-item">
-            <RouterLink to="/login" class="btn bg-gradient-primary btn-sm px-4 py-2">
+          <li class="nav-item mt-1">
+            <RouterLink to="/login" class="bg-gradient-primary btn btn-sm mt-2 px-4 py-2">
               Entrar
             </RouterLink>
           </li>
