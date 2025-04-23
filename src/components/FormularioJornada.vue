@@ -24,13 +24,28 @@
 
             <div class="row g-3">
                 <div class="col-md-4">
-                <Dropzone label="Antes" @upload="handleUpload('antes', $event)" />
+                  <Dropzone
+                    label="Antes"
+                    :max="1"
+                    :multiple="false"
+                    @upload="files => jornadaFinal.imagens.antes = files[0]"
+                  />
                 </div>
                 <div class="col-md-4">
-                <Dropzone label="Durante" :multiple="true" max="3" @upload="handleUpload('durante', $event)" />
+                  <Dropzone
+                    label="Durante"
+                    :max="3"
+                    :multiple="true"
+                    @upload="files => jornadaFinal.imagens.durante = files"
+                  />
                 </div>
                 <div class="col-md-4">
-                <Dropzone label="Depois" @upload="handleUpload('depois', $event)" />
+                  <Dropzone
+                    label="Depois"
+                    :max="1"
+                    :multiple="false"
+                    @upload="files => jornadaFinal.imagens.depois = files[0]"
+                  />
                 </div>
             </div>
             </div>
@@ -41,20 +56,47 @@
         <div class="mb-3">
           <label class="form-label">Classificação</label>
           <div class="btn-group w-100" role="group">
-            <input type="radio" class="btn-check" name="classificacao" id="crianca" autocomplete="off" />
-            <label class="btn btn-outline-primary" for="crianca">Criança</label>
-  
-            <input type="radio" class="btn-check" name="classificacao" id="adolescente" autocomplete="off" />
-            <label class="btn btn-outline-primary" for="adolescente">Adolescente</label>
-  
-            <input type="radio" class="btn-check" name="classificacao" id="adulto" autocomplete="off" />
-            <label class="btn btn-outline-primary" for="adulto">Adulto</label>
+            <div class="btn-group w-100" role="group">
+              <input
+                type="radio"
+                class="btn-check"
+                name="classificacao"
+                id="crianca"
+                value="Criança"
+                v-model="jornadaFinal.classificacao"
+                autocomplete="off"
+              />
+              <label class="btn btn-outline-primary" for="crianca">Criança</label>
+
+              <input
+                type="radio"
+                class="btn-check"
+                name="classificacao"
+                id="adolescente"
+                value="Adolescente"
+                v-model="jornadaFinal.classificacao"
+                autocomplete="off"
+              />
+              <label class="btn btn-outline-primary" for="adolescente">Adolescente</label>
+
+              <input
+                type="radio"
+                class="btn-check"
+                name="classificacao"
+                id="adulto"
+                value="Adulto"
+                v-model="jornadaFinal.classificacao"
+                autocomplete="off"
+              />
+              <label class="btn btn-outline-primary" for="adulto">Adulto</label>
+            </div>
           </div>
         </div>
   
         <div class="mb-3">
           <label class="form-label">Gênero</label>
-          <select class="form-select">
+          <select class="form-select" v-model="jornadaFinal.genero">
+            <option disabled value="">Selecione</option>
             <option>Masculino</option>
             <option>Feminino</option>
             <option>Outro</option>
@@ -63,17 +105,17 @@
         </div>
   
         <div class="mb-3">
-  <label class="form-label">Regiões afetadas</label>
+          <label class="form-label">Regiões afetadas</label>
 
-  <div class="d-flex gap-2 mb-2">
-    <select v-model="regiaoAtual" class="form-select">
-      <option disabled value="">Selecionar região...</option>
-      <option v-for="op in opcoesRegioes" :key="op" :value="op">{{ op }}</option>
-    </select>
-    <button class="btn btn-outline-primary" type="button" @click="adicionarRegiao">
-      <i class="bi bi-plus-lg"></i>
-    </button>
-  </div>
+          <div class="d-flex gap-2 mb-2">
+            <select v-model="regiaoAtual" class="form-select">
+              <option disabled value="">Selecionar região...</option>
+              <option v-for="op in opcoesRegioes" :key="op" :value="op">{{ op }}</option>
+            </select>
+            <button class="btn btn-outline-primary" type="button" @click="adicionarRegiao">
+              <i class="bi bi-plus-lg"></i>
+            </button>
+        </div>
 
     <div class="d-flex flex-wrap gap-2">
         <span
@@ -90,20 +132,25 @@
   
       <div v-else-if="etapa === 3" class="card shadow-sm border-0 mb-4 p-4">
         <h6 class="fw-bold mb-3 text-primary">3 de 4 — Compartilhe sua dica ou tratamento</h6>
-        <input type="text" class="form-control mb-2" placeholder="Ex: hidratante, aveia, banho morno..." />
-        <textarea class="form-control" placeholder="Descreva com mais detalhes (opcional)" rows="4"></textarea>
+        <textarea
+          class="form-control"
+          v-model="jornadaFinal.descricao"
+          placeholder="Descreva com mais detalhes. Ex.: pomada advantan, comprimido metrexato, óleo de coco"
+          rows="4"
+        ></textarea>
+
       </div>
   
       <div v-else-if="etapa === 4" class="card shadow-sm border-0 mb-4 p-4">
         <h6 class="fw-bold mb-3 text-primary">4 de 4 — Consentimento</h6>
         <div class="form-check mb-2">
-          <input class="form-check-input" type="checkbox" id="c1" />
+          <input class="form-check-input" type="checkbox" id="c1" v-model="jornadaFinal.consentimentos.imagemSegura" />
           <label class="form-check-label" for="c1">
             Declaro que as imagens não expõem meu rosto ou dados sensíveis.
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="c2" />
+          <input class="form-check-input" type="checkbox" id="c2" v-model="jornadaFinal.consentimentos.exibirGaleria"/>
           <label class="form-check-label" for="c2">
             Aceito que minha jornada seja exibida na galeria colaborativa.
           </label>
@@ -113,7 +160,7 @@
       <!-- Navegação -->
       <div class="d-flex justify-content-between mt-4">
         <button class="btn btn-outline-secondary" @click="voltarEtapa" :disabled="etapa === 1">Voltar</button>
-        <button class="btn btn-primary" @click="avancarEtapa">
+        <button class="btn btn-primary" @click="etapa < 4 ? avancarEtapa() : enviarJornada()">
           {{ etapa < 4 ? 'Próximo' : 'Enviar Jornada' }}
         </button>
       </div>
@@ -122,8 +169,26 @@
   
   <script setup>
   import { ref, computed } from 'vue';
+  import { reactive } from 'vue';
   import Dropzone from '../components/Dropzone.vue';
   
+  const jornadaFinal = reactive({
+    classificacao: '',
+    genero: '',
+    regioesAfetadas: [],
+    tags: [],
+    descricao: '',
+    consentimentos: {
+      imagemSegura: false,
+      exibirGaleria: false
+    },
+    imagens: {
+      antes: null,
+      durante: [],
+      depois: null
+    }
+  });
+
   const etapa = ref(1);
   const percentual = computed(() => (etapa.value - 1) * 33.33 + 25);
   const opcoesRegioes = [
@@ -149,17 +214,35 @@ const regioesSelecionadas = ref([]);
 
   function adicionarRegiao() {
     if (
-        regiaoAtual.value &&
-        !regioesSelecionadas.value.includes(regiaoAtual.value)
+      regiaoAtual.value &&
+      !regioesSelecionadas.value.includes(regiaoAtual.value)
     ) {
-        regioesSelecionadas.value.push(regiaoAtual.value);
-        regiaoAtual.value = '';
+      regioesSelecionadas.value.push(regiaoAtual.value);
+      jornadaFinal.regioesAfetadas = [...regioesSelecionadas.value]; // sincroniza
+      regiaoAtual.value = '';
     }
   }
 
-    function removerRegiao(index) {
+  function removerRegiao(index) {
     regioesSelecionadas.value.splice(index, 1);
-    }
+    jornadaFinal.regioesAfetadas = [...regioesSelecionadas.value]; // sincroniza
+  }
+
+    const enviarJornada = async () => {
+      if (!jornadaFinal.consentimentos.imagemSegura || !jornadaFinal.consentimentos.exibirGaleria) {
+        alert("É necessário aceitar as duas condições.");
+        return;
+      }
+      // Garante que ao menos 1 região seja registrada
+      if (regioesSelecionadas.value.length === 0 && regiaoAtual.value) {
+        jornadaFinal.regioesAfetadas = [regiaoAtual.value];
+      } else {
+        jornadaFinal.regioesAfetadas = [...regioesSelecionadas.value];
+      }
+      console.log("📦 Objeto final para Firebase:", jornadaFinal);
+
+      // aqui futuramente subimos para o Firebase
+    };
 
   </script>
   

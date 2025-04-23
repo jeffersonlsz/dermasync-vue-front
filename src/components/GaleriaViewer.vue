@@ -1,8 +1,8 @@
 <template>
   <div class="container py-5">
     <h2 class="fw-bold text-center mb-1">Galeria Colaborativa</h2>
-    <p class="text-center text-muted mb-4">Compartilhe sua experiência e ajude outras pessoas com dicas e tratamentos.</p>
-
+    <p class="text-center text-muted mb-4">Neste espaço, você poderá ver a contribuição de outras pessoas que passaram pela mesma condição e obtiveram sucesso.</p>
+    <p class="text-center text-muted mb-4">Não se preocupe, os dados são 100% anônimos</p>
     <div class="text-center mb-4">
       <button class="btn btn-primary btn-lg px-5" @click="mostrandoFormulario = true">
         Envie sua jornada
