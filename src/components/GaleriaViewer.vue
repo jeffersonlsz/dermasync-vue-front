@@ -5,7 +5,7 @@
     <p class="text-center text-muted mb-4">Não se preocupe, os dados são 100% anônimos</p>
     <div class="text-center mb-4">
       <button class="btn btn-primary btn-lg px-5" @click="mostrandoFormulario = true">
-        Envie sua jornada
+        Compartilhe sua jornada - outros podem aprender com você !
         </button>
     </div>
 

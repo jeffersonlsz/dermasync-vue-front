@@ -2,10 +2,11 @@
     <div>
       <!-- Cabeçalho com título e progresso -->
         <div class="mb-4">
-        <div class="d-flex align-items-center gap-2 mb-2">
-            <i class="bi bi-upload text-primary fs-4"></i>
-            <h5 class="fw-bold text-primary mb-0">Envie sua jornada em etapas</h5>
-        </div>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+              <i class="bi bi-upload text-primary fs-4"></i>
+              <h5 class="fw-bold text-primary mb-0">Envie sua jornada em etapas</h5>
+              <button class="btn-close" @click="$emit('fechar')" aria-label="Fechar"></button>
+          </div>
         <div class="progress" style="height: 24px; background-color: #e9ecef;">
             <div
             class="progress-bar bg-gradient"
@@ -170,7 +171,11 @@
   <script setup>
   import { ref, computed } from 'vue';
   import { reactive } from 'vue';
+  import { db, storage } from '../firebase/config';
+  import { collection, addDoc, Timestamp } from 'firebase/firestore';
+  import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
   import Dropzone from '../components/Dropzone.vue';
+
   
   const jornadaFinal = reactive({
     classificacao: '',
@@ -228,21 +233,40 @@ const regioesSelecionadas = ref([]);
     jornadaFinal.regioesAfetadas = [...regioesSelecionadas.value]; // sincroniza
   }
 
-    const enviarJornada = async () => {
-      if (!jornadaFinal.consentimentos.imagemSegura || !jornadaFinal.consentimentos.exibirGaleria) {
-        alert("É necessário aceitar as duas condições.");
-        return;
-      }
-      // Garante que ao menos 1 região seja registrada
-      if (regioesSelecionadas.value.length === 0 && regiaoAtual.value) {
-        jornadaFinal.regioesAfetadas = [regiaoAtual.value];
-      } else {
-        jornadaFinal.regioesAfetadas = [...regioesSelecionadas.value];
-      }
-      console.log("📦 Objeto final para Firebase:", jornadaFinal);
+    function validarJornada() {
+      const camposObrigatorios = [
+        jornadaFinal.classificacao,
+        jornadaFinal.genero,
+        jornadaFinal.descricao
+      ];
 
-      // aqui futuramente subimos para o Firebase
-    };
+      const consentimentoOk = jornadaFinal.consentimentos.imagemSegura && jornadaFinal.consentimentos.exibirGaleria;
+
+      const temImagemAntes = jornadaFinal.imagens.antes !== null;
+      const temImagemDepois = jornadaFinal.imagens.depois !== null;
+
+      return camposObrigatorios.every(c => c && c.trim() !== '') &&
+            consentimentoOk &&
+            temImagemAntes &&
+            temImagemDepois;
+  }
+
+
+  const enviarJornada = async () => {
+    if (!jornadaFinal.consentimentos.imagemSegura || !jornadaFinal.consentimentos.exibirGaleria) {
+      alert("É necessário aceitar as duas condições.");
+      return;
+    }
+    // Garante que ao menos 1 região seja registrada
+    if (regioesSelecionadas.value.length === 0 && regiaoAtual.value) {
+      jornadaFinal.regioesAfetadas = [regiaoAtual.value];
+    } else {
+      jornadaFinal.regioesAfetadas = [...regioesSelecionadas.value];
+    }
+    console.log("📦 Objeto final para Firebase:", jornadaFinal);
+
+    // aqui futuramente subimos para o Firebase
+  };
 
   </script>
   

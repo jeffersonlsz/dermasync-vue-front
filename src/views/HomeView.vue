@@ -15,7 +15,7 @@
         </p>
         <div class="d-flex flex-column flex-sm-row gap-3">
           <router-link to="/login" class="btn btn-primary btn-lg">Quero Participar</router-link>
-          <router-link to="/galeria" class="btn btn-outline-secondary btn-lg">Galeria Colaborativa</router-link>
+          <router-link to="/galeria" class="btn btn-outline-secondary btn-lg">Compartilhar sua experiência</router-link>
         </div>
       </div>
     </div>
@@ -102,7 +102,7 @@
   min-height: 80vh;
   border-radius: 1rem;
   overflow: hidden;
-  background-image: url('/img/hero-dermatite.jpg');
+  background-image: url('/img/hero-dermatite_002.png');
   background-size: cover;
   background-position: center;
   display: flex;
