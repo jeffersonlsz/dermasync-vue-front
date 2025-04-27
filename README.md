@@ -6,3 +6,4 @@ Objetivo: implementar o login do sistema DermaSync como primeiro módulo Vue ant
 # Snapshots
 
 
+![Landing page](public/img/snapshots/landing_page_001.png)
