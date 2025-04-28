@@ -30,28 +30,38 @@
       </div>
     </div>
 
-    <div class="row g-4">
-      <div v-for="(card, index) in galeria.slice(0, limite)" :key="index" class="col-md-4">
-        <div class="card border-0 shadow-sm">
-          <div class="d-flex">
-            <img :src="card.imgAntes" class="w-50 rounded-start" alt="Antes" style="object-fit: cover; height: 140px;" />
-            <img :src="card.imgDurante" class="w-50 rounded-end" alt="Durante" style="object-fit: cover; height: 140px;" />
-          </div>
+    
+    <div>
+      <div v-if="carregando" class="text-center py-5">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Carregando...</span>
+        </div>
+      </div>
 
-          <div class="p-3">
-            <h6 class="fw-bold mb-1">{{ card.classificacao }}</h6>
-            <div class="mb-2 d-flex flex-wrap gap-1">
-              <span v-for="tag in card.tags" :key="tag" class="badge bg-light text-dark">{{ tag }}</span>
+      <div v-else class="row g-4">
+        <div v-for="(card, index) in galeria.slice(0, limite)" :key="index" class="col-md-4">
+          <div class="card border-0 shadow-sm">
+            <div class="d-flex">
+              <img :src="card.imgAntes" @error="(e) => e.target.src = '/img/fallback-error.png'" class="w-50 rounded-start" alt="Antes" style="object-fit: cover; height: 140px;" />
+              <img :src="card.imgDurante" @error="(e) => e.target.src = '/img/fallback-error.png'"  class="w-50 rounded-end" alt="Durante" style="object-fit: cover; height: 140px;" />
             </div>
-            <p class="small text-muted mb-1">{{ card.solucao }}</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <a href="#" class="small text-primary text-decoration-none" @click.prevent="abrirOverlay(card)">Ver jornada</a>
-              <button class="btn btn-outline-secondary btn-sm">Curtir ❤️</button>
+
+            <div class="p-3">
+              <h6 class="fw-bold mb-1">{{ card.classificacao }}</h6>
+              <div class="mb-2 d-flex flex-wrap gap-1">
+                <span v-for="tag in card.tags" :key="tag" class="badge bg-light text-dark">{{ tag }}</span>
+              </div>
+              <p class="small text-muted mb-1">{{ card.solucao }}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <a href="#" class="small text-primary text-decoration-none" @click.prevent="abrirOverlay(card)">Ver jornada</a>
+                <button class="btn btn-outline-secondary btn-sm">Curtir ❤️</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
     <div v-if="mostrandoFormulario" class="overlay" @click.self="mostrandoFormulario = false">
       <div class="overlay-content">
         <FormularioJornada @fechar="mostrandoFormulario = false" />
@@ -90,20 +100,91 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { db, storage } from '../firebase/config'; // ajuste o caminho conforme seu projeto
+import { collection, getDocs } from 'firebase/firestore';
+import { getDownloadURL, ref as storageRef } from 'firebase/storage';
 import FormularioJornada from '../components/FormularioJornada.vue';
 
 const limite = ref(6);
+const galeria = ref([]);
+const carregando = ref(true);
 const jornadaSelecionada = ref(null);
-
 const mostrandoFormulario = ref(false);
+
+
+// Função para carregar os dados
+async function carregarGaleria() {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'jornadas'));
+    
+      const dados = await Promise.all(querySnapshot.docs.map(async doc => {
+        const data = doc.data();
+        // Pega os caminhos das imagens
+        const caminhoAntes = data.imagens.antes; // exemplo: "jornadas/fotoAntes.jpg"
+        const caminhoDepois = data.imagens.depois; // exemplo: "jornadas/fotoDurante.jpg"
+
+        try {
+          if (caminhoAntes) {
+            urlAntes = await getDownloadURL(storageRef(storage, caminhoAntes));
+          }
+        } catch (e) {
+          console.warn(`Erro ao carregar imagem Antes do documento ${doc.id}: usando fallback.`);
+        }
+
+        try {
+          if (caminhoDepois) {
+            urlDepois = await getDownloadURL(storageRef(storage, caminhoDepois));
+          }
+        } catch (e) {
+          console.warn(`Erro ao carregar imagem Durante do documento ${doc.id}: usando fallback.`);
+        }
+        let urlAntes = '';
+        let urlDepois = '';
+      
+
+        // Gera as URLs públicas
+        
+        if (caminhoAntes) {
+          urlAntes = await getDownloadURL(storageRef(storage, caminhoAntes));
+        }
+
+        if (caminhoDepois) {
+          urlDepois = await getDownloadURL(storageRef(storage, caminhoDepois));
+        }
+
+        return {
+          id: doc.id,
+          imgAntes: urlAntes,
+          imgDurante: urlDepois,
+          classificacao: data.classificacao || 'Não informado',
+          tags: data.tags || [],
+          solucao: data.solucao || '',
+          // outros campos se precisar
+        };
+    }));
+
+    galeria.value = dados;
+
+  } catch (error) {
+    console.error('Erro ao carregar galeria:', error);
+  } finally {
+    carregando.value = false;
+  }
+}
+
+onMounted(() => {
+  carregarGaleria();
+});
+
+
 
 function abrirOverlay(card) {
   jornadaSelecionada.value = card;
 }
 
 // Dados mockados por enquanto
-const galeria = ref([
+/*const galeria = ref([
   {
     classificacao: 'Adulto',
     tags: ['Hidratante aveia', 'Corticóides'],
@@ -174,7 +255,7 @@ const galeria = ref([
     imgDurante: 'https://placehold.co/200x140?text=Depois',
     solucao: 'Melhora significativa com uso de roupas leves e pomadas leves'
   }
-]);
+]); */
 </script>
 
 <style scoped>
