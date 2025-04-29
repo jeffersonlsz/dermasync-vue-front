@@ -1,4 +1,5 @@
 <template>
+  
   <div class="container py-5">
     <h2 class="fw-bold text-center mb-1">Galeria Colaborativa</h2>
     <p class="text-center text-muted mb-4">Neste espaço, você poderá ver a contribuição de outras pessoas que passaram pela mesma condição e obtiveram sucesso.</p>
@@ -32,39 +33,60 @@
 
     
     <div>
-      <div v-if="carregando" class="text-center py-5">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Carregando...</span>
-        </div>
+    <div v-if="estado === 'LOADING'" class="text-center py-5">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Carregando...</span>
       </div>
+    </div>
 
-      <div v-else class="row g-4">
-        <div v-for="(card, index) in galeria.slice(0, limite)" :key="index" class="col-md-4">
-          <div class="card border-0 shadow-sm">
-            <div class="d-flex">
-              <img :src="card.imgAntes" @error="(e) => e.target.src = '/img/fallback-error.png'" class="w-50 rounded-start" alt="Antes" style="object-fit: cover; height: 140px;" />
-              <img :src="card.imgDurante" @error="(e) => e.target.src = '/img/fallback-error.png'"  class="w-50 rounded-end" alt="Durante" style="object-fit: cover; height: 140px;" />
+    <div v-else-if="estado === 'ERROR'" class="text-center py-5">
+      <p class="text-danger">Erro ao carregar a galeria. Tente novamente mais tarde.</p>
+      <button class="btn btn-primary mt-3" @click="carregarGaleria">Tentar novamente</button>
+    </div>
+
+    <div v-else-if="estado === 'EMPTY'" class="text-center py-5">
+      <p class="text-muted">Nenhuma jornada encontrada ainda.</p>
+    </div>
+
+    <div v-else-if="estado === 'SUCCESS'" class="row g-4">
+      <div v-for="(card, index) in galeria.slice(0, limite)" :key="index" class="col-md-4">
+        <div class="card border-0 shadow-sm">
+          <div class="d-flex">
+            <img 
+              :src="card.imgAntes" 
+              @error="(e) => e.target.src = '/img/fallback-error.png'" 
+              class="w-50 rounded-start" 
+              alt="Antes" 
+              style="object-fit: cover; height: 140px;" 
+            />
+            <img 
+              :src="card.imgDepois" 
+              @error="(e) => e.target.src = '/img/fallback-error.png'" 
+              class="w-50 rounded-end" 
+              alt="Depois" 
+              style="object-fit: cover; height: 140px;" 
+            />
+          </div>
+
+          <div class="p-3">
+            <h6 class="fw-bold mb-1">{{ card.classificacao }}</h6>
+            <div class="mb-2 d-flex flex-wrap gap-1">
+              <span v-for="tag in card.tags" :key="tag" class="badge bg-light text-dark">{{ tag }}</span>
             </div>
-
-            <div class="p-3">
-              <h6 class="fw-bold mb-1">{{ card.classificacao }}</h6>
-              <div class="mb-2 d-flex flex-wrap gap-1">
-                <span v-for="tag in card.tags" :key="tag" class="badge bg-light text-dark">{{ tag }}</span>
-              </div>
-              <p class="small text-muted mb-1">{{ card.solucao }}</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <a href="#" class="small text-primary text-decoration-none" @click.prevent="abrirOverlay(card)">Ver jornada</a>
-                <button class="btn btn-outline-secondary btn-sm">Curtir ❤️</button>
-              </div>
+            <p class="small text-muted mb-1">{{ card.solucao }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <a href="#" class="small text-primary text-decoration-none" @click.prevent="abrirOverlay(card)">Ver jornada</a>
+              <button class="btn btn-outline-secondary btn-sm">Curtir ❤️</button>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
     <div v-if="mostrandoFormulario" class="overlay" @click.self="mostrandoFormulario = false">
       <div class="overlay-content">
-        <FormularioJornada @fechar="mostrandoFormulario = false" />
+        <FormularioJornada @uploadFinalizado="carregarNovoCard" @fechar="mostrandoFormulario = false" />
       </div>
     </div>
     <div class="text-center mt-4" v-if="limite < galeria.length">
@@ -77,10 +99,10 @@
         <button class="btn-close float-end" @click="jornadaSelecionada = null"></button>
         <div class="row g-4">
           <div class="col-md-6">
-            <img :src="jornadaSelecionada.imgDurante" class="img-fluid rounded" alt="Imagem" />
+            <img :src="jornadaSelecionada.imgDepois" class="img-fluid rounded" alt="Imagem" />
             <div class="mt-3 d-flex gap-2">
               <img :src="jornadaSelecionada.imgAntes" width="70" height="70" class="rounded border" />
-              <img :src="jornadaSelecionada.imgDurante" width="70" height="70" class="rounded border" />
+              <img :src="jornadaSelecionada.imgDepois" width="70" height="70" class="rounded border" />
             </div>
             <div class="mt-3">
               <span v-for="tag in jornadaSelecionada.tags" :key="tag" class="badge bg-primary me-2">{{ tag }}</span>
@@ -100,30 +122,41 @@
 </template>
 
 <script setup>
+
 import { ref, onMounted } from 'vue';
 import { db, storage } from '../firebase/config'; // ajuste o caminho conforme seu projeto
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDoc, getDocs, doc } from 'firebase/firestore';
 import { getDownloadURL, ref as storageRef } from 'firebase/storage';
 import FormularioJornada from '../components/FormularioJornada.vue';
+//import { defineEmits } from 'vue'; 
 
 const limite = ref(6);
 const galeria = ref([]);
 const carregando = ref(true);
 const jornadaSelecionada = ref(null);
 const mostrandoFormulario = ref(false);
+const estado = ref('LOADING'); 
 
 
 // Função para carregar os dados
 async function carregarGaleria() {
+  estado.value = 'LOADING'; 
+  galeria.value = [];
   try {
     const querySnapshot = await getDocs(collection(db, 'jornadas'));
     
+    if (querySnapshot.empty) {
+      estado.value = 'EMPTY';
+      return;
+    }
+    // Se houver dados, continue
       const dados = await Promise.all(querySnapshot.docs.map(async doc => {
         const data = doc.data();
         // Pega os caminhos das imagens
-        const caminhoAntes = data.imagens.antes; // exemplo: "jornadas/fotoAntes.jpg"
-        const caminhoDepois = data.imagens.depois; // exemplo: "jornadas/fotoDurante.jpg"
-
+        const caminhoAntes = data.imagens.antes; 
+        const caminhoDepois = data.imagens.depois;  
+        let urlAntes = '';
+        let urlDepois = '';
         try {
           if (caminhoAntes) {
             urlAntes = await getDownloadURL(storageRef(storage, caminhoAntes));
@@ -137,26 +170,14 @@ async function carregarGaleria() {
             urlDepois = await getDownloadURL(storageRef(storage, caminhoDepois));
           }
         } catch (e) {
-          console.warn(`Erro ao carregar imagem Durante do documento ${doc.id}: usando fallback.`);
+          console.warn(`Erro ao carregar imagem Depois do documento ${doc.id}: usando fallback.`);
         }
-        let urlAntes = '';
-        let urlDepois = '';
-      
-
-        // Gera as URLs públicas
-        
-        if (caminhoAntes) {
-          urlAntes = await getDownloadURL(storageRef(storage, caminhoAntes));
-        }
-
-        if (caminhoDepois) {
-          urlDepois = await getDownloadURL(storageRef(storage, caminhoDepois));
-        }
+       
 
         return {
           id: doc.id,
           imgAntes: urlAntes,
-          imgDurante: urlDepois,
+          imgDepois: urlDepois,
           classificacao: data.classificacao || 'Não informado',
           tags: data.tags || [],
           solucao: data.solucao || '',
@@ -165,11 +186,77 @@ async function carregarGaleria() {
     }));
 
     galeria.value = dados;
+    estado.value = 'SUCCESS'; // Atualiza o estado para indicar que os dados foram carregados com sucesso
 
   } catch (error) {
     console.error('Erro ao carregar galeria:', error);
   } finally {
     carregando.value = false;
+  }
+}
+
+async function esperarDownloadURL(path, tentativas = 5, intervalo = 500) {
+  for (let i = 0; i < tentativas; i++) {
+    try {
+      return await getDownloadURL(storageRef(storage, path));
+    } catch (e) {
+      await new Promise(resolve => setTimeout(resolve, intervalo));
+    }
+  }
+  throw new Error(`Arquivo ${path} não disponível após ${tentativas} tentativas`);
+}
+
+
+async function carregarNovoCard(idNovoDoc) {
+  try {
+    const docRef = doc(db, 'jornadas', idNovoDoc); // cria referência ao documento
+    const docSnap = await getDoc(docRef);          // busca o documento
+
+    if (!docSnap.exists()) {
+      console.warn(`Documento ${idNovoDoc} não encontrado`);
+      return;
+    }
+
+    const data = docSnap.data();
+
+    const caminhoAntes = data.imagens.antes;
+    const caminhoDepois = data.imagens.depois;
+
+    let urlAntes = '/img/fallback-error.png';
+    let urlDepois = '/img/fallback-error.png';
+
+    try {
+      if (caminhoAntes) {
+        urlAntes = await esperarDownloadURL(caminhoAntes);
+      }
+    } catch (e) {
+      console.warn(`Erro ao carregar imagem Antes para novo card ${idNovoDoc}`);
+    }
+
+    try {
+      if (caminhoDepois) {
+        urlDepois = await esperarDownloadURL(caminhoDepois);
+      }
+    } catch (e) {
+      console.warn(`Erro ao carregar imagem Durante para novo card ${idNovoDoc}`);
+    }
+
+    const novoCard = {
+      id: docSnap.id,
+      imgAntes: urlAntes,
+      imgDepois: urlDepois,
+      classificacao: data.classificacao || 'Não informado',
+      tags: data.tags || [],
+      solucao: data.solucao || '',
+    };
+    if (galeria.value.some(card => card.id === docSnap.id)) {
+      console.warn(`Card duplicado detectado (${docSnap.id}). Ignorando.`);
+      return;
+    }
+    galeria.value.unshift(novoCard);
+
+  } catch (error) {
+    console.error('Erro ao carregar novo card:', error);
   }
 }
 

@@ -1,4 +1,5 @@
 <template>
+  
     <div>
       <!-- Cabeçalho com título e progresso -->
       <div class="mb-4">
@@ -166,6 +167,7 @@
           <i class="bi bi-check-circle-fill text-success fs-1 mb-3"></i>
           <h5 class="fw-bold text-success">Sua jornada foi enviada com sucesso!</h5>
         </div>
+        
       </template>
     </div>
   
@@ -187,7 +189,8 @@
   import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
   import { autenticarAnonimamente } from '../firebase/authService';
   import Dropzone from '../components/Dropzone.vue';
-
+  import GaleriaViewer from './GaleriaViewer.vue';
+  
   
   const jornadaFinal = reactive({
     classificacao: '',
@@ -205,7 +208,7 @@
       depois: null
     }
   });
-  const emit = defineEmits(['fechar']);
+  const emit = defineEmits(['fechar', 'uploadFinalizado']);
   
   const etapa = ref(1);
   const percentual = computed(() => (etapa.value - 1) * 33.33 + 25);
@@ -329,9 +332,10 @@
         };
 
         // Salva no Firestore
-        await addDoc(collection(db, 'jornadas'), dadosFinal);
-
-        alert("🎉 Jornada enviada com sucesso!");
+        let newDoc = await addDoc(collection(db, 'jornadas'), dadosFinal);
+        emit('uploadFinalizado', newDoc.id);
+        console.log("🗂️ Documento salvo com ID:", newDoc.id);
+        //alert("🎉 Jornada enviada com sucesso!");
         // resetar se quiser aqui
 
         progresso.value = 100;
@@ -343,8 +347,10 @@
           etapa.value = 1;
           resetarFormulario();
           emit("fechar");
+          //emit('uploadFinalizado', newDoc.id);
+          
         }, 2500);
-
+        
       } catch (err) {
         console.error("Erro ao enviar:", err);
         alert("Erro ao enviar. Tente novamente.");
