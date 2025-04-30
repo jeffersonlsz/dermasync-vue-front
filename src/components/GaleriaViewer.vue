@@ -10,88 +10,69 @@
         </button>
     </div>
 
-    <div class="mb-4 text-center">
-      <div class="linha-filtro mb-2">
-        <strong>Faixa etária :</strong>
-        <span class="badge bg-light text-dark mx-1">Criança</span>
-        <span class="badge bg-light text-dark mx-1">Adolescente</span>
-        <span class="badge bg-light text-dark mx-1">Adulto</span>
-      </div>
-      <div class="linha-filtro mb-2">
-        <strong>Gênero :</strong>
-        <span class="badge bg-light text-dark mx-1">Masculino</span>
-        <span class="badge bg-light text-dark mx-1">Feminino</span>
-        <span class="badge bg-light text-dark mx-1">Não informado</span>
-      </div>
-      <div class="linha-filtro">
-        <strong>Região do corpo :</strong>
-        <span class="badge bg-light text-dark mx-1">Rosto</span>
-        <span class="badge bg-light text-dark mx-1">Pernas</span>
-        <span class="badge bg-light text-dark mx-1">Braços</span>
-      </div>
-    </div>
+    <FiltrosGaleria/>
 
     
     <div>
-    <div v-if="estado === 'LOADING'" class="text-center py-5">
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">Carregando...</span>
-      </div>
-    </div>
-
-    <div v-else-if="estado === 'ERROR'" class="text-center py-5">
-      <p class="text-danger">Erro ao carregar a galeria. Tente novamente mais tarde.</p>
-      <button class="btn btn-primary mt-3" @click="carregarGaleria">Tentar novamente</button>
-    </div>
-
-    <div v-else-if="estado === 'EMPTY'" class="text-center py-5">
-      <p class="text-muted">Nenhuma jornada encontrada ainda.</p>
-    </div>
-
-    <div v-else-if="estado === 'SUCCESS'" class="row g-4">
-      <div v-for="(card, index) in galeria.slice(0, limite)" :key="index" class="col-md-4">
-        <div class="card border-0 shadow-sm">
-          <div class="d-flex">
-            <img 
-              :src="card.imgAntes" 
-              @error="(e) => e.target.src = '/img/fallback-error.png'" 
-              class="w-50 rounded-start" 
-              alt="Antes" 
-              style="object-fit: cover; height: 140px;" 
-            />
-            <img 
-              :src="card.imgDepois" 
-              @error="(e) => e.target.src = '/img/fallback-error.png'" 
-              class="w-50 rounded-end" 
-              alt="Depois" 
-              style="object-fit: cover; height: 140px;" 
-            />
-          </div>
-
-          <div class="p-3">
-            <h6 class="fw-bold mb-1">{{ card.classificacao }}</h6>
-            <div class="mb-2 d-flex flex-wrap gap-1">
-              <span v-for="tag in card.tags" :key="tag" class="badge bg-light text-dark">{{ tag }}</span>
-            </div>
-            <p class="small text-muted mb-1">{{ card.solucao }}</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <a href="#" class="small text-primary text-decoration-none" @click.prevent="abrirOverlay(card)">Ver jornada</a>
-              <button class="btn btn-outline-secondary btn-sm">Curtir ❤️</button>
-            </div>
-          </div>
+      <div v-if="estado === 'LOADING'" class="text-center py-5">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Carregando...</span>
         </div>
       </div>
+
+      <div v-else-if="estado === 'ERROR'" class="text-center py-5">
+        <p class="text-danger">Erro ao carregar a galeria. Tente novamente mais tarde.</p>
+        <button class="btn btn-primary mt-3" @click="carregarGaleria">Tentar novamente</button>
+      </div>
+
+      <div v-else-if="estado === 'EMPTY'" class="text-center py-5">
+        <p class="text-muted">Nenhuma jornada encontrada ainda.</p>
+      </div>
+
+      <TransitionGroup
+        v-else-if="estado === 'SUCCESS'"
+        name="fade-slide"
+        tag="div"
+        class="row g-4"
+      >
+        <div
+          v-for="(card, index) in galeria.slice(0, limite)"
+          :key="card.id"
+          class="col-md-4"
+        >
+          <CardJornada :card="card" @verJornada="abrirOverlay" />
+        </div>
+      </TransitionGroup>
+
+      <!-- Botão de carregar mais -->
+      <div v-if="limite < galeria.length" class="text-center my-4">
+        <button 
+          class="btn btn-outline-primary px-4 py-2"
+          @click="carregarMais"
+          :disabled="carregandoMais"
+        >
+          <span v-if="carregandoMais" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          Carregar mais
+        </button>
+    </div>
+
+    <!-- Mensagem final quando tudo foi carregado -->
+    <div v-else-if="galeria.length > 0" class="text-center text-muted my-4">
+      <small>Todos os cards foram exibidos.</small>
     </div>
   </div>
 
     <div v-if="mostrandoFormulario" class="overlay" @click.self="mostrandoFormulario = false">
       <div class="overlay-content">
-        <FormularioJornada @uploadFinalizado="carregarNovoCard" @fechar="mostrandoFormulario = false" />
+        <FormularioJornada 
+          @uploadFinalizado="carregarNovoCard" 
+          @uploadFalhou="lidarComFalha"
+          @uploadCancelado="limparFormulario"
+          @fechar="mostrandoFormulario = false"
+        />
       </div>
     </div>
-    <div class="text-center mt-4" v-if="limite < galeria.length">
-      <button class="btn btn-outline-primary" @click="limite += 6">Carregar mais</button>
-    </div>
+    
 
     <!-- OVERLAY -->
     <div v-if="jornadaSelecionada" class="overlay">
@@ -128,15 +109,26 @@ import { db, storage } from '../firebase/config'; // ajuste o caminho conforme s
 import { collection, getDoc, getDocs, doc } from 'firebase/firestore';
 import { getDownloadURL, ref as storageRef } from 'firebase/storage';
 import FormularioJornada from '../components/FormularioJornada.vue';
-//import { defineEmits } from 'vue'; 
+import FiltrosGaleria from '../components/FiltrosGaleria.vue';
+import CardJornada from '../components/CardJornada.vue';
 
-const limite = ref(6);
+
+const limite = ref(9);
+const incremento = 9;
 const galeria = ref([]);
 const carregando = ref(true);
 const jornadaSelecionada = ref(null);
 const mostrandoFormulario = ref(false);
 const estado = ref('LOADING'); 
 
+const carregandoMais = ref(false);
+
+async function carregarMais() {
+  carregandoMais.value = true;
+  await new Promise(resolve => setTimeout(resolve, 400)); // simula delay
+  limite.value += incremento;
+  carregandoMais.value = false;
+}
 
 // Função para carregar os dados
 async function carregarGaleria() {
@@ -205,7 +197,9 @@ async function esperarDownloadURL(path, tentativas = 5, intervalo = 500) {
   }
   throw new Error(`Arquivo ${path} não disponível após ${tentativas} tentativas`);
 }
-
+function lidarComFalha(error) {
+  console.error('Erro no upload:', error);
+}
 
 async function carregarNovoCard(idNovoDoc) {
   try {
@@ -265,6 +259,10 @@ onMounted(() => {
 });
 
 
+
+function limparFormulario() {
+  console.log('Usuário cancelou envio');
+}
 
 function abrirOverlay(card) {
   jornadaSelecionada.value = card;
@@ -401,6 +399,21 @@ img {
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+.fade-slide-enter-active {
+  transition: all 0.3s ease;
+}
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.fade-slide-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-slide-leave-active {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
 </style>

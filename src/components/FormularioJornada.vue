@@ -191,7 +191,6 @@
   import Dropzone from '../components/Dropzone.vue';
   import GaleriaViewer from './GaleriaViewer.vue';
   
-  
   const jornadaFinal = reactive({
     classificacao: '',
     genero: '',
@@ -208,7 +207,12 @@
       depois: null
     }
   });
-  const emit = defineEmits(['fechar', 'uploadFinalizado']);
+  const emit =  defineEmits([
+                  'uploadFinalizado',
+                  'uploadFalhou',
+                  'uploadCancelado',
+                  'fechar'
+                ]);
   
   const etapa = ref(1);
   const percentual = computed(() => (etapa.value - 1) * 33.33 + 25);
@@ -333,7 +337,8 @@
 
         // Salva no Firestore
         let newDoc = await addDoc(collection(db, 'jornadas'), dadosFinal);
-        emit('uploadFinalizado', newDoc.id);
+        if(emit) emit('uploadFinalizado', newDoc.id);
+          
         console.log("🗂️ Documento salvo com ID:", newDoc.id);
         //alert("🎉 Jornada enviada com sucesso!");
         // resetar se quiser aqui
@@ -354,6 +359,7 @@
       } catch (err) {
         console.error("Erro ao enviar:", err);
         alert("Erro ao enviar. Tente novamente.");
+        emit('uploadFalhou', new Error('Erro ao enviar arquivos'));
         carregando.value = false;
         clearInterval(interval);
       }
