@@ -272,10 +272,7 @@
 
   const enviarJornada = async () => {
     await autenticarAnonimamente(); // <- autenticação antes de tudo
-    //if (!jornadaFinal.consentimentos.imagemSegura || !jornadaFinal.consentimentos.exibirGaleria) {
-    //  alert("É necessário aceitar as duas condições.");
-    //  return;
-    //} //TODO trocar por validar jornada() acima
+    console.log("🛡️ Autenticado anonimamente.");
     if (!validarJornada()) {
       alert("Preencha todos os campos obrigatórios e aceite os termos.");
       return;
@@ -322,7 +319,8 @@
         const afterRef = storageRef(storage, `jornadas/${idUnico}/depois.jpg`);
         await uploadBytes(afterRef, jornadaFinal.imagens.depois);
         urls.depois = await getDownloadURL(afterRef);
-
+        
+        jornadaFinal.tags = listaSimuladaTags(); // Simula tags para o usuário
         // Monta objeto final para o Firestore
         const dadosFinal = {
           classificacao: jornadaFinal.classificacao,
@@ -365,6 +363,29 @@
       }
     };
 
+    function listaSimuladaTags(){
+      const listaFixa = [
+            "vitamina D", "corticóides", "imunossupressores", "hidratantes",
+            "alimentação", "laticinios", "acaros", "alergia", "dupixent", "dupilumabe",
+            "medicamentos orais", "ciclosporina", "metrexato", "baricitinibe",
+            "pomadas", "autohemoterapia", "ozonioterapia", "gabapentina",
+            "alergia a medicamentos", "alergia alimentar", "alergia a poeira",
+            "predsolona", "prednisona", "dexametasona", "hidroxicloroquina", "imunoterapia",
+            "fototerapia", "laser", "biologicos", "imunobiologicos",
+            "imunomoduladores", "fotoproteção", "protetor solar", "hidratação",
+            "hidratação oral", "hidratação tópica", "hidratantes emolientes"
+          ];
+      // Embaralha a lista e pega entre 2 e 6 itens
+      const shuffled = listaFixa.sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, Math.floor(Math.random() * 5) + 2);
+      return selected;
+    }
+
+    function cancelarUpload() {
+      emit('uploadCancelado', new Error('Upload cancelado pelo usuário'));
+      carregando.value = false;
+      clearInterval(interval);
+    }
 
     
 

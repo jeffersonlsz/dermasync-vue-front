@@ -5,9 +5,11 @@
 <script setup>
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase/config';
+import { autenticarAnonimamente } from './firebase/authService';
 
 // Você pode ainda proteger rotas futuras aqui se quiser
 onAuthStateChanged(auth, (user) => {
+  autenticarAnonimamente(auth);
   console.log("👤 Sessão detectada:", user?.email || 'deslogado');
   console.log("auth.currentUser:", auth.currentUser);
   

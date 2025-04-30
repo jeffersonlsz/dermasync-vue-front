@@ -23,15 +23,19 @@ onMounted(() => {
   onAuthStateChanged(auth, async (user) => {
     console.log("👤 Sessão detectada:", auth.currentUser?.email || 'deslogado');
     if (user) {
+      
       const token = await user.getIdTokenResult(true);
       const role = (token.claims.role || 'usuario').trim();
-
+      console.log("🎫 Papel via custom claim:", role);
       if (role === 'admin') {
         router.push('/admin');
       } else if (role === 'colaborador') {
         router.push('/colaborador');
-      } else {
-        router.push('/galeria');
+      } else if (role === 'usuario') {
+        router.push('/login');
+      } 
+      else {
+        router.push('/');
       }
     }
   });

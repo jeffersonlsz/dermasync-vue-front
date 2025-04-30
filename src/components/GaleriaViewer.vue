@@ -10,7 +10,7 @@
         </button>
     </div>
 
-    <FiltrosGaleria/>
+    <FiltroGaleria @filtrosAlterados="filtrosAtuais = $event" />
 
     
     <div>
@@ -35,12 +35,8 @@
         tag="div"
         class="row g-4"
       >
-        <div
-          v-for="(card, index) in galeria.slice(0, limite)"
-          :key="card.id"
-          class="col-md-4"
-        >
-          <CardJornada :card="card" @verJornada="abrirOverlay" />
+        <div v-for="card in galeriaFiltrada.slice(0, limite)" :key="card.id" class="col-md-4">
+          <CardJornada :card="card" />
         </div>
       </TransitionGroup>
 
@@ -108,9 +104,10 @@ import { ref, onMounted } from 'vue';
 import { db, storage } from '../firebase/config'; // ajuste o caminho conforme seu projeto
 import { collection, getDoc, getDocs, doc } from 'firebase/firestore';
 import { getDownloadURL, ref as storageRef } from 'firebase/storage';
+import { computed } from 'vue';
 import FormularioJornada from '../components/FormularioJornada.vue';
-import FiltrosGaleria from '../components/FiltrosGaleria.vue';
 import CardJornada from '../components/CardJornada.vue';
+import FiltroGaleria from '../components/FiltrosGaleria.vue';
 
 
 const limite = ref(9);
@@ -172,6 +169,8 @@ async function carregarGaleria() {
           imgDepois: urlDepois,
           classificacao: data.classificacao || 'Não informado',
           tags: data.tags || [],
+          regioesAfetadas: data.regioesAfetadas || [],
+          genero: data.genero || 'Não informado',
           solucao: data.solucao || '',
           // outros campos se precisar
         };
@@ -240,6 +239,8 @@ async function carregarNovoCard(idNovoDoc) {
       imgAntes: urlAntes,
       imgDepois: urlDepois,
       classificacao: data.classificacao || 'Não informado',
+      regioesAfetadas: data.regioesAfetadas || [],
+      genero: data.genero || 'Não informado',
       tags: data.tags || [],
       solucao: data.solucao || '',
     };
@@ -258,6 +259,52 @@ onMounted(() => {
   carregarGaleria();
 });
 
+const filtrosAtuais = ref({
+  faixaEtaria: '',
+  genero: '',
+  regiao: '',
+  tagsSelecionadas: []
+});
+
+
+const galeriaFiltrada = computed(() => {
+  return galeria.value.filter(card => {
+    console.log('Filtrando card:', card);
+    console.log('Filtros atuais:', filtrosAtuais.value.faixaEtaria, filtrosAtuais.value.genero, filtrosAtuais.value.regiao, filtrosAtuais.value.tagsSelecionadas);
+    // Faixa etária (agora múltiplos)
+    if (filtrosAtuais.value.faixaEtaria.length > 0 &&
+        !filtrosAtuais.value.faixaEtaria.includes(card.classificacao?.toLowerCase())) {
+      return false;
+    }
+
+    // Gênero
+    if (filtrosAtuais.value.genero.length > 0 &&
+        !filtrosAtuais.value.genero.includes(card.genero?.toLowerCase())) {
+      return false;
+    }
+
+    // Região — OR entre arrays
+    if (filtrosAtuais.value.regiao.length > 0) {
+      const regioesDoCard = (card.regioesAfetadas || []).map(r => r.toLowerCase());
+      const algumaCoincide = filtrosAtuais.value.regiao.some(reg =>
+        regioesDoCard.includes(reg.toLowerCase())
+      );
+      if (!algumaCoincide) return false;
+    }
+
+    // Tags OR — se ao menos 1 tag estiver presente
+    if (filtrosAtuais.value.tagsSelecionadas.length > 0) {
+      const cardTags = (card.tags || []).map(tag => tag.toLowerCase());
+      const algumaCoincide = filtrosAtuais.value.tagsSelecionadas.some(tag =>
+        cardTags.includes(tag.toLowerCase())
+      );
+      if (!algumaCoincide) return false;
+    }
+
+    return true;
+  });
+});
+
 
 
 function limparFormulario() {
@@ -268,79 +315,13 @@ function abrirOverlay(card) {
   jornadaSelecionada.value = card;
 }
 
-// Dados mockados por enquanto
-/*const galeria = ref([
-  {
-    classificacao: 'Adulto',
-    tags: ['Hidratante aveia', 'Corticóides'],
-    imgAntes: 'https://placehold.co/200x140?text=Antes',
-    imgDurante: 'https://placehold.co/200x140?text=Depois',
-    solucao: 'Hidratação com aveia e uso de corticóides'
-  },
-  {
-    classificacao: 'Adolescente',
-    tags: ['Creme hidratante', 'Advantan'],
-    imgAntes: 'https://placehold.co/200x140?text=Antes',
-    imgDurante: 'https://placehold.co/200x140?text=Depois',
-    solucao: 'Uso de creme hidratante e Advantan'
-  },
-  {
-    classificacao: 'Adulto',
-    tags: ['Óleo de girassol', 'Banhos mornos'],
-    imgAntes: 'https://placehold.co/200x140?text=Antes',
-    imgDurante: 'https://placehold.co/200x140?text=Depois',
-    solucao: 'Injeção de vitamina D e uso de óleo de girassol'
-  },
-  {
-    classificacao: 'Criança',
-    tags: ['Hidratante infantil', 'Pomada natural'],
-    imgAntes: 'https://placehold.co/200x140?text=Antes',
-    imgDurante: 'https://placehold.co/200x140?text=Depois',
-    solucao: 'Melhora com uso de hidratante infantil leve'
-  },
-  {
-    classificacao: 'Adolescente',
-    tags: ['Protetor solar', 'Vitamina D'],
-    imgAntes: 'https://placehold.co/200x140?text=Antes',
-    imgDurante: 'https://placehold.co/200x140?text=Depois',
-    solucao: 'Exposição ao sol moderada com protetor e suplemento vitamínico'
-  },
-  {
-    classificacao: 'Adulto',
-    tags: ['Pomada manipulada', 'Hidratantes noturnos'],
-    imgAntes: 'https://placehold.co/200x140?text=Antes',
-    imgDurante: 'https://placehold.co/200x140?text=Depois',
-    solucao: 'Melhora com uso diário de pomadas personalizadas'
-  },
-  {
-    classificacao: 'Criança',
-    tags: ['Banho de aveia', 'Creme calmante'],
-    imgAntes: 'https://placehold.co/200x140?text=Antes',
-    imgDurante: 'https://placehold.co/200x140?text=Depois',
-    solucao: 'Uso de banho morno com aveia e cremes calmantes'
-  },
-  {
-    classificacao: 'Adolescente',
-    tags: ['Dieta sem lactose', 'Probióticos'],
-    imgAntes: 'https://placehold.co/200x140?text=Antes',
-    imgDurante: 'https://placehold.co/200x140?text=Depois',
-    solucao: 'Controle da dermatite com ajuste na alimentação e probióticos'
-  },
-  {
-    classificacao: 'Adulto',
-    tags: ['Fototerapia', 'Hidratante intensivo'],
-    imgAntes: 'https://placehold.co/200x140?text=Antes',
-    imgDurante: 'https://placehold.co/200x140?text=Depois',
-    solucao: 'Sessões semanais de fototerapia e hidratação intensa'
-  },
-  {
-    classificacao: 'Criança',
-    tags: ['Pomada de corticoide leve', 'Vestimenta de algodão'],
-    imgAntes: 'https://placehold.co/200x140?text=Antes',
-    imgDurante: 'https://placehold.co/200x140?text=Depois',
-    solucao: 'Melhora significativa com uso de roupas leves e pomadas leves'
-  }
-]); */
+function aplicarFiltros(filtros) {
+  console.log('[DEBUG] Filtros recebidos:', filtros);
+  // Aqui você pode atualizar a lista de cards filtrados com base nesses filtros
+  // Exemplo: galeria.value = filtrarGaleria(filtros);
+  // Para fins de exemplo, vamos apenas logar os filtros
+  console.log('Filtros aplicados:', filtros);
+}
 </script>
 
 <style scoped>
