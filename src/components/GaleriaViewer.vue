@@ -10,7 +10,10 @@
         </button>
     </div>
 
-    <FiltroGaleria @filtrosAlterados="filtrosAtuais = $event" />
+    <FiltroGaleria
+      :contadores="contadores"
+      @filtrosAlterados="filtrosAtuais = $event"
+    />
 
     
     <div>
@@ -30,33 +33,37 @@
       </div>
 
       <TransitionGroup
-        v-else-if="estado === 'SUCCESS'"
-        name="fade-slide"
-        tag="div"
-        class="row g-4"
-      >
-        <div v-for="card in galeriaFiltrada.slice(0, limite)" :key="card.id" class="col-md-4">
-          <CardJornada :card="card" />
-        </div>
-      </TransitionGroup>
-
-      <!-- Botão de carregar mais -->
-      <div v-if="limite < galeria.length" class="text-center my-4">
-        <button 
-          class="btn btn-outline-primary px-4 py-2"
-          @click="carregarMais"
-          :disabled="carregandoMais"
+          v-else-if="estado === 'SUCCESS'"
+          name="fade-slide"
+          tag="div"
+          class="row g-4"
         >
-          <span v-if="carregandoMais" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          Carregar mais
-        </button>
-    </div>
+          <div v-for="card in galeriaVisivel" :key="card.id" class="col-md-4">
+            <CardJornada :card="card" />
+          </div>
+        </TransitionGroup>
+        <!-- DEBUG -->
+        <div v-if="estado === 'SUCCESS'" class="text-center text-muted my-4">
+          <div style="font-size: 12px; color: #888;">
+            <p><strong>[DEBUG]</strong></p>
+            <p>galeriaFiltrada.length: {{ galeriaFiltrada.length }}</p>
+            <p>galeriaVisivel.length: {{ galeriaVisivel.length }}</p>
+            <p>Condição final: {{ galeriaVisivel.length >= galeriaFiltrada.length }}</p>
+            <p>Estado: {{ estado }}</p>
+          </div>
+        </div>
+        <!-- Sentinel para scroll infinito -->
+        <div v-if="sucesso" ref="sentinela" style="height: 1px;"></div>
 
-    <!-- Mensagem final quando tudo foi carregado -->
-    <div v-else-if="galeria.length > 0" class="text-center text-muted my-4">
-      <small>Todos os cards foram exibidos.</small>
-    </div>
-  </div>
+        <!-- Mensagem final quando todos os cards filtrados foram exibidos -->
+        <div
+          v-if="estado === 'SUCCESS' && galeriaFiltrada.length > 0 && galeriaVisivel.length >= galeriaFiltrada.length"
+          class="text-center text-muted my-4"
+        >
+          <small>Todos os cards foram exibidos.</small>
+        </div>
+
+        </div>
 
     <div v-if="mostrandoFormulario" class="overlay" @click.self="mostrandoFormulario = false">
       <div class="overlay-content">
@@ -70,31 +77,7 @@
     </div>
     
 
-    <!-- OVERLAY -->
-    <div v-if="jornadaSelecionada" class="overlay">
-      <div class="overlay-content">
-        <button class="btn-close float-end" @click="jornadaSelecionada = null"></button>
-        <div class="row g-4">
-          <div class="col-md-6">
-            <img :src="jornadaSelecionada.imgDepois" class="img-fluid rounded" alt="Imagem" />
-            <div class="mt-3 d-flex gap-2">
-              <img :src="jornadaSelecionada.imgAntes" width="70" height="70" class="rounded border" />
-              <img :src="jornadaSelecionada.imgDepois" width="70" height="70" class="rounded border" />
-            </div>
-            <div class="mt-3">
-              <span v-for="tag in jornadaSelecionada.tags" :key="tag" class="badge bg-primary me-2">{{ tag }}</span>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <p><strong>Faixa etária:</strong> {{ jornadaSelecionada.classificacao }}</p>
-            <p><strong>Gênero:</strong> feminino</p>
-            <p><strong>Área afetada:</strong> braços</p>
-            <p><strong>Descrição:</strong></p>
-            <p class="text-muted">{{ jornadaSelecionada.solucao }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+
   </div>
 </template>
 
@@ -105,27 +88,69 @@ import { db, storage } from '../firebase/config'; // ajuste o caminho conforme s
 import { collection, getDoc, getDocs, doc } from 'firebase/firestore';
 import { getDownloadURL, ref as storageRef } from 'firebase/storage';
 import { computed } from 'vue';
+import { watchEffect, watch } from 'vue';
 import FormularioJornada from '../components/FormularioJornada.vue';
 import CardJornada from '../components/CardJornada.vue';
 import FiltroGaleria from '../components/FiltrosGaleria.vue';
 
 
 const limite = ref(9);
-const incremento = 9;
+const limiteVisual = ref(14);
+const incremento = 6;
 const galeria = ref([]);
 const carregando = ref(true);
-const jornadaSelecionada = ref(null);
+
 const mostrandoFormulario = ref(false);
 const estado = ref('LOADING'); 
+const sentinela = ref(null);
 
-const carregandoMais = ref(false);
+const contadores = computed(() => {
+  const counts = {
+    faixaEtaria: {},
+    genero: {},
+    regiao: {},
+    tags: {}
+  };
 
-async function carregarMais() {
-  carregandoMais.value = true;
-  await new Promise(resolve => setTimeout(resolve, 400)); // simula delay
-  limite.value += incremento;
-  carregandoMais.value = false;
+  for (const card of galeriaFiltrada.value) {
+    // Faixa Etária
+    const fa = card.classificacao?.toLowerCase();
+    if (fa) counts.faixaEtaria[fa] = (counts.faixaEtaria[fa] || 0) + 1;
+
+    // Gênero
+    const gen = card.genero?.toLowerCase();
+    if (gen) counts.genero[gen] = (counts.genero[gen] || 0) + 1;
+
+    // Região
+    for (const reg of card.regioesAfetadas || []) {
+      const r = reg.toLowerCase();
+      counts.regiao[r] = (counts.regiao[r] || 0) + 1;
+    }
+
+    // Tags
+    for (const tag of card.tags || []) {
+      const t = tag.toLowerCase();
+      counts.tags[t] = (counts.tags[t] || 0) + 1;
+    }
+  }
+
+  return counts;
+});
+
+const sucesso = computed(() => estado.value === 'SUCCESS');
+// Filtros emitidos pelo FiltroGaleria
+const filtrosAtuais = ref({
+  faixaEtaria: [],
+  genero: [],
+  regiao: [],
+  tagsSelecionadas: []
+});
+
+function carregarMaisVisiveis() {
+  limiteVisual.value += incremento;
 }
+
+
 
 // Função para carregar os dados
 async function carregarGaleria() {
@@ -255,16 +280,9 @@ async function carregarNovoCard(idNovoDoc) {
   }
 }
 
-onMounted(() => {
-  carregarGaleria();
-});
 
-const filtrosAtuais = ref({
-  faixaEtaria: '',
-  genero: '',
-  regiao: '',
-  tagsSelecionadas: []
-});
+
+
 
 
 const galeriaFiltrada = computed(() => {
@@ -304,17 +322,42 @@ const galeriaFiltrada = computed(() => {
     return true;
   });
 });
+// Lista de exibição limitada ao que está visível
+const galeriaVisivel = computed(() => {
+  return galeriaFiltrada.value.slice(0, limiteVisual.value);
+});
 
+// Aumentar o limite quando o sentinel entrar na viewport
+function configurarObserver() {
+  const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      limiteVisual.value += incremento;
+    }
+  }, { threshold: 1.0 });
+
+  if (sentinela.value) observer.observe(sentinela.value);
+}
 
 
 function limparFormulario() {
   console.log('Usuário cancelou envio');
 }
 
-function abrirOverlay(card) {
-  jornadaSelecionada.value = card;
-}
 
+function ajustarLimiteSeCurto() {
+  // Só age se os dados já foram carregados com sucesso
+  if (estado.value !== 'SUCCESS') return;
+
+  const total = galeriaFiltrada.value.length;
+  const visiveis = galeriaVisivel.value.length;
+  const alturaTotal = document.documentElement.scrollHeight;
+  const alturaViewport = window.innerHeight;
+
+  // Se tudo já está visível, e não há barra de rolagem
+  if (total > 0 && visiveis < total && alturaTotal <= alturaViewport) {
+    limiteVisual.value = total;
+  }
+}
 function aplicarFiltros(filtros) {
   console.log('[DEBUG] Filtros recebidos:', filtros);
   // Aqui você pode atualizar a lista de cards filtrados com base nesses filtros
@@ -322,6 +365,29 @@ function aplicarFiltros(filtros) {
   // Para fins de exemplo, vamos apenas logar os filtros
   console.log('Filtros aplicados:', filtros);
 }
+
+onMounted(() => {
+  carregarGaleria();
+  // galeria.value = await carregarDoFirestore();
+  configurarObserver();
+  ajustarLimiteSeCurto();
+  watchEffect(() => {
+  if (
+    estado.value === 'SUCCESS' &&
+    galeriaFiltrada.value.length <= limiteVisual.value &&
+    document.documentElement.scrollHeight <= window.innerHeight
+  ) {
+    limiteVisual.value = galeriaFiltrada.value.length;
+  }
+}
+  
+);
+
+watch(filtrosAtuais, () => {
+  ajustarLimiteSeCurto();
+});
+
+});
 </script>
 
 <style scoped>
@@ -332,55 +398,9 @@ img {
   display: block;
   margin-bottom: 0.5rem;
 }
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(4px);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
-.overlay-content {
-  background: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  max-width: 900px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-}
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
 
-.overlay-content {
-  background: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  max-width: 800px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-}
+
 .fade-slide-enter-active {
   transition: all 0.3s ease;
 }

@@ -4,11 +4,14 @@
     <!-- Faixa Etária -->
     <div class="mb-3">
       <strong class="d-block mb-2">Faixa etária:</strong>
-      <span v-for="item in ['criança', 'adolescente', 'adulto']" :key="item"
+      <span
+        v-for="item in ['crianca', 'adolescente', 'adulto']"
+        :key="item"
         @click="toggleItem('faixaEtaria', item)"
         :class="['badge me-1 mb-1', filtros.faixaEtaria.includes(item) ? 'bg-primary text-white' : 'bg-light text-dark']"
-        style="cursor: pointer;">
-        {{ item.toUpperCase() }}
+        style="cursor: pointer;"
+      >
+        {{ item.toUpperCase() }} ({{ contadores.faixaEtaria[item] || 0 }})
       </span>
     </div>
 
@@ -26,7 +29,7 @@
     <!-- Região -->
     <div class="mb-3">
       <strong class="d-block mb-2">Regiões afetadas:</strong>
-      <span v-for="item in ['rosto', 'pescoço', 'tronco', 'braços', 'pernas']" :key="item"
+      <span v-for="item in ['rosto', 'pescoço', 'tronco', 'braços', 'pernas', 'mãos', 'costas', 'pés']" :key="item"
         @click="toggleItem('regiao', item)"
         :class="['badge me-1 mb-1', filtros.regiao.includes(item) ? 'bg-primary text-white' : 'bg-light text-dark']"
         style="cursor: pointer;">
@@ -58,6 +61,19 @@
 <script setup>
 import { reactive, watch } from 'vue';
 
+defineProps({
+  contadores: {
+    type: Object,
+    default: () => ({
+      faixaEtaria: {},
+      genero: {},
+      regiao: {},
+      tags: {}
+    })
+  }
+});
+
+
 const emit = defineEmits(['filtrosAlterados']);
 
 const filtros = reactive({
@@ -86,7 +102,9 @@ function selecionar(campo, valor) {
 
 // Lista base para seleção de tags (futuro: populado dinamicamente)
 const todasTags = [
-  "vitamina D", "corticóides", "hidratantes", "alimentação", "ácaros"
+  "vitamina D", "corticóides", "hidratantes", "alimentação", "ácaros", 
+  "imunoterapia", "medicamentos orais", "alergia alimentar", "biologicos",
+   "dupixent"
 ];
 
 function toggleItem(campo, valor) {
