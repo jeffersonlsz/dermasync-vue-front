@@ -1,26 +1,27 @@
 <template>
     <BaseLayout>
-<!-- HERO COM IMAGEM -->
-<section class="hero-section my-4">
-  <div class="hero-overlay"></div>
 
-  <div class="container hero-content">
-    <div class="row">
-      <div class="col-lg-8">
-        <h1 class="fw-bold mb-3">
-          Conectando pessoas com soluções para <span class="text-primary">Dermatite Atópica</span>
-        </h1>
-        <p class="text-muted mb-4">
-          Uma plataforma colaborativa onde você pode obter ajuda a partir de experiências reais de outras pessoas.
-        </p>
-        <div class="d-flex flex-column flex-sm-row gap-3">
-          <router-link to="/login" class="btn btn-primary btn-lg">Quero Participar</router-link>
-          <router-link to="/galeria" class="btn btn-outline-secondary btn-lg">Compartilhar sua experiência</router-link>
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="hero-overlay">
+          <h1 class="hero-title">
+            Conectando pessoas com soluções para<br />
+            <span class="highlight">Dermatite Atópica</span>
+          </h1>
+          <p class="hero-subtext">
+            Uma plataforma colaborativa onde você pode obter ajuda a partir de experiências reais de outras pessoas.
+          </p>
+
+          <div class="hero-buttons">
+            <RouterLink to="/galeria" class="btn btn-primary">Explorar Galeria</RouterLink>
+            <RouterLink to="/formulario" class="btn btn-secondary">Compartilhar sua experiência</RouterLink>
+          </div>
+
+          <p class="hero-promise">
+            🎯 Veja mais de 100 relatos reais de pessoas lidando com dermatite atópica — descubra o que funcionou na prática.
+          </p>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
   
       <!-- GALERIA MOCK -->
       <section class="container my-5">
@@ -96,35 +97,100 @@
     color: #6c757d;
     font-weight: 500;
   }
+  .navbar {
+    background-color: rgba(20, 20, 20, 0.85) !important; /* tom escuro translúcido */
+    backdrop-filter: blur(6px); /* dá um efeito sutil moderno */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
 
   .hero-section {
   position: relative;
-  min-height: 80vh;
-  border-radius: 1rem;
-  overflow: hidden;
-  background-image: url('/img/hero-dermatite_002.png');
-  background-size: cover;
-  background-position: center;
+  height: 70vh;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0)),
+    url('/img/hero-dermatite_002.png') center center / cover no-repeat;
   display: flex;
   align-items: center;
+  padding: 2rem;
+  color: white;
 }
 
 .hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0.85) 20%, rgba(255, 255, 255, 0.65) 50%, rgba(255, 255, 255, 0.3) 80%);
-  z-index: 1;
+  max-width: 700px;
 }
 
-.hero-content {
-  position: relative;
-  z-index: 2;
-  padding: 4rem 2rem;
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
 }
 
-@media (max-width: 768px) {
-  .hero-content {
-    text-align: center;
+.highlight {
+  color: #7f9cf5; /* tom azul violeta */
+}
+
+.hero-subtext {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary {
+  background-color: #7f56d9;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #6b46c1;
+}
+
+.btn-secondary {
+  background-color: white;
+  color: #7f56d9;
+  border: 1px solid #7f56d9;
+}
+
+.btn-secondary:hover {
+  background-color: #f0f0f0;
+}
+
+.hero-promise {
+  font-size: 0.95rem;
+  color: #f1f1f1;
+  margin-top: 0.5rem;
+  max-width: 500px;
+}
+
+@media (max-width: 600px) {
+  .hero-section {
+    padding: 1.5rem 1rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .hero-promise {
+    font-size: 0.9rem;
   }
 }
 

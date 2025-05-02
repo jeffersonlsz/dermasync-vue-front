@@ -46,5 +46,10 @@
 
 <script setup>
 import { ref } from 'vue'
+const isMenuOpen = ref(false)
+
+function toggleMenu() {
+  isMenuOpen.value = !isMenuOpen.value
+}
 
 </script>

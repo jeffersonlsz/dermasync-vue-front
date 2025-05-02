@@ -30,6 +30,7 @@
 
 <script setup>
 import Navbar from '../components/Navbar.vue';
+
 console.log("🧪 BaseLayout foi renderizado");
 </script>
 
