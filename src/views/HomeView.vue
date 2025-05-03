@@ -23,32 +23,18 @@
         </div>
     </section>
   
-      <!-- GALERIA MOCK -->
-      <section class="container my-5">
-        <h2 class="text-center fw-bold mb-4">Galeria colaborativa (exemplo)</h2>
-        <div class="row g-4">
-          <div class="col-md-4">
-            <div class="mock-img">Antes / Durante / Depois</div>
-          </div>
-          <div class="col-md-4">
-            <div class="mock-img">Depoimento sobre tratamento</div>
-          </div>
-          <div class="col-md-4">
-            <div class="mock-img">Contribuição recente</div>
-          </div>
-        </div>
-      </section>
+<HomeGaleriaColaborativa/>
   
 <!-- COMO FUNCIONA -->
-<section class="container text-center my-5">
+<section class="container text-center py-5">
   <h2 class="fw-bold mb-5">Como Funciona</h2>
-  <div class="row g-5 justify-content-center">
+  <div class="row g-4 justify-content-center">
     <!-- Passo 1 -->
     <div class="col-md-4">
       <div class="icon-wrapper mx-auto mb-3">
         <i class="bi bi-upload fs-2 text-primary"></i>
       </div>
-      <h6 class="fw-bold">1. Envie sua foto</h6>
+      <h5 class="fw-bold">1. Envie sua jornada</h5>
       <p class="text-muted">Compartilhe sua jornada com segurança e anonimato.</p>
     </div>
 
@@ -57,7 +43,7 @@
       <div class="icon-wrapper mx-auto mb-3">
         <i class="bi bi-image fs-2 text-success"></i>
       </div>
-      <h6 class="fw-bold">2. Veja experiências reais</h6>
+      <h5 class="fw-bold">2. Veja experiências reais</h5>
       <p class="text-muted">Explore nossa galeria colaborativa de casos reais.</p>
     </div>
 
@@ -66,16 +52,20 @@
       <div class="icon-wrapper mx-auto mb-3">
         <i class="bi bi-lightbulb fs-2 text-warning"></i>
       </div>
-      <h6 class="fw-bold">3. Descubra o que funciona</h6>
+      <h5 class="fw-bold">3. Descubra o que funciona</h5>
       <p class="text-muted">Aprenda com dicas e soluções que deram certo para outros.</p>
     </div>
   </div>
 
+  
+</section>
+<section class="container text-center py-5">
   <!-- Rodapé de confiança -->
   <p class="text-muted fw-semibold mt-5">
     <i class="bi bi-lock-fill text-warning me-2"></i>
-    <strong>100% Anônimo</strong> – Você pode participar com segurança
+    <strong>100% Anônimo</strong> – Protegemos seus dados e privacidade
   </p>
+
 </section>
 
     </BaseLayout>
@@ -83,20 +73,11 @@
   
   <script setup>
   import BaseLayout from '../layouts/BaseLayout.vue';
+  import HomeGaleriaColaborativa from '../components/HomeGaleriaColaborativa.vue';
   </script>
   
   <style scoped>
-  .mock-img {
-    width: 100%;
-    height: 180px;
-    background: #dee2e6;
-    border-radius: 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #6c757d;
-    font-weight: 500;
-  }
+
   .navbar {
     background-color: rgba(20, 20, 20, 0.85) !important; /* tom escuro translúcido */
     backdrop-filter: blur(6px); /* dá um efeito sutil moderno */
@@ -173,6 +154,11 @@
   color: #f1f1f1;
   margin-top: 0.5rem;
   max-width: 500px;
+}
+
+.passo-como-funciona{
+  background-color: #dee2e6;
+  border-radius: 6%;
 }
 
 @media (max-width: 600px) {

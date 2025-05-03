@@ -5,7 +5,7 @@
     <p class="text-center text-muted mb-4">Neste espaço, você poderá ver a contribuição de outras pessoas que passaram pela mesma condição e obtiveram sucesso.</p>
     <p class="text-center text-muted mb-4">Não se preocupe, os dados são 100% anônimos</p>
     <div class="text-center mb-4">
-      <button class="btn btn-primary btn-lg px-5" @click="mostrandoFormulario = true">
+      <button class="btn btn-primary btn-lg px-5" @click.stop.prevent="mostrandoFormulario = true">
         Compartilhe sua jornada - outros podem aprender com você !
         </button>
     </div>
@@ -43,7 +43,7 @@
           </div>
         </TransitionGroup>
         <!-- DEBUG -->
-        <div v-if="estado === 'SUCCESS'" class="text-center text-muted my-4">
+        <!--div v-if="estado === 'SUCCESS'" class="text-center text-muted my-4">
           <div style="font-size: 12px; color: #888;">
             <p><strong>[DEBUG]</strong></p>
             <p>galeriaFiltrada.length: {{ galeriaFiltrada.length }}</p>
@@ -51,7 +51,7 @@
             <p>Condição final: {{ galeriaVisivel.length >= galeriaFiltrada.length }}</p>
             <p>Estado: {{ estado }}</p>
           </div>
-        </div>
+        </div-->
         <!-- Sentinel para scroll infinito -->
         <div v-if="sucesso" ref="sentinela" style="height: 1px;"></div>
 
@@ -168,9 +168,11 @@ async function carregarGaleria() {
         const data = doc.data();
         // Pega os caminhos das imagens
         const caminhoAntes = data.imagens.antes; 
-        const caminhoDepois = data.imagens.depois;  
+        const caminhoDepois = data.imagens.depois; 
+        const caminhosDurante = data.imagens.durante; // Se houver 
         let urlAntes = '';
         let urlDepois = '';
+        let urlsDurante = [];
         try {
           if (caminhoAntes) {
             urlAntes = await getDownloadURL(storageRef(storage, caminhoAntes));
@@ -187,11 +189,22 @@ async function carregarGaleria() {
           console.warn(`Erro ao carregar imagem Depois do documento ${doc.id}: usando fallback.`);
         }
        
+        if(urlsDurante.length > 0) {
+          urlsDurante = await Promise.all(caminhosDurante.map(async caminho => {
+            try {
+              return await getDownloadURL(storageRef(storage, caminho));
+            } catch (e) {
+              console.warn(`Erro ao carregar imagem Durante do documento ${doc.id}: usando fallback.`);
+              return '/img/fallback-error.png'; // ou outro fallback
+            }
+          }));
+        }
 
         return {
           id: doc.id,
           imgAntes: urlAntes,
           imgDepois: urlDepois,
+          imgDurante: urlsDurante || [],
           classificacao: data.classificacao || 'Não informado',
           tags: data.tags || [],
           regioesAfetadas: data.regioesAfetadas || [],
@@ -238,10 +251,12 @@ async function carregarNovoCard(idNovoDoc) {
     const data = docSnap.data();
 
     const caminhoAntes = data.imagens.antes;
+    const caminhosDurante = data.imagens.durante;
     const caminhoDepois = data.imagens.depois;
 
     let urlAntes = '/img/fallback-error.png';
     let urlDepois = '/img/fallback-error.png';
+    let urlsDurante = [];
 
     try {
       if (caminhoAntes) {
@@ -259,10 +274,22 @@ async function carregarNovoCard(idNovoDoc) {
       console.warn(`Erro ao carregar imagem Durante para novo card ${idNovoDoc}`);
     }
 
+    if (caminhosDurante.length > 0) {
+      urlsDurante = await Promise.all(caminhosDurante.map(async caminho => {
+        try {
+          return await esperarDownloadURL(caminho);
+        } catch (e) {
+          console.warn(`Erro ao carregar imagem Durante para novo card ${idNovoDoc}`);
+          return '/img/fallback-error.png'; // ou outro fallback
+        }
+      }));
+    }
+
     const novoCard = {
       id: docSnap.id,
       imgAntes: urlAntes,
       imgDepois: urlDepois,
+      imgDurante: urlsDurante || [],
       classificacao: data.classificacao || 'Não informado',
       regioesAfetadas: data.regioesAfetadas || [],
       genero: data.genero || 'Não informado',
@@ -399,6 +426,30 @@ img {
   margin-bottom: 0.5rem;
 }
 
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.overlay-content {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
 
 
 .fade-slide-enter-active {

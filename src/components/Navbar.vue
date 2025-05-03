@@ -28,6 +28,11 @@
             <RouterLink class="nav-link text-dark me-2 px-3" to="/">Início</RouterLink>
           </li>
           <li class="nav-item">
+            <RouterLink class="nav-link text-dark me-2 px-3" to="/cadastro">
+              Cadastrar-se
+            </RouterLink>
+          </li>
+          <li class="nav-item">
             <RouterLink class="nav-link text-dark me-2 px-3" to="/galeria">Galeria</RouterLink>
           </li>
         </ul>
@@ -53,3 +58,11 @@ function toggleMenu() {
 }
 
 </script>
+
+<style scoped>
+.navbar {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 8px;
+}
+
+</style>
