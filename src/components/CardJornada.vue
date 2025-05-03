@@ -137,7 +137,7 @@ console.log('Card recebido:', props.card);
         <p><strong>Áreas afetada:</strong> {{ jornadaSelecionada.regioesAfetadas }}</p>
 
         <p class="mt-3"><strong>Descrição:</strong></p>
-        <p class="text-muted">{{ jornadaSelecionada.solucao }}</p>
+        <p class="text-muted">{{ jornadaSelecionada.descricao }}</p>
         
         <div class="mt-4">
           <span v-for="tag in jornadaSelecionada.tags" :key="tag" class="badge bg-primary me-2 mb-1">{{ tag }}</span>

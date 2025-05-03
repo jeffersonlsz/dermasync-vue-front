@@ -5,11 +5,18 @@
     <section class="hero-section">
         <div class="hero-overlay">
           <h1 class="hero-title">
-            Conectando pessoas com soluções para<br />
+            Você não está só! <br />
+            Aprenda o que funcionou para outras pessoas <br />
             <span class="highlight">Dermatite Atópica</span>
           </h1>
           <p class="hero-subtext">
-            Uma plataforma colaborativa onde você pode obter ajuda a partir de experiências reais de outras pessoas.
+            
+            Aprenda com pessoas reais que enfrentam o mesmo desafio.
+            <br />
+            Ensine o que funcionou pra você e ajude outros a encontrar alívio.
+            <br />
+
+      
           </p>
 
           <div class="hero-buttons">
@@ -18,7 +25,7 @@
           </div>
 
           <p class="hero-promise">
-            🎯 Veja mais de 100 relatos reais de pessoas lidando com dermatite atópica — descubra o que funcionou na prática.
+            🎯 Veja relatos reais de pessoas lidando com dermatite atópica — descubra o que funcionou na prática.
           </p>
         </div>
     </section>

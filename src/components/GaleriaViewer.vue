@@ -205,6 +205,7 @@ async function carregarGaleria() {
           imgAntes: urlAntes,
           imgDepois: urlDepois,
           imgDurante: urlsDurante || [],
+          descricao: data.descricao || 'Não informado',
           classificacao: data.classificacao || 'Não informado',
           tags: data.tags || [],
           regioesAfetadas: data.regioesAfetadas || [],
