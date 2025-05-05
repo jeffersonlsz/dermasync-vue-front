@@ -1,55 +1,55 @@
 <template>
-  <div class="text-center">
+  <div class="filtros-container container text-center">
 
     <!-- Faixa Etária -->
-    <div class="mb-3">
-      <strong class="d-block mb-2">Faixa etária:</strong>
-      <span
+    <div class="row align-items-center mb-3">
+      <div class="col-auto d-block mb-2">Faixa etária:</div>
+      <div
         v-for="item in ['crianca', 'adolescente', 'adulto']"
         :key="item"
         @click="toggleItem('faixaEtaria', item)"
-        :class="['badge me-1 mb-1', filtros.faixaEtaria.includes(item) ? 'bg-primary text-white' : 'bg-light text-dark']"
+        :class="['filter-tag col-auto', filtros.faixaEtaria.includes(item) ? 'bg-primary text-white' : 'bg-light text-dark']"
         style="cursor: pointer;"
       >
         {{ item.toUpperCase() }} ({{ contadores.faixaEtaria[item] || 0 }})
-      </span>
+    </div>
     </div>
 
     <!-- Gênero -->
-    <div class="mb-3">
-      <strong class="d-block mb-2">Gênero:</strong>
+    <div class="row align-items-center mb-3">
+      <strong class="col-auto d-block mb-2">Gênero:</strong>
       <span v-for="item in ['masculino', 'feminino', 'não informado']" :key="item"
         @click="toggleItem('genero', item)"
-        :class="['badge me-1 mb-1', filtros.genero.includes(item) ? 'bg-primary text-white' : 'bg-light text-dark']"
+        :class="['filter-tag col-auto', filtros.genero.includes(item) ? 'bg-primary text-white' : 'bg-light text-dark']"
         style="cursor: pointer;">
         {{ item.toUpperCase() }}
       </span>
     </div>
 
     <!-- Região -->
-    <div class="mb-3">
-      <strong class="d-block mb-2">Regiões afetadas:</strong>
+    <div class="row align-items-center mb-3">
+      <strong class="col-auto d-block mb-2">Regiões afetadas:</strong>
       <span v-for="item in ['rosto', 'pescoço', 'tronco', 'braços', 'pernas', 'mãos', 'costas', 'pés']" :key="item"
         @click="toggleItem('regiao', item)"
-        :class="['badge me-1 mb-1', filtros.regiao.includes(item) ? 'bg-primary text-white' : 'bg-light text-dark']"
+        :class="['filter-tag col-auto', filtros.regiao.includes(item) ? 'bg-primary text-white' : 'bg-light text-dark']"
         style="cursor: pointer;">
         {{ item.toUpperCase() }}
       </span>
     </div>
 
     <!-- Tags dinâmicas -->
-    <div class="mb-2">
-      <strong class="d-block mb-2">Outras tags:</strong>
+    <div class="row align-items-center mb-3">
+      <strong class="col-auto d-block mb-2">Outras tags:</strong>
       <span v-for="tag in todasTags" :key="tag"
         @click="toggleTag(tag)"
-        :class="['badge me-1 mb-1', filtros.tagsSelecionadas.includes(tag) ? 'bg-secondary text-white' : 'bg-light text-muted']"
+        :class="['col-auto badge me-1 mb-1 bg-light text-dark', filtros.tagsSelecionadas.includes(tag) ? 'bg-secondary text-white' : 'bg-light text-muted']"
         style="cursor: pointer;">
         {{ tag }}
       </span>
     </div>
 
     <div class="mt-3">
-      <button class="btn btn-outline-secondary btn-sm" @click="limparFiltros">
+      <button class="btn btn-sm" @click="limparFiltros">
         Limpar filtros
       </button>
     </div>
@@ -128,3 +128,40 @@ function toggleTag(tag) {
 }
 
 </script>
+
+<style scoped>
+
+.filtros-container {
+  
+  margin-bottom: 1rem;
+
+  
+  
+}
+
+.filtros-container  > .row {
+  
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+
+}
+
+.filter-tag {
+  border: none;
+  background-color: #f0f0f0;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.875rem;
+  margin: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.filter-tag.active {
+  background-color: #3b82f6; /* Azul suave */
+  color: white;
+}
+</style>

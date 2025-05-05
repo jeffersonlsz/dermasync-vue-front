@@ -31,41 +31,8 @@
     </section>
   
 <HomeGaleriaColaborativa/>
-  
-<!-- COMO FUNCIONA -->
-<section class="container text-center py-5">
-  <h2 class="fw-bold mb-5">Como Funciona</h2>
-  <div class="row g-4 justify-content-center">
-    <!-- Passo 1 -->
-    <div class="col-md-4">
-      <div class="icon-wrapper mx-auto mb-3">
-        <i class="bi bi-upload fs-2 text-primary"></i>
-      </div>
-      <h5 class="fw-bold">1. Envie sua jornada</h5>
-      <p class="text-muted">Compartilhe sua jornada com segurança e anonimato.</p>
-    </div>
+<HomeComoFunciona/>
 
-    <!-- Passo 2 -->
-    <div class="col-md-4">
-      <div class="icon-wrapper mx-auto mb-3">
-        <i class="bi bi-image fs-2 text-success"></i>
-      </div>
-      <h5 class="fw-bold">2. Veja experiências reais</h5>
-      <p class="text-muted">Explore nossa galeria colaborativa de casos reais.</p>
-    </div>
-
-    <!-- Passo 3 -->
-    <div class="col-md-4">
-      <div class="icon-wrapper mx-auto mb-3">
-        <i class="bi bi-lightbulb fs-2 text-warning"></i>
-      </div>
-      <h5 class="fw-bold">3. Descubra o que funciona</h5>
-      <p class="text-muted">Aprenda com dicas e soluções que deram certo para outros.</p>
-    </div>
-  </div>
-
-  
-</section>
 <section class="container text-center py-5">
   <!-- Rodapé de confiança -->
   <p class="text-muted fw-semibold mt-5">
@@ -81,6 +48,7 @@
   <script setup>
   import BaseLayout from '../layouts/BaseLayout.vue';
   import HomeGaleriaColaborativa from '../components/HomeGaleriaColaborativa.vue';
+  import HomeComoFunciona from '../components/HomeComoFunciona.vue';
   </script>
   
   <style scoped>
