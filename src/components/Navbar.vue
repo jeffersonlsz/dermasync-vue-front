@@ -28,7 +28,7 @@
             <RouterLink class="nav-link text-dark me-2 px-3" to="/">Início</RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link text-dark me-2 px-3" to="/cadastro">
+            <RouterLink class="nav-link text-dark me-2 px-3 " to="/cadastro">
               Cadastrar-se
             </RouterLink>
           </li>
