@@ -37,6 +37,29 @@ This project is **not open-source**. It is published only for technical demonstr
 
 ---
 
+## 📸 Screenshots
+
+![Landing Page](public/img/snapshots/landing_page_002.png){ width=500px }
+
+Here are some screenshots showcasing the platform's features:
+- User gallery with filterable labels
+- Upload interface for personal journeys
+- Admin panel with role-based access
+- Insights powered by LLM integration
+- Custom UI built with Argon Design System
+- Responsive design across devices
+- Backend integration with FastAPI
+- Firebase-hosted services
+- Google Cloud Run deployment
+- And more! Screenshots
+
+- Vue.js 3 + Vite
+- Firebase (Auth, Firestore, Hosting, Storage)
+- FastAPI (Python) + Google Cloud Run
+- SCSS + Argon Design System
+
+---
+
 ## 📫 Contact
 
 Jefferson Leandro  
