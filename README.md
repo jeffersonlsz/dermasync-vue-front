@@ -39,8 +39,6 @@ This project is **not open-source**. It is published only for technical demonstr
 
 ## 📸 Screenshots
 
-![Landing Page](public/img/snapshots/landing_page_002.png){ width=500px }
-
 Here are some screenshots showcasing the platform's features:
 - User gallery with filterable labels
 - Upload interface for personal journeys
@@ -57,6 +55,9 @@ Here are some screenshots showcasing the platform's features:
 - Firebase (Auth, Firestore, Hosting, Storage)
 - FastAPI (Python) + Google Cloud Run
 - SCSS + Argon Design System
+![Landing Page](public/img/snapshots/landing_page_002.png){ width=320px }
+
+
 
 ---
 
