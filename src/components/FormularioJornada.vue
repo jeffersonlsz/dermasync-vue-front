@@ -26,6 +26,9 @@
     <div v-if="etapa === 1" class="card shadow-sm border-0 mb-4 p-4">
           <h6 class="fw-bold mb-3 text-primary">1 de 4 — Envio das Imagens</h6>
           <p class="text-muted">Envie três fotos mostrando seu progresso: antes, durante e depois.</p>
+          <div v-if="erroFormulario" class="erro-formulario text-danger fw-bold mt-2">
+            {{ erroFormulario }}
+          </div>
 
           <div class="row g-3">
               <div class="col-md-4">
@@ -58,6 +61,9 @@
 
     <div v-else-if="etapa === 2" class="card shadow-sm border-0 mb-4 p-4">
       <h6 class="fw-bold mb-3 text-primary">2 de 4 — Informações sobre você</h6>
+      <div v-if="erroFormulario" class="erro-formulario text-danger fw-bold mt-2">
+            {{ erroFormulario }}
+          </div>
       <div class="mb-3">
         <label class="form-label">Classificação</label>
         <div class="btn-group w-100" role="group">
@@ -137,6 +143,9 @@
 
     <div v-else-if="etapa === 3" class="card shadow-sm border-0 mb-4 p-4">
       <h6 class="fw-bold mb-3 text-primary">3 de 4 — Compartilhe sua dica ou tratamento</h6>
+      <div v-if="erroFormulario" class="erro-formulario text-danger fw-bold mt-2">
+            {{ erroFormulario }}
+          </div>
       <textarea
         class="form-control"
         v-model="jornadaFinal.descricao"
@@ -149,6 +158,9 @@
     <div v-else-if="etapa === 4" class="card shadow-sm border-0 mb-4 p-4">
     <template v-if="!sucesso">
       <h6 class="fw-bold mb-3 text-primary">4 de 4 — Consentimento</h6>
+      <div v-if="erroFormulario" class="erro-formulario text-danger fw-bold mt-2">
+            {{ erroFormulario }}
+          </div>
       <div class="form-check mb-2">
         <input class="form-check-input" type="checkbox" id="c1" v-model="jornadaFinal.consentimentos.imagemSegura" />
         <label class="form-check-label" for="c1">
@@ -190,8 +202,9 @@ import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage
 import { autenticarAnonimamente } from '../firebase/authService';
 import Dropzone from '../components/Dropzone.vue';
 import GaleriaViewer from './GaleriaViewer.vue';
+import { criarJornada } from '../helpers/jornada';
 
-const jornadaFinal = reactive({
+/*const jornadaFinal = reactive({
   classificacao: '',
   genero: '',
   regioesAfetadas: [],
@@ -206,7 +219,22 @@ const jornadaFinal = reactive({
     durante: [],
     depois: null
   }
-});
+}); */
+const erroFormulario = ref("");
+const jornadaFinal = reactive(criarJornada());
+
+function validarEtapa1() {
+  const { antes, durante, depois } = jornadaFinal.imagens;
+
+  if (!antes  || !depois) {
+    erroFormulario.value = "Você precisa enviar pelo menos as imagens: antes e depois.";
+    return false;
+  }
+
+  erroFormulario.value = ""; // limpa erro anterior se tudo ok
+  return true;
+}
+
 const emit =  defineEmits([
                 'uploadFinalizado',
                 'uploadFalhou',
@@ -223,6 +251,7 @@ const regiaoAtual = ref('');
 const regioesSelecionadas = ref([]);
 
 function avancarEtapa() {
+  if (etapa.value === 1 && !validarEtapa1()) return; // valida etapa 1
     if (etapa.value < 4) 
       etapa.value++;
     else 
@@ -273,10 +302,12 @@ const progresso = ref(0);
 const enviarJornada = async () => {
   await autenticarAnonimamente(); // <- autenticação antes de tudo
   console.log("🛡️ Autenticado anonimamente.");
-  if (!validarJornada()) {
-    alert("Preencha todos os campos obrigatórios e aceite os termos.");
+  const validacao = jornadaFinal.validar();
+  if (validacao !== true) {
+    alert("Erros no preenchimento:\n" + validacao.join("\n"));
     return;
   }
+  
   // Garante que ao menos 1 região seja registrada
   if (regioesSelecionadas.value.length === 0 && regiaoAtual.value) {
     jornadaFinal.regioesAfetadas = [regiaoAtual.value];
@@ -284,7 +315,7 @@ const enviarJornada = async () => {
     jornadaFinal.regioesAfetadas = [...regioesSelecionadas.value];
   }
   console.log("📦 Objeto final para Firebase:", jornadaFinal);
-  
+  jornadaFinal.marcarAtualizacao(); // Atualiza a data de modificação
   // aqui futuramente subimos para o Firebase
   carregando.value = true;
   progresso.value = 0;

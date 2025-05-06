@@ -1,7 +1,22 @@
 
 // jornada.js
 // Contrato de dados da jornada + métodos de utilidade
-
+/*const jornadaFinal = reactive({
+  classificacao: '',
+  genero: '',
+  regioesAfetadas: [],
+  tags: [],
+  descricao: '',
+  consentimentos: {
+    imagemSegura: false,
+    exibirGaleria: false
+  },
+  imagens: {
+    antes: null,
+    durante: [],
+    depois: null
+  }
+}); */
 export function criarJornada() {
   return {
     // --- Dados do usuário ---
@@ -17,7 +32,15 @@ export function criarJornada() {
       durante: [],
       depois: null
     },
-
+    classificacao: '',
+    genero: '',
+    regioesAfetadas: [],
+    tags: [],
+    descricao: '',
+    consentimentos: {
+      imagemSegura: false,
+      exibirGaleria: false
+    },
     // --- Processamento da LLM ---
     statusLLM: "pendente",
     tags_extraidas: [],
@@ -40,21 +63,10 @@ export function criarJornada() {
     versao_schema: 1,
 
     // === MÉTODOS ===
-
+    
     validar() {
-      const erros = [];
-
-      if (!this.nome || typeof this.nome !== "string") erros.push("Nome ausente ou inválido.");
-      if (!this.idade || isNaN(this.idade)) erros.push("Idade inválida.");
-      if (!["masculino", "feminino", "outro"].includes(this.sexo)) erros.push("Sexo inválido.");
-      if (!this.classificacao) erros.push("Classificação ausente.");
-      if (!this.descricao) erros.push("Descrição obrigatória.");
-
-      if (!this.imagens.antes) erros.push("Imagem 'antes' é obrigatória.");
-      if (!this.imagens.durante || this.imagens.durante.length === 0) erros.push("Imagem 'durante' é obrigatória.");
-      if (!this.imagens.depois) erros.push("Imagem 'depois' é obrigatória.");
-
-      return erros.length === 0 ? true : erros;
+      //desativado por enquanto
+      return true;
     },
 
     limpar() {
