@@ -55,7 +55,10 @@ Here are some screenshots showcasing the platform's features:
 - Firebase (Auth, Firestore, Hosting, Storage)
 - FastAPI (Python) + Google Cloud Run
 - SCSS + Argon Design System
-![Landing Page](public/img/snapshots/landing_page_002.png){ width=320px }
+
+<p align="left">
+    <img src="public/img/snapshots/landing_page_002.png" alt="Landing Page" width="400px">
+</p>
 
 
 
