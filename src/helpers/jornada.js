@@ -1,22 +1,7 @@
 
 // jornada.js
 // Contrato de dados da jornada + métodos de utilidade
-/*const jornadaFinal = reactive({
-  classificacao: '',
-  genero: '',
-  regioesAfetadas: [],
-  tags: [],
-  descricao: '',
-  consentimentos: {
-    imagemSegura: false,
-    exibirGaleria: false
-  },
-  imagens: {
-    antes: null,
-    durante: [],
-    depois: null
-  }
-}); */
+
 export function criarJornada() {
   return {
     // --- Dados do usuário ---
@@ -74,7 +59,9 @@ export function criarJornada() {
     },
 
     marcarAtualizacao() {
+      
       this.atualizado_em = new Date().toISOString();
+      console.log("Inicio atualização do LLM em: ", this.atualizado_em);
     },
 
     iniciarLLM() {
@@ -92,6 +79,39 @@ export function criarJornada() {
       const fim = new Date(this.llm_processamento.fim);
       this.llm_processamento.duracao_ms = fim - inicio;
       this.marcarAtualizacao();
+    },
+
+    toJSON() {
+      const {
+        nome, idade, sexo, classificacao, descricao, imagens, regioesAfetadas,
+        statusLLM, tags_extraidas, microdepoimento,
+        intervencoes_mencionadas, llm_processamento,
+        tentativas_llm, erro_llm, ultima_tentativa_llm,
+        criado_em, atualizado_em, versao_schema
+      } = this;
+    
+      return {
+        nome,
+        idade,
+        sexo,
+        classificacao,
+        descricao,
+        imagens,
+        regioesAfetadas,
+        statusLLM,
+        tags_extraidas,
+        microdepoimento,
+        intervencoes_mencionadas,
+        llm_processamento,
+        tentativas_llm,
+        erro_llm,
+        ultima_tentativa_llm,
+        criado_em,
+        atualizado_em,
+        versao_schema
+      };
     }
   };
+
+
 }

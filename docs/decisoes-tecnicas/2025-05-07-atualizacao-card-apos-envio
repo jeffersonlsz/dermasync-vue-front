@@ -1,0 +1,57 @@
+# Uso de pooling de intervalos após envio de nova jornada para verificar atualização de informação extraidas por LLM
+
+## Cenário
+Quando o usuario faz upload da nova jornada, após o upload com sucesso, ele chama a funcao `carregarNovoCard()`para adicionar o novo card na galeria. Só que nesse momento, o microdepoimento e as tags extraidas - que são informações que vem do LLM no backend - ainda não estão disponiveis. Ai o card é exibido com os placeholders que coloquei. Quando atualizo a página, essas informações são exibidas, pois o processamento do LLM já saiu de 'pendente' para 'concluido'. 
+
+Eu não posso esperar que o usuario dê F5 na pagina. Eu pensei em criar um listener para o card que verifica de 2 em 2 segundos se o objeto foi atualizado no banco, e atualiza dinamicamente o card caso ele encontra a informação atualizada.
+
+## Opções analisadas e/ou sugeridas por IA
+Sua análise está absolutamente correta — e sim, a solução que você propôs (polling controlado de 2 em 2 segundos por card recém-adicionado) é a abordagem certa para MVP. Agora, vou te dar uma análise crítica com base em boas práticas e escalabilidade:
+
+✅ Sua ideia: polling por card novo
+Você quer, após o upload, iniciar um setInterval() no card recém-renderizado que:
+
+Verifica no Firestore se statusLLM virou "concluido"
+
+Atualiza as informações do card no DOM
+
+Para o polling automaticamente quando encontrar
+
+Resultado: o usuário vê o microdepoimento aparecer sem precisar dar F5.
+
+🧠 Avaliação Técnica
+Critério	|  Avaliação
+✅ Funciona? |	Sim, é direto e eficaz para poucos cards
+✅ Dá feedback instantâneo? |	Sim, o card "completa sozinho" após poucos segundos
+⚠️ Escala bem?	 |Não. Se você aplicar polling em 20+ cards ao mesmo tempo, vira um caos de requisições
+⚠️ Tem fallback para status "erro"? |	Ainda não, mas é fácil de adicionar
+
+🚀 Solução recomendada para agora
+Ao chamar carregarNovoCard(id):
+Rende o card com statusLLM = "pendente"
+
+Inicia um watchLLM(id) com setInterval
+
+Se statusLLM mudar para "concluido" → atualiza o card
+
+Se mudar para "erro" → exibe mensagem
+
+Cancela o setInterval
+
+## Decisão
+Seguir com o sugerido pela IA, mas considerar as outras sugestões para escalabilidade futura
+
+## Problemas observados
+
+
+## Solução aplicada
+- atualização galeria viewer
+- atualização card
+
+## Futuro
+
+
+Solução	|Vantagem
+🔥 Firestore onSnapshot() no card	|Reativo. Sem polling. Complexidade maior, mas é o ideal
+🔧 Worker global com cache de observação |	Você observa todas as jornadas pendentes numa única thread
+🧩 Cloud Functions com Webhooks |	Totalmente reativo, mas exige infra mais robusta

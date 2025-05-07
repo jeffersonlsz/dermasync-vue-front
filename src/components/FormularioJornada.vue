@@ -204,22 +204,6 @@ import Dropzone from '../components/Dropzone.vue';
 import GaleriaViewer from './GaleriaViewer.vue';
 import { criarJornada } from '../helpers/jornada';
 
-/*const jornadaFinal = reactive({
-  classificacao: '',
-  genero: '',
-  regioesAfetadas: [],
-  tags: [],
-  descricao: '',
-  consentimentos: {
-    imagemSegura: false,
-    exibirGaleria: false
-  },
-  imagens: {
-    antes: null,
-    durante: [],
-    depois: null
-  }
-}); */
 const erroFormulario = ref("");
 const jornadaFinal = reactive(criarJornada());
 
@@ -303,6 +287,7 @@ const enviarJornada = async () => {
   await autenticarAnonimamente(); // <- autenticação antes de tudo
   console.log("🛡️ Autenticado anonimamente.");
   const validacao = jornadaFinal.validar();
+  //TODO esse trecho será removido. A validação será feita no formulario, em cada etapa
   if (validacao !== true) {
     alert("Erros no preenchimento:\n" + validacao.join("\n"));
     return;
@@ -314,8 +299,7 @@ const enviarJornada = async () => {
   } else {
     jornadaFinal.regioesAfetadas = [...regioesSelecionadas.value];
   }
-  console.log("📦 Objeto final para Firebase:", jornadaFinal);
-  jornadaFinal.marcarAtualizacao(); // Atualiza a data de modificação
+  
   // aqui futuramente subimos para o Firebase
   carregando.value = true;
   progresso.value = 0;
@@ -351,27 +335,51 @@ const enviarJornada = async () => {
       await uploadBytes(afterRef, jornadaFinal.imagens.depois);
       urls.depois = await getDownloadURL(afterRef);
       
-      jornadaFinal.tags = listaSimuladaTags(); // Simula tags para o usuário
+      //preparacao para chamada do LLM
+      console.log("📦 Objeto jornadaFinal antes do processamento LLM:", jornadaFinal);
+      jornadaFinal.marcarAtualizacao(); // Atualiza a data de modificação
+      // Marca como pendente para o backend saber que precisa processar
+      jornadaFinal.statusLLM = "pendente";
       // Monta objeto final para o Firestore
-      const dadosFinal = {
-        classificacao: jornadaFinal.classificacao,
-        genero: jornadaFinal.genero,
-        regioesAfetadas: jornadaFinal.regioesAfetadas,
-        tags: jornadaFinal.tags,
-        descricao: jornadaFinal.descricao,
-        consentimentos: jornadaFinal.consentimentos,
-        imagens: urls,
-        criadoEm: Timestamp.now()
-      };
-
+      
+      
+      jornadaFinal.imagens = urls; // Adiciona URLs das imagens
+      jornadaFinal.criado_em = new Date().toISOString(); // Adiciona timestamp do Firestore
       // Salva no Firestore
-      let newDoc = await addDoc(collection(db, 'jornadas'), dadosFinal);
+      const newDoc = await addDoc(collection(db, 'jornadas'), jornadaFinal.toJSON());
+      const docId = newDoc.id; // ID do documento criado
       if(emit) emit('uploadFinalizado', newDoc.id);
         
       console.log("🗂️ Documento salvo com ID:", newDoc.id);
-      //alert("🎉 Jornada enviada com sucesso!");
+      console.log("🧠 Iniciando chamada ao LLM...");
+      
+      // Chamada direta à API do LLM (MVP)
+      let resposta = null;
+      try {//llm-api-319776447667.us-central1.run.app
+        resposta = await fetch("https://llm-api-cr63nls7za-uc.a.run.app/processar-jornada", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: docId,
+            descricao: jornadaFinal.descricao,
+            idade: jornadaFinal.idade,
+            sexo: jornadaFinal.sexo,
+            classificacao: jornadaFinal.classificacao
+          })
+        });
+        console.log("✅ LLM acionado com sucesso.");
+      } catch (erro) {
+        console.warn("⚠️ Falha ao acionar a LLM:", erro);
+        // (opcional) salvar log em outra coleção ou campo no Firestore
+      }
+      if (resposta && resposta.ok) {
+        console.log("✅ LLM foi acionado com sucesso.");
+        console.log("🗂️ Resposta da requisicao ao LLM:", resposta);
+      } else {
+        console.error("⚠️ Erro ao acionar LLM:", resposta.statusText);
+      }
       // resetar se quiser aqui
-
+      jornadaFinal.limpar(); // Limpa o objeto jornadaFinal
       progresso.value = 100;
       sucesso.value = true;
 

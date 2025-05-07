@@ -206,8 +206,9 @@ async function carregarGaleria() {
           imgDepois: urlDepois,
           imgDurante: urlsDurante || [],
           descricao: data.descricao || 'Não informado',
+          microdepoimento: data.microdepoimento || ' -- ',
           classificacao: data.classificacao || 'Não informado',
-          tags: data.tags || [],
+          tags: data.tags_extraidas || [],
           regioesAfetadas: data.regioesAfetadas || [],
           genero: data.genero || 'Não informado',
           solucao: data.solucao || '',
@@ -291,10 +292,11 @@ async function carregarNovoCard(idNovoDoc) {
       imgAntes: urlAntes,
       imgDepois: urlDepois,
       imgDurante: urlsDurante || [],
+      microdepoimento: data.microdepoimento || ' -- ',
       classificacao: data.classificacao || 'Não informado',
       regioesAfetadas: data.regioesAfetadas || [],
       genero: data.genero || 'Não informado',
-      tags: data.tags || [],
+      tags: data.tags_extraidas || [],
       solucao: data.solucao || '',
     };
     if (galeria.value.some(card => card.id === docSnap.id)) {
@@ -302,6 +304,9 @@ async function carregarNovoCard(idNovoDoc) {
       return;
     }
     galeria.value.unshift(novoCard);
+   
+    watchLLM(docSnap.id); // Inicia o watcher para o novo card
+    console.log('Watcher iniciado para o novo card:', docSnap.id);
 
   } catch (error) {
     console.error('Erro ao carregar novo card:', error);
@@ -309,6 +314,28 @@ async function carregarNovoCard(idNovoDoc) {
 }
 
 
+function watchLLM(id) {
+  const refDoc = doc(db, "jornadas", id);
+
+  const interval = setInterval(async () => {
+    const snap = await getDoc(refDoc);
+    const dados = snap.data();
+    if (!dados) return;
+
+    const index = galeria.value.findIndex(j => j.id === id);
+    if (index === -1) return;
+
+    galeria.value[index].tags_extraidas = dados.tags_extraidas || [];
+    galeria.value[index].microdepoimento = dados.microdepoimento || "";
+    galeria.value[index].statusLLM = dados.statusLLM;
+
+    if (["concluido", "erro"].includes(dados.statusLLM)) {
+      clearInterval(interval);
+    }
+
+    console.log("🔄 Card atualizado via LLM:", dados.statusLLM);
+  }, 2000);
+}
 
 
 

@@ -4,12 +4,36 @@ import { onMounted } from 'vue';
 import intersect from '../directives/intersect.js'; // ajuste o path conforme estrutura
 
 onMounted(() => {
-  
+  console.log('Componente CardJornada montado!');
+  console.log('props.card:', props.card);
+  console.log('props.tags_extraidas:', props.tags_extraidas); 
+  console.log('props.microdepoimento:', props.microdepoimento);
+  console.log('props.statusLLM:', props.statusLLM);
+  console.log('props:', props);
+  console.log('visivel:', visivel.value);
+  console.log('jornadaSelecionada:', jornadaSelecionada.value);
+  console.log('carregandoAntes:', carregandoAntes.value);
+  console.log('carregandoDepois:', carregandoDepois.value);
+
  
 });
 
+
+
 const props = defineProps({
-  card: Object
+  card: Object,
+  tags_extraidas: {
+    type: Array,
+    default: () => []
+  },
+  microdepoimento: {
+    type: String,
+    default: ""
+  },
+  statusLLM: {
+    type: String,
+    default: "pendente"
+  }
 });
 const visivel = ref(false);
 const jornadaSelecionada = ref(null);
@@ -82,6 +106,7 @@ console.log('Card recebido:', props.card);
         <span v-for="tag in card.tags" :key="tag" class="badge bg-light text-dark">{{ tag }}</span>
       </div>
       <p class="small text-muted mb-1">{{ card.solucao }}</p>
+      <p class="small text-muted mb-1">{{ card.microdepoimento }}</p>
       <div class="d-flex justify-content-between align-items-center">
         <a href="#" class="small text-primary text-decoration-none" @click.prevent="verJornada(card)">Ver jornada</a>
         <button class="btn btn-outline-secondary btn-sm">Curtir ❤️</button>
@@ -134,7 +159,7 @@ console.log('Card recebido:', props.card);
 
         <p><strong>Faixa etária:</strong> {{ jornadaSelecionada.classificacao }}</p>
         <p><strong>Gênero:</strong> {{ jornadaSelecionada.genero }}</p>
-        <p><strong>Áreas afetada:</strong> {{ jornadaSelecionada.regioesAfetadas }}</p>
+        <p><strong>Áreas afetadas:</strong> {{ jornadaSelecionada.regioesAfetadas }}</p>
 
         <p class="mt-3"><strong>Descrição:</strong></p>
         <p class="text-muted">{{ jornadaSelecionada.descricao }}</p>
