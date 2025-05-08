@@ -159,7 +159,10 @@ console.log('Card recebido:', props.card);
 
         <p><strong>Faixa etária:</strong> {{ jornadaSelecionada.classificacao }}</p>
         <p><strong>Gênero:</strong> {{ jornadaSelecionada.genero }}</p>
-        <p><strong>Áreas afetadas:</strong> {{ jornadaSelecionada.regioesAfetadas }}</p>
+        <p><strong>Áreas afetadas:</strong></p>
+        <div>
+          <span v-for="(regiao, index) in jornadaSelecionada.regioesAfetadas" :key="index" class="badge bg-gradient-faded-info  me-1">{{ regiao }}</span>
+        </div>
 
         <p class="mt-3"><strong>Descrição:</strong></p>
         <p class="text-muted">{{ jornadaSelecionada.descricao }}</p>

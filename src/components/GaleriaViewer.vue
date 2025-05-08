@@ -325,7 +325,7 @@ function watchLLM(id) {
     const index = galeria.value.findIndex(j => j.id === id);
     if (index === -1) return;
 
-    galeria.value[index].tags_extraidas = dados.tags_extraidas || [];
+    galeria.value[index].tags = dados.tags_extraidas || [];
     galeria.value[index].microdepoimento = dados.microdepoimento || "";
     galeria.value[index].statusLLM = dados.statusLLM;
 

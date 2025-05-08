@@ -363,7 +363,7 @@ const enviarJornada = async () => {
             id: docId,
             descricao: jornadaFinal.descricao,
             idade: jornadaFinal.idade,
-            sexo: jornadaFinal.sexo,
+            sexo: jornadaFinal.genero,
             classificacao: jornadaFinal.classificacao
           })
         });
