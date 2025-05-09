@@ -35,6 +35,9 @@ const props = defineProps({
     default: "pendente"
   }
 });
+
+const tagz = ref(props.card.tags.slice(0, 3)); // Exibe apenas as 3 primeiras tags inicialmente
+
 const visivel = ref(false);
 const jornadaSelecionada = ref(null);
 
@@ -64,13 +67,24 @@ function imagemCarregou(tipo) {
   if (tipo === 'antes') carregandoAntes.value = false;
   if (tipo === 'depois') carregandoDepois.value = false;
 }
+
+function verMaisTags(card, el) {
+  // sempre adiciona mais 3 ou o número de tags que restam
+  const tagsRestantes = card.tags.slice(tagz.value.length, tagz.value.length + 3);
+  tagz.value.push(...tagsRestantes);
+  // Se não houver mais tags, remove o botão
+  if (tagz.value.length >= card.tags.length) {
+    el.target.style.display = 'none';
+  }
+}
+
 console.log('Card recebido:', props.card);
 </script>
 
 <template>
   <div
     v-intersect="ativarAnimacao"
-    :class="['card', 'border-0', 'shadow-sm', { 'animado': visivel }]"
+    :class="['card', 'border-0', 'shadow-lg', { 'animado': visivel }]"
   >
     <div class="d-flex" style="height: 140px;">
       <!-- ANTES -->
@@ -79,7 +93,7 @@ console.log('Card recebido:', props.card);
           :src="card.imgAntes"
           @load="imagemCarregou('antes')"
           @error="imagemCarregou('antes')"
-          class="w-100 h-100 rounded-start fade-in-img"
+          class="p-1 w-100 h-100 rounded-start fade-in-img"
           :class="{ loaded: !carregandoAntes }"
           style="object-fit: cover;"
         />
@@ -92,7 +106,7 @@ console.log('Card recebido:', props.card);
           :src="card.imgDepois"
           @load="imagemCarregou('depois')"
           @error="imagemCarregou('depois')"
-          class="w-100 h-100 rounded-end fade-in-img"
+          class="p-1 w-100 h-100 rounded-end fade-in-img"
           :class="{ loaded: !carregandoDepois }"
           style="object-fit: cover;"
         />
@@ -103,10 +117,13 @@ console.log('Card recebido:', props.card);
     <div class="p-3">
       <h6 class="fw-bold mb-1">{{ card.classificacao }}</h6>
       <div class="mb-2 d-flex flex-wrap gap-1">
-        <span v-for="tag in card.tags" :key="tag" class="badge bg-light text-dark">{{ tag }}</span>
+        <span v-for="tag in tagz" :key="tag" class="badge bg-light text-dark">{{ tag }}</span>
+        <span class="bg-light badge text-dark bg-primary-subtle" @click.prevent="verMaisTags(card, $event)" >+Mais tags</span>
       </div>
       <p class="small text-muted mb-1">{{ card.solucao }}</p>
       <p class="small text-muted mb-1">{{ card.microdepoimento }}</p>
+      <hr />
+      
       <div class="d-flex justify-content-between align-items-center">
         <a href="#" class="small text-primary text-decoration-none" @click.prevent="verJornada(card)">Ver jornada</a>
         <button class="btn btn-outline-secondary btn-sm">Curtir ❤️</button>
