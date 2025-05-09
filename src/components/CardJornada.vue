@@ -93,7 +93,7 @@ console.log('Card recebido:', props.card);
           :src="card.imgAntes"
           @load="imagemCarregou('antes')"
           @error="imagemCarregou('antes')"
-          class="p-1 w-100 h-100 rounded-start fade-in-img"
+          class="thumb-jornada p-1 w-100 h-100 rounded-start fade-in-img"
           :class="{ loaded: !carregandoAntes }"
           style="object-fit: cover;"
         />
@@ -106,7 +106,7 @@ console.log('Card recebido:', props.card);
           :src="card.imgDepois"
           @load="imagemCarregou('depois')"
           @error="imagemCarregou('depois')"
-          class="p-1 w-100 h-100 rounded-end fade-in-img"
+          class="thumb-jornada p-1 w-100 h-100 rounded-end fade-in-img"
           :class="{ loaded: !carregandoDepois }"
           style="object-fit: cover;"
         />
@@ -116,16 +116,17 @@ console.log('Card recebido:', props.card);
 
     <div class="p-3">
       <h6 class="fw-bold mb-1">{{ card.classificacao }}</h6>
+      <p class="small text-muted mb-1">{{ card.solucao }}</p>
+      <p class="small text-muted mb-1">{{ card.microdepoimento }}</p>
       <div class="mb-2 d-flex flex-wrap gap-1">
         <span v-for="tag in tagz" :key="tag" class="badge bg-light text-dark">{{ tag }}</span>
         <span class="bg-light badge text-dark bg-primary-subtle" @click.prevent="verMaisTags(card, $event)" >+Mais tags</span>
       </div>
-      <p class="small text-muted mb-1">{{ card.solucao }}</p>
-      <p class="small text-muted mb-1">{{ card.microdepoimento }}</p>
+      
       <hr />
       
       <div class="d-flex justify-content-between align-items-center">
-        <a href="#" class="small text-primary text-decoration-none" @click.prevent="verJornada(card)">Ver jornada</a>
+        <a href="#" class=" btn btn-light  text-primary text-decoration-none" @click.prevent="verJornada(card)">Ver jornada</a>
         <button class="btn btn-outline-secondary btn-sm">Curtir ❤️</button>
       </div>
     </div>
@@ -227,6 +228,13 @@ console.log('Card recebido:', props.card);
 
 
 <style scoped>
+
+.thumb-jornada {
+  border-radius: 15px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  
+}
 
 .miniatura {
   width: 70px;
