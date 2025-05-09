@@ -1,59 +1,106 @@
 <template>
-  <div class="filtros-container container text-center">
+  <div class="filtros-container container">
+    <h2 class="text-center mb-3">Filtrar Resultados</h2>
 
-    <!-- Faixa Etária -->
-    <div class="row align-items-center mb-3">
-      <div class="col-auto d-block mb-2">Faixa etária:</div>
-      <div
-        v-for="item in ['crianca', 'adolescente', 'adulto']"
-        :key="item"
-        @click="toggleItem('faixaEtaria', item)"
-        :class="['filter-tag col-auto', filtros.faixaEtaria.includes(item) ? 'bg-primary text-white' : 'bg-light text-dark']"
-        style="cursor: pointer;"
-      >
-        {{ item.toUpperCase() }} ({{ contadores.faixaEtaria[item] || 0 }})
-    </div>
+    <div class="accordion" id="filtrosAccordion">
+
+      <!-- Faixa Etária -->
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faixaEtariaCollapse">
+            Faixa etária
+          </button>
+        </h2>
+        <div id="faixaEtariaCollapse" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            <div class="d-flex flex-wrap gap-2">
+              <span
+                v-for="item in ['crianca', 'adolescente', 'adulto']"
+                :key="item"
+                @click="toggleItem('faixaEtaria', item)"
+                :class="['badge', filtros.faixaEtaria.includes(item) ? 'bg-primary' : 'bg-secondary']"
+                style="cursor: pointer;">
+                {{ item.toUpperCase() }} ({{ contadores.faixaEtaria[item] || 0 }})
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gênero -->
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#generoCollapse">
+            Gênero
+          </button>
+        </h2>
+        <div id="generoCollapse" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            <div class="d-flex flex-wrap gap-2">
+              <span
+                v-for="item in ['masculino', 'feminino', 'não informado']"
+                :key="item"
+                @click="toggleItem('genero', item)"
+                :class="['badge', filtros.genero.includes(item) ? 'bg-primary' : 'bg-secondary']"
+                style="cursor: pointer;">
+                {{ item.toUpperCase() }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Região -->
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#regiaoCollapse">
+            Regiões afetadas
+          </button>
+        </h2>
+        <div id="regiaoCollapse" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            <div class="d-flex flex-wrap gap-2">
+              <span
+                v-for="item in ['rosto', 'pescoço', 'tronco', 'braços', 'pernas', 'mãos', 'costas', 'pés']"
+                :key="item"
+                @click="toggleItem('regiao', item)"
+                :class="['badge', filtros.regiao.includes(item) ? 'bg-primary' : 'bg-secondary']"
+                style="cursor: pointer;">
+                {{ item.toUpperCase() }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outras Tags -->
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tagsCollapse">
+            Questões relacionadas
+          </button>
+        </h2>
+        <div id="tagsCollapse" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            <div class="d-flex flex-wrap gap-2">
+              <span
+                v-for="tag in todasTags"
+                :key="tag"
+                @click="toggleTag(tag)"
+                :class="['badge', filtros.tagsSelecionadas.includes(tag) ? 'bg-info' : 'bg-light']"
+                style="cursor: pointer;">
+                {{ tag }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Gênero -->
-    <div class="row align-items-center mb-3">
-      <strong class="col-auto d-block mb-2">Gênero:</strong>
-      <span v-for="item in ['masculino', 'feminino', 'não informado']" :key="item"
-        @click="toggleItem('genero', item)"
-        :class="['filter-tag col-auto', filtros.genero.includes(item) ? 'bg-primary text-white' : 'bg-light text-dark']"
-        style="cursor: pointer;">
-        {{ item.toUpperCase() }}
-      </span>
+    <div class="text-center mt-4">
+      <button class="btn btn-outline-secondary" @click="limparFiltros">Limpar filtros</button>
     </div>
-
-    <!-- Região -->
-    <div class="row align-items-center mb-3">
-      <strong class="col-auto d-block mb-2">Regiões afetadas:</strong>
-      <span v-for="item in ['rosto', 'pescoço', 'tronco', 'braços', 'pernas', 'mãos', 'costas', 'pés']" :key="item"
-        @click="toggleItem('regiao', item)"
-        :class="['filter-tag col-auto', filtros.regiao.includes(item) ? 'bg-primary text-white' : 'bg-light text-dark']"
-        style="cursor: pointer;">
-        {{ item.toUpperCase() }}
-      </span>
-    </div>
-
-    <!-- Tags dinâmicas -->
-    <div class="row align-items-center mb-3">
-      <strong class="col-auto d-block mb-2">Outras tags:</strong>
-      <span v-for="tag in todasTags" :key="tag"
-        @click="toggleTag(tag)"
-        :class="['col-auto badge me-1 mb-1 bg-light text-dark', filtros.tagsSelecionadas.includes(tag) ? 'bg-secondary text-white' : 'bg-light text-muted']"
-        style="cursor: pointer;">
-        {{ tag }}
-      </span>
-    </div>
-
-    <div class="mt-3">
-      <button class="btn btn-sm" @click="limparFiltros">
-        Limpar filtros
-      </button>
-    </div>
-
   </div>
 </template>
 

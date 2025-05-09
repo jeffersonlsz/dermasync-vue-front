@@ -7,10 +7,6 @@ export function criarJornada() {
     // --- Dados do usuário ---
     nome: null,
     idade: null,
-    sexo: null,
-    classificacao: null,
-    descricao: null,
-
     // --- Imagens da jornada ---
     imagens: {
       antes: null,
@@ -83,7 +79,7 @@ export function criarJornada() {
 
     toJSON() {
       const {
-        nome, idade, sexo, classificacao, descricao, imagens, regioesAfetadas,
+        nome, idade, genero, classificacao, descricao, imagens, regioesAfetadas,
         statusLLM, tags_extraidas, microdepoimento,
         intervencoes_mencionadas, llm_processamento,
         tentativas_llm, erro_llm, ultima_tentativa_llm,
@@ -93,7 +89,7 @@ export function criarJornada() {
       return {
         nome,
         idade,
-        sexo,
+        genero,
         classificacao,
         descricao,
         imagens,
