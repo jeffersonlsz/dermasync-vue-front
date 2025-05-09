@@ -181,7 +181,7 @@ function toggleTag(tag) {
 .filtros-container {
   
   margin-bottom: 1rem;
-
+  width: 50%;
   
   
 }

@@ -189,7 +189,7 @@ async function carregarGaleria() {
           console.warn(`Erro ao carregar imagem Depois do documento ${doc.id}: usando fallback.`);
         }
        
-        if(urlsDurante.length > 0) {
+        if(caminhosDurante) {
           urlsDurante = await Promise.all(caminhosDurante.map(async caminho => {
             try {
               return await getDownloadURL(storageRef(storage, caminho));

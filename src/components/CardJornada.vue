@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { onMounted } from 'vue';
 import intersect from '../directives/intersect.js'; // ajuste o path conforme estrutura
+import CardJornadaOverlay from './CardJornadaOverlay.vue';
 
 onMounted(() => {
   console.log('Componente CardJornada montado!');
@@ -132,97 +133,13 @@ console.log('Card recebido:', props.card);
     </div>
   </div>
 
-<!-- OVERLAY CONTAINER -->
-<div v-if="jornadaSelecionada" class="overlay-wrapper">
-  <div class="overlay-content bg-white p-4 rounded shadow position-relative">
-    <button class="btn-close position-absolute top-0 end-0 m-3" @click="jornadaSelecionada = null"></button>
+  <!--CardJornadaOverlay :jornadaSelecionada="jornadaSelecionada" @close="jornadaSelecionada = null" /-->
 
-    <div class="row g-4 mt-3">
-      <!-- LADO ESQUERDO -->
-      <div class="col-md-6 border-end">
-
-          <!-- Título + ícone -->
-        <div class="d-flex align-items-center mt-3 mb-5">
-          <i class="bi bi-images me-2 fs-5 text-secondary"></i>
-          <h5 class="m-0">Fotos da jornada</h5>
-
- 
-        </div>
-
-        <div class="text-center">
-          <img
-              :src="jornadaSelecionada.imgDepois"
-              class="img-fluid rounded shadow-sm mb-2"
-              alt="Depois"
-              style="max-height: 300px; object-fit: contain; width: 100%;"
-            />
-            <div class="d-flex justify-content-center gap-2 mt-2">
-              <img :src="jornadaSelecionada.imgAntes" class="miniatura" alt="Antes" />
-              <img :src="jornadaSelecionada.imgDepois" class="miniatura" alt="Depois" />
-            </div>
-
-        </div>
-
-
-      </div>
-
-      <!-- LADO DIREITO -->
-      <div class="col-md-6">
-
-            <!-- Título + ícone -->
-          <div class="d-flex align-items-center  mt-3 mb-5">
-            <i class="bi bi-info-circle me-2 fs-5 text-secondary"></i>
-            <h5 class="m-0">Informações adicionais</h5>
-          </div>
-
-        <p><strong>Faixa etária:</strong> {{ jornadaSelecionada.classificacao }}</p>
-        <p><strong>Gênero:</strong> {{ jornadaSelecionada.genero }}</p>
-        <p><strong>Áreas afetadas:</strong></p>
-        <div>
-          <span v-for="(regiao, index) in jornadaSelecionada.regioesAfetadas" :key="index" class="badge bg-gradient-faded-info  me-1">{{ regiao }}</span>
-        </div>
-
-        <p class="mt-3"><strong>Descrição:</strong></p>
-        <p class="text-muted">{{ jornadaSelecionada.descricao }}</p>
-        
-        <div class="mt-4">
-          <span v-for="tag in jornadaSelecionada.tags" :key="tag" class="badge bg-primary me-2 mb-1">{{ tag }}</span>
-        </div>
-
-        <hr />
-
-        <h6 class="fw-bold">Sugestões geradas via IA</h6>
-        <p>Pessoas como você tentaram <strong>{{ jornadaSelecionada.sugestaoPrincipal || 'lorem ipsum' }}</strong> com bons resultados.</p>
-        <p class="text-muted small">
-          Para adultos com {{ jornadaSelecionada.condicao || 'lorem ipsum pacabis ipsis' }}, 68% relataram melhora em até 9 dias.
-        </p>
-
-        <a href="#" class="d-block mb-3 text-primary">Ver histórias semelhantes</a>
-
-        <h6 class="fw-bold mt-4">Comparador de abordagens</h6>
-        <table class="table table-sm">
-          <thead>
-            <tr>
-              <th>Tratamento</th>
-              <th>N° Relatos</th>
-              <th>Média (dias)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(linha, index) in jornadaSelecionada.comparador" :key="index">
-              <td>{{ linha.nome }}</td>
-              <td>{{ linha.nrelatos }}</td>
-              <td>{{ linha.mediaDias }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <button class="btn btn-primary w-100 mt-3">Quero seguir essa jornada</button>
-      </div>
-    </div>
-  </div>
-</div>
-
+  <CardJornadaOverlay 
+      :jornadaSelecionada="jornadaSelecionada" 
+      @update:jornadaSelecionada="jornadaSelecionada = $event" 
+       />
+  
 
 </template>
 
