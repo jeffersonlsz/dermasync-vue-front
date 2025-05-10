@@ -1,14 +1,16 @@
 <template>
   <div class="filtros-container container">
-    <h2 class="text-center mb-3">Filtrar Resultados</h2>
+    <h4 class="text-center mb-3">Filtrar Resultados</h4>
 
     <div class="accordion" id="filtrosAccordion">
 
       <!-- Faixa Etária -->
       <div class="accordion-item">
         <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faixaEtariaCollapse">
-            Faixa etária
+          <button @click="toggleAccordion()" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faixaEtariaCollapse">
+            Faixa etária <span v-if="filtros.faixaEtaria.length">({{ filtros.faixaEtaria.length }})</span>
+            <span class="ms-auto" v-if="isOpen">−</span>
+            <span class="ms-auto" v-else>+</span>
           </button>
         </h2>
         <div id="faixaEtariaCollapse" class="accordion-collapse collapse">
@@ -106,7 +108,7 @@
 
 
 <script setup>
-import { reactive, watch } from 'vue';
+import { reactive, watch, ref } from 'vue';
 
 defineProps({
   contadores: {
@@ -120,6 +122,10 @@ defineProps({
   }
 });
 
+const isOpen = ref(false);
+const toggleAccordion = () => {
+  isOpen.value = !isOpen.value;
+};
 
 const emit = defineEmits(['filtrosAlterados']);
 
@@ -183,7 +189,6 @@ function toggleTag(tag) {
   margin-bottom: 1rem;
   width: 50%;
   
-  
 }
 
 .filtros-container  > .row {
@@ -210,5 +215,35 @@ function toggleTag(tag) {
 .filter-tag.active {
   background-color: #3b82f6; /* Azul suave */
   color: white;
+}
+
+.accordion-item,
+.accordion-button,
+.accordion-body {
+  border-radius: 0 !important;
+}
+
+.accordion-item {
+  border: 1px solid #e2e8f0; /* cor neutra, tom cinza claro */
+}
+.accordion-button:hover {
+  background-color: #f8f9fa; /* cinza bem claro */
+  border-color: #cbd5e0;
+  transition: background-color 0.2s ease;
+}
+.accordion-button {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.accordion-button::after {
+  display: none !important;
+}
+
+@media screen and (max-width: 768px) {
+  .filtros-container {
+    width: 100%;
+  }
+  
 }
 </style>
