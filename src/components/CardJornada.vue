@@ -87,7 +87,16 @@ console.log('Card recebido:', props.card);
     v-intersect="ativarAnimacao"
     :class="['card', 'border-0', 'shadow-lg', { 'animado': visivel }]"
   >
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+      <h6 class="mb-0">{{ card.classificacao }}</h6>
+      </div>
+      <div>
+      <i class="bi bi-info-circle text-muted"></i>
+      </div>
+    </div>
     <div class="d-flex" style="height: 140px;">
+      
       <!-- ANTES -->
       <div class="w-50 position-relative">
         <img
@@ -116,7 +125,7 @@ console.log('Card recebido:', props.card);
     </div>
 
     <div class="p-3">
-      <h6 class="fw-bold mb-1">{{ card.classificacao }}</h6>
+      
       <p class="small text-muted mb-1">{{ card.solucao }}</p>
       <p class="small text-muted mb-1">{{ card.microdepoimento }}</p>
       <div class="mb-2 d-flex flex-wrap gap-1">
@@ -125,7 +134,7 @@ console.log('Card recebido:', props.card);
       </div>
       
       <hr />
-      
+      <hr class="horizontal dark my-3">
       <div class="d-flex justify-content-between align-items-center">
         <a href="#" class=" btn btn-light  text-primary text-decoration-none" @click.prevent="verJornada(card)">Ver jornada</a>
         <button class="btn btn-outline-secondary btn-sm">Curtir ❤️</button>
@@ -225,6 +234,19 @@ console.log('Card recebido:', props.card);
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
+.card .card-header {
+  background-color: #f8f9fa;
+  padding-bottom: 3px !important;
+  padding-top: 3px !important;
+  padding-left: 8px !important;
+  background-color: white;
+  border-bottom: revert-layer;
+  & > div > h6 {
+    font-size: 1.0rem;
+    font-weight: 300;
+    color: #000000;
+  }
+}
 .card.animado {
   opacity: 1;
   transform: translateY(0);
