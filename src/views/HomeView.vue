@@ -5,10 +5,10 @@
 <section class="hero-section flex flex-col lg:flex-row items-center justify-between gap-8 px-6 py-12 max-w-7xl mx-auto">
   
   <!-- Texto à esquerda -->
-  <div class="hero-overlay lg:w-1/2 space-y-6">
+  <div class="hero-overlay space-y-6">
     <h1 class="hero-title">
-      Você não está só! <br />
-      Aprenda o que funcionou para outras pessoas <br />
+      Você não está só!
+      Aprenda o que funcionou para outras pessoas com <br />
       <span class="highlight">Dermatite Atópica</span>
     </h1>
 
@@ -17,24 +17,51 @@
       Ensine o que funcionou pra você e ajude outros a encontrar alívio.
     </p>
 
-    <div class="hero-buttons flex flex-wrap gap-4">
+    <div class="hero-buttons flex flex-wrap gap-4 remove-mobile">
       <RouterLink to="/galeria" class="btn btn-primary">Explorar Galeria</RouterLink>
-      <RouterLink to="/formulario" class="btn btn-secondary">Compartilhar sua experiência</RouterLink>
+      <RouterLink to="/formulario" class="btn btn-secondary ">Compartilhar sua experiência</RouterLink>
     </div>
 
-    <p class="hero-promise">
+    <p class="hero-promise remove-mobile">
       🎯 Veja relatos reais de pessoas lidando com dermatite atópica — descubra o que funcionou na prática.
     </p>
+
+      <!-- Vídeo à direita -->
+  
+    <div class=" remove-desktop">
+      <video
+        controls
+        preload="metadata"
+        poster="/img/video-thumb.jpg"
+        class="w-full max-w-full aspect-video rounded-xl shadow-lg object-cover hero-video" 
+      >
+        <source
+          src="https://firebasestorage.googleapis.com/v0/b/dermasync-3d14a.firebasestorage.app/o/public%2Fvideos%2Fvideo-sample.mp4?alt=media"
+          type="video/mp4"
+        />
+        Seu navegador não suporta vídeos.
+      </video>
+    </div>
+
+
+    <div class="hero-buttons flex flex-wrap gap-4 remove-desktop">
+      <RouterLink to="/galeria" class="btn btn-primary">Explorar Galeria</RouterLink>
+      <RouterLink to="/formulario" class="btn btn-secondary ">Compartilhar sua experiência</RouterLink>
+    </div>
+
   </div>
+  
+ 
+
 
   <!-- Vídeo à direita -->
-  <div class="lg:w-1/2 w-full">
-    <div class="hero-video-wrapper">
+  
+  <div class="hero-video-wrapper">
     <video
       controls
       preload="metadata"
       poster="/img/video-thumb.jpg"
-      class="w-full max-w-full aspect-video rounded-xl shadow-lg object-cover"
+      class="w-full max-w-full aspect-video rounded-xl shadow-lg object-cover hero-video" 
     >
       <source
         src="https://firebasestorage.googleapis.com/v0/b/dermasync-3d14a.firebasestorage.app/o/public%2Fvideos%2Fvideo-sample.mp4?alt=media"
@@ -43,7 +70,7 @@
       Seu navegador não suporta vídeos.
     </video>
   </div>
-  </div>
+  
 </section>
 
   
@@ -69,12 +96,29 @@
   </script>
   
   <style scoped>
-
+ 
+ 
   .navbar {
     background-color: rgba(20, 20, 20, 0.85) !important; /* tom escuro translúcido */
     backdrop-filter: blur(6px); /* dá um efeito sutil moderno */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   }
+
+
+  .hero-video-wrapper {
+  width: 100%;
+  max-width: 480px;
+  margin: 2rem auto 0 auto; /* margem acima, centralizado */
+}
+
+.hero-video {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+}
 
   .hero-section {
   position: relative;
@@ -126,7 +170,7 @@ video {
 .hero-video-wrapper {
   width: 100%;
   max-width: 480px;
-  margin: 2rem auto 0 auto; /* margem acima, centralizado */
+  margin: 14rem auto 0 auto; /* margem acima, centralizado */
 }
 
 .btn {
@@ -169,9 +213,28 @@ video {
   border-radius: 6%;
 }
 
-@media (max-width: 600px) {
+@media (min-width: 768px){
+  .remove-desktop {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .remove-mobile{
+    display:none;
+  }
+
   .hero-section {
     padding: 1.5rem 1rem;
+    height: 85vh;
+  }
+
+  .hero-video-wrapper{
+    display: none;
+  }
+   
+  .hero-title {
+    font-size: 2rem;
   }
 
   .hero-buttons {

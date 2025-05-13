@@ -8,8 +8,9 @@
   </div>
     
 
-    <div v-if="mostrarOverlay" class="overlay-filtros">
-      <div class="conteudo-overlay">
+    <div v-if="mostrarOverlay" class="overlay-filtros" @click.self="mostrarOverlay = false">
+      <div class="conteudo-overlay position-relative">
+        <button class="btn-close position-absolute top-0 end-0 m-3" @click="mostrarOverlay = false"></button>
         <!-- Faixa Etária -->
         <label class="form-label fw-bold mb-2">Filtrar por faixa etária</label>
         <div class="d-flex flex-wrap gap-2 mb-4">
@@ -60,7 +61,7 @@
 </template>
 
 <script setup>
-import { reactive, watch, ref } from 'vue';
+import { reactive, watch, ref, onMounted, onBeforeUnmount } from 'vue';
 
 defineProps({
   contadores: {
@@ -114,12 +115,6 @@ function limparFiltros() {
   }
 }
 
-// Emitir sempre que um filtro mudar
-/*watch(filtros, () => {
-  console.log("Filtros alterados (FiltrosGaleria):", filtros);
-  emit('filtrosAlterados', { ...filtros });
-}, { deep: true }); */ 
-
 function selecionar(campo, valor) {
   console.log("Campo:", campo);
   console.log("Valor:", valor);
@@ -159,10 +154,23 @@ function toggleTag(tag) {
   }
 }
 
+function handleKeyDown(event) {
+  if (event.key === 'Escape') {
+    mostrarOverlay.value = false
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeyDown)
+})
+
 </script>
 
 <style scoped>
-
 .overlay-filtros {
   position: fixed;
   top: 0;
