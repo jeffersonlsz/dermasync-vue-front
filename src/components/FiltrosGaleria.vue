@@ -1,111 +1,63 @@
+
 <template>
-  <div class="filtros-container container">
-    <h4 class="text-center mb-3">Filtrar Resultados</h4>
-
-    <div class="accordion" id="filtrosAccordion">
-
-      <!-- Faixa Etária -->
-      <div class="accordion-item">
-        <h2 class="accordion-header">
-          <button @click="toggleAccordion()" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faixaEtariaCollapse">
-            Faixa etária <span v-if="filtros.faixaEtaria.length">({{ filtros.faixaEtaria.length }})</span>
-            <span class="ms-auto" v-if="isOpen">−</span>
-            <span class="ms-auto" v-else>+</span>
-          </button>
-        </h2>
-        <div id="faixaEtariaCollapse" class="accordion-collapse collapse">
-          <div class="accordion-body">
-            <div class="d-flex flex-wrap gap-2">
-              <span
-                v-for="item in ['crianca', 'adolescente', 'adulto']"
-                :key="item"
-                @click="toggleItem('faixaEtaria', item)"
-                :class="['badge', filtros.faixaEtaria.includes(item) ? 'bg-primary' : 'bg-secondary']"
-                style="cursor: pointer;">
-                {{ item.toUpperCase() }} ({{ contadores.faixaEtaria[item] || 0 }})
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Gênero -->
-      <div class="accordion-item">
-        <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#generoCollapse">
-            Gênero
-          </button>
-        </h2>
-        <div id="generoCollapse" class="accordion-collapse collapse">
-          <div class="accordion-body">
-            <div class="d-flex flex-wrap gap-2">
-              <span
-                v-for="item in ['masculino', 'feminino', 'não informado']"
-                :key="item"
-                @click="toggleItem('genero', item)"
-                :class="['badge', filtros.genero.includes(item) ? 'bg-primary' : 'bg-secondary']"
-                style="cursor: pointer;">
-                {{ item.toUpperCase() }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Região -->
-      <div class="accordion-item">
-        <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#regiaoCollapse">
-            Regiões afetadas
-          </button>
-        </h2>
-        <div id="regiaoCollapse" class="accordion-collapse collapse">
-          <div class="accordion-body">
-            <div class="d-flex flex-wrap gap-2">
-              <span
-                v-for="item in ['rosto', 'pescoço', 'tronco', 'braços', 'pernas', 'mãos', 'costas', 'pés']"
-                :key="item"
-                @click="toggleItem('regiao', item)"
-                :class="['badge', filtros.regiao.includes(item) ? 'bg-primary' : 'bg-secondary']"
-                style="cursor: pointer;">
-                {{ item.toUpperCase() }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Outras Tags -->
-      <div class="accordion-item">
-        <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tagsCollapse">
-            Questões relacionadas
-          </button>
-        </h2>
-        <div id="tagsCollapse" class="accordion-collapse collapse">
-          <div class="accordion-body">
-            <div class="d-flex flex-wrap gap-2">
-              <span
-                v-for="tag in todasTags"
-                :key="tag"
-                @click="toggleTag(tag)"
-                :class="['badge', filtros.tagsSelecionadas.includes(tag) ? 'bg-info' : 'bg-light']"
-                style="cursor: pointer;">
-                {{ tag }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="text-center mt-4">
-      <button class="btn btn-outline-secondary" @click="limparFiltros">Limpar filtros</button>
-    </div>
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <span>Filtros</span>
+    <button class="btn btn-outline-secondary" @click="mostrarOverlay = true">
+      <i class="bi bi-filter-circle"></i> <!-- Ícone de filtros -->
+    </button>
   </div>
-</template>
+    
 
+    <div v-if="mostrarOverlay" class="overlay-filtros">
+      <div class="conteudo-overlay">
+        <!-- Faixa Etária -->
+        <label class="form-label fw-bold mb-2">Filtrar por faixa etária</label>
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <button
+            v-for="item in ['crianca', 'adolescente', 'adulto']"
+            :key="item"
+            @click="toggleItem('faixaEtaria', item)"
+            :class="['btn', 'filter-tag', { active: filtrosPendentes.faixaEtaria.includes(item) }]"
+            style="border-radius: 20px; padding: 5px 15px;">
+            {{ item.toUpperCase() }}
+          </button>
+        </div>
+
+        <!-- Região Afetada -->
+        <label class="form-label fw-bold mb-2">Filtrar por região afetada</label>
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <button
+            v-for="item in ['rosto', 'pescoço', 'tronco', 'braços', 'pernas', 'mãos', 'costas', 'pés']"
+            :key="item"
+            @click="toggleItem('regiao', item)"
+            :class="['btn', 'filter-tag', { active: filtrosPendentes.regiao.includes(item) }]"
+            style="border-radius: 20px; padding: 5px 15px;">
+            {{ item.toUpperCase() }}
+          </button>
+        </div>
+
+            <!-- Outras Tags -->
+        <label class="form-label fw-bold mb-2">Outras tags</label>
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <button
+            v-for="tag in todasTags"
+            :key="tag"
+            @click="toggleTag(tag)"
+            :class="['btn', 'filter-tag', { active: filtrosPendentes.tagsSelecionadas.includes(tag) }]"
+            style="border-radius: 20px; padding: 5px 15px;">
+            {{ tag }}
+          </button>
+        </div>
+
+        <!-- Botões ao fim -->
+        <div class="d-flex justify-content-between mt-4">
+          <button class="btn btn-outline-danger" @click="limparFiltros">Limpar filtros</button>
+          <button class="btn btn-primary" @click="aplicarFiltros">Aplicar filtros</button>
+        </div>
+      </div>
+    </div>
+  
+</template>
 
 <script setup>
 import { reactive, watch, ref } from 'vue';
@@ -122,11 +74,7 @@ defineProps({
   }
 });
 
-const isOpen = ref(false);
-const toggleAccordion = () => {
-  isOpen.value = !isOpen.value;
-};
-
+const mostrarOverlay = ref(false);
 const emit = defineEmits(['filtrosAlterados']);
 
 const filtros = reactive({
@@ -136,20 +84,45 @@ const filtros = reactive({
   tagsSelecionadas: []
 });
 
+const filtrosPendentes = ref({
+  faixaEtaria: [],
+  genero: [],
+  regiao: [],
+  tagsSelecionadas: []
+})
+
+function aplicarFiltros() {
+  // Atualiza o estado local (caso necessário)
+  console.log("Filtros pendentes:", filtrosPendentes.value);
+  console.log("Filtros aplicados:", filtros.value);
+  filtros.value = { ...filtrosPendentes.value }
+
+  // Emite os filtros para o componente pai
+  emit('filtrosAlterados', { ...filtrosPendentes.value })
+
+  // Fecha o overlay
+  mostrarOverlay.value = false
+}
+
+// Função para limpar os filtros
 function limparFiltros() {
-  filtros.faixaEtaria = [];
-  filtros.genero = [];
-  filtros.regiao = [];
-  filtros.tagsSelecionadas = [];
+  filtrosPendentes.value  = {
+    faixaEtaria: [],
+    genero: [],
+    regiao: [],
+    tagsSelecionadas: []
+  }
 }
 
 // Emitir sempre que um filtro mudar
-watch(filtros, () => {
+/*watch(filtros, () => {
   console.log("Filtros alterados (FiltrosGaleria):", filtros);
   emit('filtrosAlterados', { ...filtros });
-}, { deep: true });
+}, { deep: true }); */ 
 
 function selecionar(campo, valor) {
+  console.log("Campo:", campo);
+  console.log("Valor:", valor);
   filtros[campo] = filtros[campo] === valor ? '' : valor;
 }
 
@@ -160,23 +133,29 @@ const todasTags = [
    "dupixent"
 ];
 
-function toggleItem(campo, valor) {
-  const lista = filtros[campo];
-  const index = lista.indexOf(valor);
-  if (index >= 0) {
-    lista.splice(index, 1);
+
+// Função para alternar a seleção de uma categoria (faixa etária, gênero, etc.)
+function toggleItem(categoria, item) {
+  console.log("Categoria:", categoria);
+  console.log("Item:", item);
+  const idx = filtrosPendentes.value[categoria].indexOf(item)
+  if (idx === -1) {
+    filtrosPendentes.value[categoria].push(item)
   } else {
-    lista.push(valor);
+    filtrosPendentes.value[categoria].splice(idx, 1)
   }
 }
 
 
+// Função para alternar a seleção de tags
 function toggleTag(tag) {
-  const index = filtros.tagsSelecionadas.indexOf(tag);
-  if (index >= 0) {
-    filtros.tagsSelecionadas.splice(index, 1);
+  console.log("Tag:", tag);
+  console.log("Tags selecionadas:", filtrosPendentes.value.tagsSelecionadas);
+  const idx = filtrosPendentes.value.tagsSelecionadas.indexOf(tag)
+  if (idx === -1) {
+    filtrosPendentes.value.tagsSelecionadas.push(tag)
   } else {
-    filtros.tagsSelecionadas.push(tag);
+    filtrosPendentes.value.tagsSelecionadas.splice(idx, 1)
   }
 }
 
@@ -184,21 +163,26 @@ function toggleTag(tag) {
 
 <style scoped>
 
-.filtros-container {
-  
-  margin-bottom: 1rem;
-  width: 50%;
-  
+.overlay-filtros {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1050;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.filtros-container  > .row {
-  
-  margin-bottom: 0.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-
+.conteudo-overlay {
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 90%;
 }
 
 .filter-tag {
@@ -217,33 +201,13 @@ function toggleTag(tag) {
   color: white;
 }
 
-.accordion-item,
-.accordion-button,
-.accordion-body {
-  border-radius: 0 !important;
-}
-
-.accordion-item {
-  border: 1px solid #e2e8f0; /* cor neutra, tom cinza claro */
-}
-.accordion-button:hover {
-  background-color: #f8f9fa; /* cinza bem claro */
-  border-color: #cbd5e0;
-  transition: background-color 0.2s ease;
-}
-.accordion-button {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-}
-
-.accordion-button::after {
-  display: none !important;
+button.active {
+  background-color: #0d6efd;
+  color: white !important;
+  border-color: #0d6efd;
 }
 
 @media screen and (max-width: 768px) {
-  .filtros-container {
-    width: 100%;
-  }
-  
+
 }
 </style>

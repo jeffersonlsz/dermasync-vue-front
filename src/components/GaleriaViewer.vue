@@ -1,21 +1,21 @@
 <template>
-  
+
   <div class="container py-5">
     <h2 class="fw-bold text-center mb-1">Galeria Colaborativa</h2>
-    <p class="text-center text-muted mb-4">Neste espaço, você poderá ver a contribuição de outras pessoas que passaram pela mesma condição e obtiveram sucesso.</p>
+    <p class="text-center text-muted mb-4">Neste espaço, você poderá ver a contribuição de outras pessoas que passaram
+      pela mesma condição e obtiveram sucesso.</p>
     <p class="text-center text-muted mb-4">Não se preocupe, os dados são 100% anônimos</p>
     <div class="text-center mb-4">
       <button class="btn btn-primary btn-lg px-5" @click.stop.prevent="mostrandoFormulario = true">
         Compartilhe sua jornada - outros podem aprender com você !
-        </button>
+      </button>
     </div>
 
-    <FiltroGaleria
-      :contadores="contadores"
-      @filtrosAlterados="filtrosAtuais = $event"
-    />
+    <FiltroGaleria :contadores="contadores" @filtrosAlterados="filtrosAtuais = $event" />
+ 
 
-    
+
+
     <div>
       <div v-if="estado === 'LOADING'" class="text-center py-5">
         <div class="spinner-border" role="status">
@@ -32,18 +32,13 @@
         <p class="text-muted">Nenhuma jornada encontrada ainda.</p>
       </div>
 
-      <TransitionGroup
-          v-else-if="estado === 'SUCCESS'"
-          name="fade-slide"
-          tag="div"
-          class="row g-4"
-        >
-          <div v-for="card in galeriaVisivel" :key="card.id" class="col-md-4">
-            <CardJornada :card="card" />
-          </div>
-        </TransitionGroup>
-        <!-- DEBUG -->
-        <!--div v-if="estado === 'SUCCESS'" class="text-center text-muted my-4">
+      <TransitionGroup v-else-if="estado === 'SUCCESS'" name="fade-slide" tag="div" class="row g-4">
+        <div v-for="card in galeriaVisivel" :key="card.id" class="col-md-4">
+          <CardJornada :card="card" />
+        </div>
+      </TransitionGroup>
+      <!-- DEBUG -->
+      <!--div v-if="estado === 'SUCCESS'" class="text-center text-muted my-4">
           <div style="font-size: 12px; color: #888;">
             <p><strong>[DEBUG]</strong></p>
             <p>galeriaFiltrada.length: {{ galeriaFiltrada.length }}</p>
@@ -52,30 +47,24 @@
             <p>Estado: {{ estado }}</p>
           </div>
         </div-->
-        <!-- Sentinel para scroll infinito -->
-        <div v-if="sucesso" ref="sentinela" style="height: 1px;"></div>
+      <!-- Sentinel para scroll infinito -->
+      <div v-if="sucesso" ref="sentinela" style="height: 1px;"></div>
 
-        <!-- Mensagem final quando todos os cards filtrados foram exibidos -->
-        <div
-          v-if="estado === 'SUCCESS' && galeriaFiltrada.length > 0 && galeriaVisivel.length >= galeriaFiltrada.length"
-          class="text-center text-muted my-4"
-        >
-          <small>Todos os cards foram exibidos.</small>
-        </div>
+      <!-- Mensagem final quando todos os cards filtrados foram exibidos -->
+      <div v-if="estado === 'SUCCESS' && galeriaFiltrada.length > 0 && galeriaVisivel.length >= galeriaFiltrada.length"
+        class="text-center text-muted my-4">
+        <small>Todos os cards foram exibidos.</small>
+      </div>
 
-        </div>
+    </div>
 
     <div v-if="mostrandoFormulario" class="overlay" @click.self="mostrandoFormulario = false">
       <div class="overlay-content">
-        <FormularioJornada 
-          @uploadFinalizado="carregarNovoCard" 
-          @uploadFalhou="lidarComFalha"
-          @uploadCancelado="limparFormulario"
-          @fechar="mostrandoFormulario = false"
-        />
+        <FormularioJornada @uploadFinalizado="carregarNovoCard" @uploadFalhou="lidarComFalha"
+          @uploadCancelado="limparFormulario" @fechar="mostrandoFormulario = false" />
       </div>
     </div>
-    
+
 
 
   </div>
@@ -446,6 +435,12 @@ watch(filtrosAtuais, () => {
 </script>
 
 <style scoped>
+
+.card-filtros{
+ align-items: center;
+ justify-content: center;
+}
+
 img {
   object-fit: cover;
 }
