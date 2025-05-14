@@ -1,11 +1,10 @@
 
 <template>
-  <div class="d-flex align-items-center gap-2 mb-3">
-    <span>Filtros</span>
-    <button class="btn btn-outline-secondary" @click="mostrarOverlay = true">
-      <i class="bi bi-filter-circle"></i> <!-- Ícone de filtros -->
-    </button>
-  </div>
+<div class="d-flex align-items-center mb-3" @click="mostrarOverlay = true" style="cursor: pointer;">
+  <i class="bi bi-filter fs-2 text-primary me-2"></i>
+  <span class="fw-semibold text-secondary">Filtros</span>
+</div>
+
     
 
     <div v-if="mostrarOverlay" class="overlay-filtros" @click.self="mostrarOverlay = false">

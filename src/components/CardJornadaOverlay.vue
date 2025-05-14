@@ -1,5 +1,6 @@
 <template>
 <!-- OVERLAY CONTAINER -->
+ <transition name="fade-overlay">
 <div v-if="jornadaSelecionada" class="overlay-wrapper">
   <div class="overlay-content bg-white p-4 rounded shadow position-relative">
     <button class="btn-close position-absolute top-0 end-0 m-3" @click="$emit('update:jornadaSelecionada', null)"></button>
@@ -100,6 +101,7 @@
     </div>
   </div>
 </div>
+</transition>
 <!-- OVERLAY IMAGEM AMPLIADA-->
 <div
   v-if="showImagemAmpliada"
@@ -231,6 +233,20 @@ const currentIndex = ref(0)
 }
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
+}
+
+.fade-overlay-enter-active, .fade-overlay-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-overlay-enter-from,
+.fade-overlay-leave-to {
+  opacity: 0;
+}
+
+.fade-overlay-enter-to,
+.fade-overlay-leave-from {
+  opacity: 1;
 }
 
 </style>

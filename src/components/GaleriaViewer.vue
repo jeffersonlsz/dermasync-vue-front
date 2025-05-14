@@ -1,15 +1,26 @@
 <template>
 
   <div class="container py-5">
-    <h2 class="fw-bold text-center mb-1">Galeria Colaborativa</h2>
-    <p class="text-center text-muted mb-4">Neste espaço, você poderá ver a contribuição de outras pessoas que passaram
-      pela mesma condição e obtiveram sucesso.</p>
-    <p class="text-center text-muted mb-4">Não se preocupe, os dados são 100% anônimos</p>
-    <div class="text-center mb-4">
-      <button class="btn btn-primary btn-lg px-5" @click.stop.prevent="mostrandoFormulario = true">
-        Compartilhe sua jornada - outros podem aprender com você !
-      </button>
-    </div>
+<div class="text-center mt-4 mb-5">
+  <!-- Título -->
+  <h1 class="display-5 fw-bold">Jornadas de Cura e Bem-estar</h1>
+  <p class="lead text-muted mb-4">
+    Histórias reais de pessoas enfrentando dermatite atópica. Inspire-se e compartilhe sua experiência para ajudar outras pessoas.
+  </p>
+
+  <!-- Botão CTA -->
+  <button class="btn btn-primary btn-lg px-4 py-3 shadow rounded-pill" @click.stop.prevent="mostrandoFormulario = true">
+    <i class="bi bi-heart-fill me-2"></i> Compartilhe sua jornada e ajude alguém hoje!
+  </button>
+
+  <!-- Alerta de responsabilidade -->
+  <div class="alert mt-4 mx-auto px-4 py-2 small text-muted border rounded-3 shadow-sm" style="max-width: 650px; background-color: #f9f9f9;">
+    <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+    Este conteúdo é colaborativo e não substitui uma consulta com dermatologista ou profissional especializado.
+  </div>
+</div>
+
+
 
     <FiltroGaleria :contadores="contadores" @filtrosAlterados="filtrosAtuais = $event" />
  
@@ -57,14 +68,14 @@
       </div>
 
     </div>
-
-    <div v-if="mostrandoFormulario" class="overlay" @click.self="mostrandoFormulario = false">
-      <div class="overlay-content">
-        <FormularioJornada @uploadFinalizado="carregarNovoCard" @uploadFalhou="lidarComFalha"
-          @uploadCancelado="limparFormulario" @fechar="mostrandoFormulario = false" />
+    <transition name="fade-slide">
+      <div v-if="mostrandoFormulario" class="overlay" @click.self="mostrandoFormulario = false">
+        <div class="overlay-content">
+          <FormularioJornada @uploadFinalizado="carregarNovoCard" @uploadFalhou="lidarComFalha"
+            @uploadCancelado="limparFormulario" @fechar="mostrandoFormulario = false" />
+        </div>
       </div>
-    </div>
-
+    </transition>
 
 
   </div>
@@ -436,6 +447,18 @@ watch(filtrosAtuais, () => {
 
 <style scoped>
 
+
+
+.btn-primary {
+  background-image: linear-gradient(135deg, #4c7ef3, #6a55f4);
+  border: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(76, 126, 243, 0.25);
+}
 .card-filtros{
  align-items: center;
  justify-content: center;
@@ -475,6 +498,7 @@ img {
 }
 
 
+
 .fade-slide-enter-active {
   transition: all 0.3s ease;
 }
@@ -490,5 +514,8 @@ img {
   opacity: 0;
   transform: translateY(-10px);
 }
+
+
+
 
 </style>

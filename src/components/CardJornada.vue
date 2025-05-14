@@ -79,6 +79,19 @@ function verMaisTags(card, el) {
   }
 }
 
+function curtir(card) {
+  // Aqui você pode implementar a lógica para curtir o card
+  // Por exemplo, enviar uma requisição para o servidor ou atualizar o estado local
+  console.log('Curtindo card:', card);
+    if (!card.curtido) {
+      card.likes++;
+      card.curtido = true;
+    } else {
+      card.likes--;
+      card.curtido = false;
+    }
+}
+
 console.log('Card recebido:', props.card);
 </script>
 
@@ -136,8 +149,18 @@ console.log('Card recebido:', props.card);
       <hr />
       <hr class="horizontal dark my-3">
       <div class="d-flex justify-content-between align-items-center">
-        <a href="#" class=" btn btn-light  text-primary text-decoration-none" @click.prevent="verJornada(card)">Ver jornada</a>
-        <button class="btn btn-outline-secondary btn-sm">Curtir ❤️</button>
+        <a href="#" class="btn btn-light text-primary text-decoration-none" @click.prevent="verJornada(card)">
+          Ver jornada
+        </a>
+
+        <div class="d-flex align-items-center gap-1 like-button" 
+            :class="{ active: card.curtido }"
+            @click.prevent="curtir(card)"
+            style="cursor: pointer;">
+          <i :class="card.curtido ? 'bi bi-heart-fill' : 'bi bi-heart'"
+            class="fs-5"></i>
+          <span class="text-muted small">{{ card.likes }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -155,6 +178,35 @@ console.log('Card recebido:', props.card);
 
 <style scoped>
 
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  will-change: transform;
+}
+
+.card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.like-button {
+  transition: transform 0.15s ease-in-out;
+}
+
+.like-button.active {
+  transform: scale(1.1);
+}
+
+.like-button i {
+  color: #adb5bd; /* cinza padrão */
+  transition: color 0.2s ease-in-out;
+}
+
+.like-button.active i {
+  color: #dc3545; /* vermelho Bootstrap */
+}
+
+
+
 .thumb-jornada {
   border-radius: 15px;
   transition: transform 0.3s ease;
@@ -169,6 +221,7 @@ console.log('Card recebido:', props.card);
   border-radius: 0.5rem;
   border: 1px solid #ccc;
 }
+
 
 
 .overlay {
@@ -228,11 +281,6 @@ console.log('Card recebido:', props.card);
 .fade-in-img.loaded {
   opacity: 1;
 }
-.card {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
 
 .card .card-header {
   background-color: #f8f9fa;
@@ -247,10 +295,7 @@ console.log('Card recebido:', props.card);
     color: #000000;
   }
 }
-.card.animado {
-  opacity: 1;
-  transform: translateY(0);
-}
+
 .shimmer {
   background: linear-gradient(90deg, #f0f0f0 25%, #e2e2e2 50%, #f0f0f0 75%);
   background-size: 200% 100%;
