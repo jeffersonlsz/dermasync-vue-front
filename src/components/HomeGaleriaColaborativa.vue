@@ -67,7 +67,7 @@ const cards = [
   <style scoped>
 .home-galeria {
   background-color: #f9fafb;
-  padding-top: 4rem;
+  padding-top: 2rem;
   padding-bottom: 4rem;
 }
   

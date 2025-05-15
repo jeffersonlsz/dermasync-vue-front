@@ -7,14 +7,15 @@
   <!-- Texto à esquerda -->
   <div class="hero-overlay space-y-6">
     <h1 class="hero-title">
-      Você não está só!
-      Aprenda o que funcionou para outras pessoas com <br />
+      
+      Aprenda com outras pessoas sobre <br />
       <span class="highlight">Dermatite Atópica</span>
     </h1>
 
     <p class="hero-subtext">
-      Aprenda com pessoas reais que enfrentam o mesmo desafio. <br />
-      Ensine o que funcionou pra você e ajude outros a encontrar alívio.
+      Depoimentos reais. <br />
+      Soluções testadas <br />
+      Obtenha descontos em medicamentos.
     </p>
 
     <div class="hero-buttons flex flex-wrap gap-4 remove-mobile">
@@ -42,16 +43,9 @@
         Seu navegador não suporta vídeos.
       </video>
     </div>
-
-
-    <div class="hero-buttons flex flex-wrap gap-4 remove-desktop">
-      <RouterLink to="/galeria" class="btn btn-primary">Explorar Galeria</RouterLink>
-      <RouterLink to="/formulario" class="btn btn-secondary ">Compartilhar sua experiência</RouterLink>
-    </div>
-
   </div>
   
- 
+
 
 
   <!-- Vídeo à direita -->
@@ -72,7 +66,12 @@
   </div>
   
 </section>
-
+<section class="hero-bottom">
+    <div class="hero-buttons flex flex-wrap gap-4 remove-desktop">
+      <RouterLink to="/galeria" class="btn btn-primary">Explorar Galeria</RouterLink>
+      
+    </div>
+</section>
   
 <HomeGaleriaColaborativa/>
 <HomeComoFunciona/>
@@ -223,10 +222,16 @@ video {
   .remove-mobile{
     display:none;
   }
+  
+  .hero-bottom{
+    margin-top: 30px;
+  }
 
   .hero-section {
     padding: 1.5rem 1rem;
-    height: 85vh;
+    height: 70vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url('/img/boy-mom-001.png') center center / cover no-repeat;
   }
 
   .hero-video-wrapper{
