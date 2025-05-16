@@ -1,35 +1,46 @@
 <template>
     <BaseLayout>
 
-<!-- HERO SECTION -->
-<section class="hero-section flex flex-col lg:flex-row items-center justify-between gap-8 px-6 py-12 max-w-7xl mx-auto">
-  
-  <!-- Texto à esquerda -->
-  <div class="hero-overlay space-y-6">
-    <h1 class="hero-title">
-      
-      Aprenda com outras pessoas sobre <br />
-      <span class="highlight">Dermatite Atópica</span>
-    </h1>
+  <section class="container py-5">
+    <div class="row align-items-center">
+      <!-- Texto -->
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        
+        <h1 class="fw-bold mb-3">
+          Veja como outras pessoas superaram a <span class="text-primary">Dermatite Atópica</span>
+        </h1>
+        <p class="mb-3">Relatos reais. Soluções aprovadas. Totalmente anônimo.</p>
+        <div class="d-flex gap-3 flex-wrap mb-2">
+          <RouterLink to="/galeria" class="btn btn-outline-secondary">Explorar Galeria</RouterLink> 
+          
+          <a href="#" class="btn btn-purple">Compartilhar Experiência</a>
+        </div>
+        <div class="hero-subtext mt-2">
+          <span class="me-2">👁️</span>Veja como outras pessoas venceram a coceira
+        </div>
+      </div>
 
-    <p class="hero-subtext">
-      Depoimentos reais. <br />
-      Soluções testadas <br />
-      Obtenha descontos em medicamentos.
-    </p>
-
-    <div class="hero-buttons flex flex-wrap gap-4 remove-mobile">
-      <RouterLink to="/galeria" class="btn btn-primary">Explorar Galeria</RouterLink>
-      <RouterLink to="/formulario" class="btn btn-secondary ">Compartilhar sua experiência</RouterLink>
+      <!-- Imagens em cápsulas -->
+      <div class="col-lg-6 d-flex justify-content-center gap-4 " style="overflow: hidden;">
+        <div class="hero-img-wrapper ms-3" style="margin-top: 72px;">
+          <img src="/img/hero-004.jpg" class="hero-img" alt="capsule 4" />
+          <img src="/img/hero-006.jpg" class="hero-img" alt="capsule 5" /> 
+        </div>
+        <div class="hero-img-wrapper">
+          <img src="/img/hero-005.jpg" class="hero-img" alt="capsule 1" />
+          <img src="/img/hero-002.jpg" class="hero-img" alt="capsule 2" />
+          <img src="/img/hero-001.jpg" class="hero-img" alt="capsule 3" />
+        </div>
+        <div class="hero-img-wrapper ms-3" style="margin-top: 72px;">
+          <img src="/img/hero-007.jpg" class="hero-img" alt="capsule 4" />
+          <img src="/img/hero-003.jpg" class="hero-img" alt="capsule 5" />
+        </div>
+      </div>
     </div>
+  </section>
+<section class="hero-bottom remove-desktop">
 
-    <p class="hero-promise remove-mobile">
-      🎯 Veja relatos reais de pessoas lidando com dermatite atópica — descubra o que funcionou na prática.
-    </p>
-
-      <!-- Vídeo à direita -->
-  
-    <div class=" remove-desktop">
+      <h5 class="text-center">Veja como funciona</h5>
       <video
         controls
         preload="metadata"
@@ -42,34 +53,10 @@
         />
         Seu navegador não suporta vídeos.
       </video>
-    </div>
-  </div>
-  
+    
 
-
-
-  <!-- Vídeo à direita -->
-  
-  <div class="hero-video-wrapper">
-    <video
-      controls
-      preload="metadata"
-      poster="/img/video-thumb.jpg"
-      class="w-full max-w-full aspect-video rounded-xl shadow-lg object-cover hero-video" 
-    >
-      <source
-        src="https://firebasestorage.googleapis.com/v0/b/dermasync-3d14a.firebasestorage.app/o/public%2Fvideos%2Fvideo-sample.mp4?alt=media"
-        type="video/mp4"
-      />
-      Seu navegador não suporta vídeos.
-    </video>
-  </div>
-  
-</section>
-<section class="hero-bottom">
-    <div class="hero-buttons flex flex-wrap gap-4 remove-desktop">
-      <RouterLink to="/galeria" class="btn btn-primary">Explorar Galeria</RouterLink>
-      
+    <div class="hero-buttons flex flex-wrap gap-4 ">
+      <RouterLink to="/galeria" class="btn btn-primary">Explorar Galeria</RouterLink> 
     </div>
 </section>
   
@@ -96,6 +83,34 @@
   
   <style scoped>
  
+
+.hero-img {
+      width: 100%;
+      max-width: 120px;
+      height: 180px;
+      border-radius: 60px;
+      object-fit: cover;
+      background-color: #f8f9fa;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      transform: scale(1.1);
+    }
+    .hero-img-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+    .btn-purple {
+      background-color: #6f2dbd;
+      color: white;
+    }
+    .btn-purple:hover {
+      background-color: #5b21a3;
+    }
+    .hero-subtext {
+      font-size: 0.95rem;
+    }
+
  
   .navbar {
     background-color: rgba(20, 20, 20, 0.85) !important; /* tom escuro translúcido */
@@ -139,6 +154,7 @@
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 1rem;
+  width: 80%;
 }
 
 .highlight {

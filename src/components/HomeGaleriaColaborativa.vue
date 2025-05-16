@@ -1,5 +1,5 @@
 <template>
-    <section class="home-galeria py-5">
+    <section class="home-galeria">
       <div class="container">
         <h2 class="text-center mb-4 fw-semibold">Nossos serviços</h2>
         <div class="row justify-content-center gap-4 flex-wrap">   
@@ -67,7 +67,7 @@ const cards = [
   <style scoped>
 .home-galeria {
   background-color: #f9fafb;
-  padding-top: 2rem;
+  
   padding-bottom: 4rem;
 }
   
