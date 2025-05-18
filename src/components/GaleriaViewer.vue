@@ -1,24 +1,24 @@
 <template>
 
-  <div class="container py-5">
-<div class="text-center mt-4 mb-5">
-  <!-- Título -->
-  <h1 class="display-5 fw-bold">Jornadas de Cura e Bem-estar</h1>
-  <p class="lead text-muted mb-4">
-    Histórias reais de pessoas enfrentando dermatite atópica. Inspire-se e compartilhe sua experiência para ajudar outras pessoas.
-  </p>
+  <div class="container py-4">
+  <div class="text-center">
+    <!-- Título -->
+    <h1 class="display-5">Relatos reais</h1>
+    <p class="lead text-muted">
+      Histórias reais. Inspire-se. Compartilhe sua experiência e ajude outras pessoas.
+    </p>
 
-  <!-- Botão CTA -->
-  <button class="btn btn-primary btn-lg px-4 py-3 shadow rounded-pill" @click.stop.prevent="mostrandoFormulario = true">
-    <i class="bi bi-heart-fill me-2"></i> Compartilhe sua jornada e ajude alguém hoje!
-  </button>
+    <!-- Botão CTA -->
+    <button class="btn btn-primary btn-lg px-4 py-4 shadow rounded-pill" @click.stop.prevent="mostrandoFormulario = true">
+      <i class="bi bi-heart-fill me-2"></i> Compartilhe sua jornada e ajude alguém hoje!
+    </button>
 
-  <!-- Alerta de responsabilidade -->
-  <div class="alert mt-4 mx-auto px-4 py-2 small text-muted border rounded-3 shadow-sm" style="max-width: 650px; background-color: #f9f9f9;">
-    <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
-    Este conteúdo é colaborativo e não substitui uma consulta com dermatologista ou profissional especializado.
+    <!-- Alerta de responsabilidade -->
+    <div class="alert mt-4 mx-auto px-4 py-2 small text-muted border rounded-3 shadow-sm" style="max-width: 650px; background-color: #f9f9f9;">
+      <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+      Este conteúdo é colaborativo e não substitui uma consulta com dermatologista ou profissional especializado.
+    </div>
   </div>
-</div>
 
 
 

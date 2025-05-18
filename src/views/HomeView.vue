@@ -42,11 +42,14 @@
 <section class="hero-section px-3 py-5 remove-desktop">
   <div class="d-flex justify-content-between align-items-start" style="width: 100%;">
     <!-- Texto à esquerda -->
-    <div class="d-flex flex-column justify-content-start" style="margin-top: 6rem;width: 55%;">
+    <div class="d-flex flex-column justify-content-start" style="margin-top: 3rem;width: 55%;">
       <h1 class="fw-bold hero-title mb-3">
         Veja como outras pessoas superaram a <span class="text-primary">Dermatite Atópica</span>
       </h1>
-      <a href="/galeria" class="btn btn-primary w-100 mt-5">Explorar Galeria</a>
+      <RouterLink to="/galeria" class="btn btn-primary w-100">Explorar Galeria</RouterLink>
+       <button class="btn btn-outline-secondary mt-3" @click="mostrarVideo = true">
+        ▶️ Veja um vídeo explicativo
+      </button>
     </div>
 
     <!-- Cápsulas à direita -->
@@ -56,6 +59,21 @@
       <img src="/img/hero-007.jpg" class="hero-img" alt="Placeholder 3" />
     </div>
   </div>
+
+  <!-- Overlay com vídeo -->
+<!-- Transição para o overlay -->
+<transition name="fade">
+  <div v-if="mostrarVideo" class="video-overlay" @click.self="fecharOverlay">
+    <div class="video-container">
+      <button class="close-btn" @click="fecharOverlay">✖</button>
+      <video controls autoplay muted class="video-player">
+        <source src="https://firebasestorage.googleapis.com/v0/b/dermasync-3d14a.firebasestorage.app/o/public%2Fvideos%2Fvideo-sample.mp4?alt=media" type="video/mp4" />
+        Seu navegador não suporta o formato de vídeo.
+      </video>
+    </div>
+  </div>
+</transition>
+
 </section>
 
 <section class="hero-bottom remove-mobile">
@@ -96,9 +114,16 @@
   </template>
   
   <script setup>
+  import { ref } from 'vue'
   import BaseLayout from '../layouts/BaseLayout.vue';
   import HomeGaleriaColaborativa from '../components/HomeGaleriaColaborativa.vue';
   import HomeComoFunciona from '../components/HomeComoFunciona.vue';
+
+  const mostrarVideo = ref(false);
+
+  function fecharOverlay() {
+    mostrarVideo.value = false;
+  }
   </script>
   
   <style scoped>
@@ -256,6 +281,60 @@ video {
   background-color: #dee2e6;
   border-radius: 6%;
 }
+
+/* Overlay e container */
+.video-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.video-container {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: #000;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+
+.video-player {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: transparent;
+  color: white;
+  font-size: 1.5rem;
+  border: none;
+  cursor: pointer;
+  z-index: 10000;
+}
+
+/* Transição Fade */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+
 
 @media (min-width: 768px) {
   .remove-desktop {
