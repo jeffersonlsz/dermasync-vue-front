@@ -106,12 +106,12 @@
               </button>
               </li>
               <li>
-              <button 
+              <!--button 
                 class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center" 
                 type="button"
               >
                 <i class="fab fa-facebook me-2"></i> Login with Facebook
-              </button>
+              </button-->
               </li>
             </ul>
           </li>
