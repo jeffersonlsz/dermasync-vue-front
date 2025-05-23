@@ -8,13 +8,13 @@
             🧴 {{ jornadaSelecionada?.titulo || 'Detalhes da Jornada' }}
           </h5>
           <button
-            class="btn-close position-absolute top-0 end-0 m-3"
+            class="btn-fechar-overlay btn-close position-absolute top-0 end-0 m-3"
             @click="$emit('update:jornadaSelecionada', null)"
           ></button>
         </div>
           
       <!-- Nav Pills bonitos -->
-      <div class="nav nav-pills nav-fills my-3 hidden md:block">
+      <div class="nav nav-pills nav-fills my-3 hidden remove_mobile">
         <div class="d-flex gap-3 bg-[#f8f9fa] p-1 rounded-pill shadow-inner w-full max-w-md mx-auto">
           <button
             v-for="tab in tabs"
@@ -177,12 +177,13 @@
     </button>
   </div>
   <!-- Nav flutuante visível apenas no mobile -->
-<div class="tab-overlay-mobile d-md-none">
+<div v-if="jornadaSelecionada"
+    class="tab-overlay-mobile d-md-none">
   <button
     v-for="(aba, index) in abas"
     :key="index"
-    @click="abaAtiva = aba.id"
-    :class="['btn-tab', { ativo: abaAtiva === aba.id }]"
+    @click="activeTab = tabs[aba.id]"
+    :class="['btn-tab', { ativo: activeTab === tabs[aba.id] }]"
   >
     {{ aba.label }}
   </button>
@@ -233,9 +234,8 @@ const abas = [
   { id: 'dicas', label: 'Tratamentos' },
 ];
 
-const abaAtiva = ref('info');
-const tabs = ['Informações da jornada', 'Casos semelhantes', 'Dicas de tratamentos']
-const activeTab = ref(tabs[0])
+const tabs = {'info':'Informações da jornada', 'casos':'Casos semelhantes', 'dicas':'Dicas de tratamentos'}
+const activeTab = ref(tabs['info'])
 
 // Organiza as imagens da jornada
 const props = defineProps({
@@ -394,4 +394,41 @@ const currentIndex = ref(0)
 .fade-overlay-leave-from {
   opacity: 1;
 }
+
+@media (max-width: 768px) {
+  .remove_mobile{
+    display: none;
+  }
+
+  .overlay-wrapper {
+   position: fixed;
+  inset: 0; /* equivale a top:0, right:0, bottom:0, left:0 */
+  z-index: 9990;
+  background-color: white;
+  overflow-y: auto;
+  padding: 1.5rem 1rem 5rem; /* espaço inferior para as tabs flutuantes */
+  border-radius: 0 !important; /* remove bordas arredondadas */
+}
+
+.btn-fechar-overlay {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  background: #ffffffcc;
+  backdrop-filter: blur(4px);
+  border: none;
+  border-radius: 9999px;
+  width: 36px;
+  height: 36px;
+  font-size: 1.25rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+}
+
 </style>
