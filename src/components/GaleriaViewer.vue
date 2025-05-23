@@ -294,6 +294,7 @@ async function carregarNovoCard(idNovoDoc) {
       imgDurante: urlsDurante || [],
       microdepoimento: data.microdepoimento || ' -- ',
       classificacao: data.classificacao || 'Não informado',
+      descricao: data.descricao || 'Não informado',
       regioesAfetadas: data.regioesAfetadas || [],
       genero: data.genero || 'Não informado',
       tags: data.tags_extraidas || [],

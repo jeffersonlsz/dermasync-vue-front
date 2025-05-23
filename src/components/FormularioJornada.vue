@@ -1,104 +1,66 @@
 <template>
-  
+
   <div>
     <!-- Cabeçalho com título e progresso -->
     <div class="mb-4">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <div class="d-flex align-items-center gap-2">
-        <i class="bi bi-upload text-primary fs-4"></i>
-        <h5 class="fw-bold text-primary mb-0">Envie sua jornada em etapas</h5>
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-upload text-primary fs-4"></i>
+          <h5 class="fw-bold text-primary mb-0">Envie sua jornada em etapas</h5>
+        </div>
+        <button class="btn-close" @click="$emit('fechar')" aria-label="Fechar"></button>
       </div>
-      <button class="btn-close" @click="$emit('fechar')" aria-label="Fechar"></button>
-    </div>
-    <div class="progress" style="height: 24px; background-color: #e9ecef;">
-      <div
-        class="progress-bar"
-        :class="carregando ? 'bg-success progress-bar-striped progress-bar-animated' : 'bg-gradient'"
-        role="progressbar"
-        :style="{ width: carregando ? progresso + '%' : percentual + '%' }"
-      >
-        {{ carregando ? progresso + '%' : 'Etapa ' + etapa + ' de 4' }}
+      <div class="progress" style="height: 24px; background-color: #e9ecef;">
+        <div class="progress-bar"
+          :class="carregando ? 'bg-success progress-bar-striped progress-bar-animated' : 'bg-gradient'"
+          role="progressbar" :style="{ width: carregando ? progresso + '%' : percentual + '%' }">
+          {{ carregando ? progresso + '%' : 'Etapa ' + etapa + ' de 4' }}
+        </div>
       </div>
     </div>
-  </div>
 
     <!-- Etapas -->
     <div v-if="etapa === 1" class="card shadow-sm border-0 mb-4 p-4">
-          <h6 class="fw-bold mb-3 text-primary">1 de 4 — Envio das Imagens</h6>
-          <p class="text-muted">Envie três fotos mostrando seu progresso: antes, durante e depois.</p>
-          <div v-if="erroFormulario" class="erro-formulario text-danger fw-bold mt-2">
-            {{ erroFormulario }}
-          </div>
+      <h6 class="fw-bold mb-3 text-primary">1 de 4 — Envio das Imagens</h6>
+      <p class="text-muted">Envie três fotos mostrando seu progresso: antes, durante e depois.</p>
+      <div v-if="erroFormulario" class="erro-formulario text-danger fw-bold mt-2">
+        {{ erroFormulario }}
+      </div>
 
-          <div class="row g-3">
-              <div class="col-md-4">
-                <Dropzone
-                  label="Antes"
-                  :max="1"
-                  :multiple="false"
-                  @upload="files => jornadaFinal.imagens.antes = files[0]"
-                />
-              </div>
-              <div class="col-md-4">
-                <Dropzone
-                  label="Durante"
-                  :max="3"
-                  :multiple="true"
-                  @upload="files => jornadaFinal.imagens.durante = files"
-                />
-              </div>
-              <div class="col-md-4">
-                <Dropzone
-                  label="Depois"
-                  :max="1"
-                  :multiple="false"
-                  @upload="files => jornadaFinal.imagens.depois = files[0]"
-                />
-              </div>
-          </div>
-          </div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <Dropzone label="Antes" :max="1" :multiple="false" @upload="files => jornadaFinal.imagens.antes = files[0]" />
+        </div>
+        <div class="col-md-4">
+          <Dropzone label="Durante" :max="3" :multiple="true" @upload="files => jornadaFinal.imagens.durante = files" />
+        </div>
+        <div class="col-md-4">
+          <Dropzone label="Depois" :max="1" :multiple="false"
+            @upload="files => jornadaFinal.imagens.depois = files[0]" />
+        </div>
+      </div>
+    </div>
 
 
     <div v-else-if="etapa === 2" class="card shadow-sm border-0 mb-4 p-4">
       <h6 class="fw-bold mb-3 text-primary">2 de 4 — Informações sobre você</h6>
       <div v-if="erroFormulario" class="erro-formulario text-danger fw-bold mt-2">
-            {{ erroFormulario }}
-          </div>
+        {{ erroFormulario }}
+      </div>
       <div class="mb-3">
         <label class="form-label">Classificação</label>
         <div class="btn-group w-100" role="group">
           <div class="btn-group w-100" role="group">
-            <input
-              type="radio"
-              class="btn-check"
-              name="classificacao"
-              id="crianca"
-              value="Criança"
-              v-model="jornadaFinal.classificacao"
-              autocomplete="off"
-            />
+            <input type="radio" class="btn-check" name="classificacao" id="crianca" value="Criança"
+              v-model="jornadaFinal.classificacao" autocomplete="off" />
             <label class="btn btn-outline-primary" for="crianca">Criança</label>
 
-            <input
-              type="radio"
-              class="btn-check"
-              name="classificacao"
-              id="adolescente"
-              value="Adolescente"
-              v-model="jornadaFinal.classificacao"
-              autocomplete="off"
-            />
+            <input type="radio" class="btn-check" name="classificacao" id="adolescente" value="Adolescente"
+              v-model="jornadaFinal.classificacao" autocomplete="off" />
             <label class="btn btn-outline-primary" for="adolescente">Adolescente</label>
 
-            <input
-              type="radio"
-              class="btn-check"
-              name="classificacao"
-              id="adulto"
-              value="Adulto"
-              v-model="jornadaFinal.classificacao"
-              autocomplete="off"
-            />
+            <input type="radio" class="btn-check" name="classificacao" id="adulto" value="Adulto"
+              v-model="jornadaFinal.classificacao" autocomplete="off" />
             <label class="btn btn-outline-primary" for="adulto">Adulto</label>
           </div>
         </div>
@@ -126,71 +88,65 @@
           <button class="btn btn-outline-primary" type="button" @click="adicionarRegiao">
             <i class="bi bi-plus-lg"></i>
           </button>
-      </div>
+        </div>
 
-  <div class="d-flex flex-wrap gap-2">
-      <span
-      class="badge bg-primary d-flex align-items-center"
-      v-for="(regiao, index) in regioesSelecionadas"
-      :key="regiao"
-      >
-      {{ regiao }}
-      <button class="btn btn-sm btn-close ms-2" @click="removerRegiao(index)"></button>
-      </span>
-  </div>
-  </div>
+        <div class="d-flex flex-wrap gap-2">
+          <span class="badge bg-primary d-flex align-items-center" v-for="(regiao, index) in regioesSelecionadas"
+            :key="regiao">
+            {{ regiao }}
+            <button class="btn btn-sm btn-close ms-2" @click="removerRegiao(index)"></button>
+          </span>
+        </div>
+      </div>
     </div>
 
     <div v-else-if="etapa === 3" class="card shadow-sm border-0 mb-4 p-4">
       <h6 class="fw-bold mb-3 text-primary">3 de 4 — Compartilhe sua dica ou tratamento</h6>
       <div v-if="erroFormulario" class="erro-formulario text-danger fw-bold mt-2">
-            {{ erroFormulario }}
-          </div>
-      <textarea
-        class="form-control"
-        v-model="jornadaFinal.descricao"
+        {{ erroFormulario }}
+      </div>
+      <textarea class="form-control" v-model="jornadaFinal.descricao"
         placeholder="Descreva com mais detalhes. Ex.: pomada advantan, comprimido metrexato, óleo de coco"
-        rows="4"
-      ></textarea>
+        rows="4"></textarea>
 
     </div>
 
     <div v-else-if="etapa === 4" class="card shadow-sm border-0 mb-4 p-4">
-    <template v-if="!sucesso">
-      <h6 class="fw-bold mb-3 text-primary">4 de 4 — Consentimento</h6>
-      <div v-if="erroFormulario" class="erro-formulario text-danger fw-bold mt-2">
-            {{ erroFormulario }}
-          </div>
-      <div class="form-check mb-2">
-        <input class="form-check-input" type="checkbox" id="c1" v-model="jornadaFinal.consentimentos.imagemSegura" />
-        <label class="form-check-label" for="c1">
-          Declaro que as imagens não expõem meu rosto ou dados sensíveis.
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="c2" v-model="jornadaFinal.consentimentos.exibirGaleria" />
-        <label class="form-check-label" for="c2">
-          Aceito que minha jornada seja exibida na galeria colaborativa.
-        </label>
-      </div>
-    </template>
-    <template v-else>
-      <div class="text-center p-5">
-        <i class="bi bi-check-circle-fill text-success fs-1 mb-3"></i>
-        <h5 class="fw-bold text-success">Sua jornada foi enviada com sucesso!</h5>
-      </div>
-      
-    </template>
-  </div>
+      <template v-if="!sucesso">
+        <h6 class="fw-bold mb-3 text-primary">4 de 4 — Consentimento</h6>
+        <div v-if="erroFormulario" class="erro-formulario text-danger fw-bold mt-2">
+          {{ erroFormulario }}
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="c1" v-model="jornadaFinal.consentimentos.imagemSegura" />
+          <label class="form-check-label" for="c1">
+            Declaro que as imagens não expõem meu rosto ou dados sensíveis.
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="c2" v-model="jornadaFinal.consentimentos.exibirGaleria" />
+          <label class="form-check-label" for="c2">
+            Aceito que minha jornada seja exibida na galeria colaborativa.
+          </label>
+        </div>
+      </template>
+      <template v-else>
+        <div class="text-center p-5">
+          <i class="bi bi-check-circle-fill text-success fs-1 mb-3"></i>
+          <h5 class="fw-bold text-success">Sua jornada foi enviada com sucesso!</h5>
+        </div>
 
-  <!-- Navegação -->
-  <div class="d-flex justify-content-between mt-4">
-    <button class="btn btn-outline-secondary" @click="voltarEtapa" :disabled="etapa === 1 || carregando">Voltar</button>
-    <button class="btn btn-primary" @click="etapa < 4 ? avancarEtapa() : enviarJornada()" :disabled="carregando">
-      {{ etapa < 4 ? 'Próximo' : 'Enviar Jornada' }}
-    </button>
+      </template>
+    </div>
+
+    <!-- Navegação -->
+    <div class="d-flex justify-content-between mt-4">
+      <button class="btn btn-outline-secondary" @click="voltarEtapa"
+        :disabled="etapa === 1 || carregando">Voltar</button>
+      <button class="btn btn-primary" @click="etapa < 4 ? avancarEtapa() : enviarJornada()" :disabled="carregando">
+        {{ etapa < 4 ? 'Próximo' : 'Enviar Jornada' }} </button>
+    </div>
   </div>
-</div>
 </template>
 
 <script setup>
@@ -210,7 +166,7 @@ const jornadaFinal = reactive(criarJornada());
 function validarEtapa1() {
   const { antes, durante, depois } = jornadaFinal.imagens;
 
-  if (!antes  || !depois) {
+  if (!antes || !depois) {
     erroFormulario.value = "Você precisa enviar pelo menos as imagens: antes e depois.";
     return false;
   }
@@ -219,36 +175,36 @@ function validarEtapa1() {
   return true;
 }
 
-const emit =  defineEmits([
-                'uploadFinalizado',
-                'uploadFalhou',
-                'uploadCancelado',
-                'fechar'
-              ]);
+const emit = defineEmits([
+  'uploadFinalizado',
+  'uploadFalhou',
+  'uploadCancelado',
+  'fechar'
+]);
 
 const etapa = ref(1);
 const percentual = computed(() => (etapa.value - 1) * 33.33 + 25);
 const opcoesRegioes = ['Rosto', 'Couro cabeludo', 'Pescoço', 'Axilas',
-                        'Tronco', 'Barriga', 'Costas', 'Braços',
-                        'Mãos', 'Pernas', 'Pés', 'Corpo inteiro'];
+  'Tronco', 'Barriga', 'Costas', 'Braços',
+  'Mãos', 'Pernas', 'Pés', 'Corpo inteiro'];
 const regiaoAtual = ref('');
 const regioesSelecionadas = ref([]);
 
 function avancarEtapa() {
   if (etapa.value === 1 && !validarEtapa1()) return; // valida etapa 1
-    if (etapa.value < 4) 
-      etapa.value++;
-    else 
-      alert('📤 Jornada enviada com sucesso!'); // aqui futuramente conectamos ao Firebase
+  if (etapa.value < 4)
+    etapa.value++;
+  else
+    alert('📤 Jornada enviada com sucesso!'); // aqui futuramente conectamos ao Firebase
 }
 
 function handleUpload(tipo, arquivos) {
-    console.log(`📁 Upload (${tipo}):`, arquivos);
+  console.log(`📁 Upload (${tipo}):`, arquivos);
 }
 
 function voltarEtapa() {
-    if (etapa.value > 1) 
-        etapa.value--;
+  if (etapa.value > 1)
+    etapa.value--;
 }
 
 function adicionarRegiao() {
@@ -260,23 +216,23 @@ function adicionarRegiao() {
 }
 
 function removerRegiao(index) {
-    regioesSelecionadas.value.splice(index, 1);
-    jornadaFinal.regioesAfetadas = [...regioesSelecionadas.value]; // sincroniza
+  regioesSelecionadas.value.splice(index, 1);
+  jornadaFinal.regioesAfetadas = [...regioesSelecionadas.value]; // sincroniza
 }
 
-  function validarJornada() {
-    const camposObrigatorios = [jornadaFinal.classificacao, 
-                                jornadaFinal.genero,
-                                jornadaFinal.descricao];
+function validarJornada() {
+  const camposObrigatorios = [jornadaFinal.classificacao,
+  jornadaFinal.genero,
+  jornadaFinal.descricao];
 
-    const consentimentoOk = jornadaFinal.consentimentos.imagemSegura && jornadaFinal.consentimentos.exibirGaleria;
-    const temImagemAntes = jornadaFinal.imagens.antes !== null;
-    const temImagemDepois = jornadaFinal.imagens.depois !== null;
+  const consentimentoOk = jornadaFinal.consentimentos.imagemSegura && jornadaFinal.consentimentos.exibirGaleria;
+  const temImagemAntes = jornadaFinal.imagens.antes !== null;
+  const temImagemDepois = jornadaFinal.imagens.depois !== null;
 
-    return camposObrigatorios.every(c => c && c.trim() !== '') &&
-          consentimentoOk &&
-          temImagemAntes &&
-          temImagemDepois;
+  return camposObrigatorios.every(c => c && c.trim() !== '') &&
+    consentimentoOk &&
+    temImagemAntes &&
+    temImagemDepois;
 }
 
 const carregando = ref(false);
@@ -292,153 +248,153 @@ const enviarJornada = async () => {
     alert("Erros no preenchimento:\n" + validacao.join("\n"));
     return;
   }
-  
+
   // Garante que ao menos 1 região seja registrada
   if (regioesSelecionadas.value.length === 0 && regiaoAtual.value) {
     jornadaFinal.regioesAfetadas = [regiaoAtual.value];
   } else {
     jornadaFinal.regioesAfetadas = [...regioesSelecionadas.value];
   }
-  
+
   // aqui futuramente subimos para o Firebase
   carregando.value = true;
   progresso.value = 0;
 
   const interval = setInterval(() => {
-      if (progresso.value < 95) progresso.value += 2;
-    }, 100);
+    if (progresso.value < 95) progresso.value += 2;
+  }, 100);
 
-    try {
-        const idUnico = Date.now().toString(); // ID temporal
-        const urls = {
-          antes: '',
-          durante: [],
-          depois: ''
-        };
+  try {
+    const idUnico = Date.now().toString(); // ID temporal
+    const urls = {
+      antes: '',
+      durante: [],
+      depois: ''
+    };
 
-      // Upload imagem ANTES
-      const beforeRef = storageRef(storage, `jornadas/${idUnico}/antes.jpg`);
-      await uploadBytes(beforeRef, jornadaFinal.imagens.antes);
-      urls.antes = await getDownloadURL(beforeRef);
+    // Upload imagem ANTES
+    const beforeRef = storageRef(storage, `jornadas/${idUnico}/antes.jpg`);
+    await uploadBytes(beforeRef, jornadaFinal.imagens.antes);
+    urls.antes = await getDownloadURL(beforeRef);
 
-      // Upload DURANTE (até 3 imagens)
-      for (let i = 0; i < jornadaFinal.imagens.durante.length; i++) {
-        const img = jornadaFinal.imagens.durante[i];
-        const refDurante = storageRef(storage, `jornadas/${idUnico}/durante_${i}.jpg`);
-        await uploadBytes(refDurante, img);
-        const url = await getDownloadURL(refDurante);
-        urls.durante.push(url);
-      }
-
-      // Upload imagem DEPOIS
-      const afterRef = storageRef(storage, `jornadas/${idUnico}/depois.jpg`);
-      await uploadBytes(afterRef, jornadaFinal.imagens.depois);
-      urls.depois = await getDownloadURL(afterRef);
-      
-      //preparacao para chamada do LLM
-      console.log("📦 Objeto jornadaFinal antes do processamento LLM:", jornadaFinal);
-      jornadaFinal.marcarAtualizacao(); // Atualiza a data de modificação
-      // Marca como pendente para o backend saber que precisa processar
-      jornadaFinal.statusLLM = "pendente";
-      // Monta objeto final para o Firestore
-      
-      
-      jornadaFinal.imagens = urls; // Adiciona URLs das imagens
-      jornadaFinal.criado_em = new Date().toISOString(); // Adiciona timestamp do Firestore
-      // Salva no Firestore
-      const newDoc = await addDoc(collection(db, 'jornadas'), jornadaFinal.toJSON());
-      const docId = newDoc.id; // ID do documento criado
-      if(emit) emit('uploadFinalizado', newDoc.id);
-        
-      console.log("🗂️ Documento salvo com ID:", newDoc.id);
-      console.log("🧠 Iniciando chamada ao LLM...");
-      
-      // Chamada direta à API do LLM (MVP)
-      let resposta = null;
-      try {//llm-api-319776447667.us-central1.run.app
-        resposta = await fetch("https://llm-api-cr63nls7za-uc.a.run.app/processar-jornada", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: docId,
-            descricao: jornadaFinal.descricao,
-            idade: jornadaFinal.idade,
-            sexo: jornadaFinal.genero,
-            classificacao: jornadaFinal.classificacao
-          })
-        });
-        console.log("✅ LLM acionado com sucesso.");
-      } catch (erro) {
-        console.warn("⚠️ Falha ao acionar a LLM:", erro);
-        // (opcional) salvar log em outra coleção ou campo no Firestore
-      }
-      if (resposta && resposta.ok) {
-        console.log("✅ LLM foi acionado com sucesso.");
-        console.log("🗂️ Resposta da requisicao ao LLM:", resposta);
-      } else {
-        console.error("⚠️ Erro ao acionar LLM:", resposta.statusText);
-      }
-      // resetar se quiser aqui
-      jornadaFinal.limpar(); // Limpa o objeto jornadaFinal
-      progresso.value = 100;
-      sucesso.value = true;
-
-      setTimeout(() => {
-        carregando.value = false;
-        sucesso.value = false;
-        etapa.value = 1;
-        resetarFormulario();
-        emit("fechar");
-        //emit('uploadFinalizado', newDoc.id);
-        
-      }, 2500);
-      
-    } catch (err) {
-      console.error("Erro ao enviar:", err);
-      alert("Erro ao enviar. Tente novamente.");
-      emit('uploadFalhou', new Error('Erro ao enviar arquivos'));
-      carregando.value = false;
-      clearInterval(interval);
+    // Upload DURANTE (até 3 imagens)
+    for (let i = 0; i < jornadaFinal.imagens.durante.length; i++) {
+      const img = jornadaFinal.imagens.durante[i];
+      const refDurante = storageRef(storage, `jornadas/${idUnico}/durante_${i}.jpg`);
+      await uploadBytes(refDurante, img);
+      const url = await getDownloadURL(refDurante);
+      urls.durante.push(url);
     }
-  };
 
-  function listaSimuladaTags(){
-    const listaFixa = [
-          "vitamina D", "corticóides", "imunossupressores", "hidratantes",
-          "alimentação", "laticinios", "acaros", "alergia", "dupixent", "dupilumabe",
-          "medicamentos orais", "ciclosporina", "metrexato", "baricitinibe",
-          "pomadas", "autohemoterapia", "ozonioterapia", "gabapentina",
-          "alergia a medicamentos", "alergia alimentar", "alergia a poeira",
-          "predsolona", "prednisona", "dexametasona", "hidroxicloroquina", "imunoterapia",
-          "fototerapia", "laser", "biologicos", "imunobiologicos",
-          "imunomoduladores", "fotoproteção", "protetor solar", "hidratação",
-          "hidratação oral", "hidratação tópica", "hidratantes emolientes"
-        ];
-    // Embaralha a lista e pega entre 2 e 6 itens
-    const shuffled = listaFixa.sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, Math.floor(Math.random() * 5) + 2);
-    return selected;
-  }
+    // Upload imagem DEPOIS
+    const afterRef = storageRef(storage, `jornadas/${idUnico}/depois.jpg`);
+    await uploadBytes(afterRef, jornadaFinal.imagens.depois);
+    urls.depois = await getDownloadURL(afterRef);
 
-  function cancelarUpload() {
-    emit('uploadCancelado', new Error('Upload cancelado pelo usuário'));
+    //preparacao para chamada do LLM
+    console.log("📦 Objeto jornadaFinal antes do processamento LLM:", jornadaFinal);
+    jornadaFinal.marcarAtualizacao(); // Atualiza a data de modificação
+    // Marca como pendente para o backend saber que precisa processar
+    jornadaFinal.statusLLM = "pendente";
+    // Monta objeto final para o Firestore
+
+
+    jornadaFinal.imagens = urls; // Adiciona URLs das imagens
+    jornadaFinal.criado_em = new Date().toISOString(); // Adiciona timestamp do Firestore
+    // Salva no Firestore
+    const newDoc = await addDoc(collection(db, 'jornadas'), jornadaFinal.toJSON());
+    const docId = newDoc.id; // ID do documento criado
+    if (emit) emit('uploadFinalizado', newDoc.id);
+
+    console.log("🗂️ Documento salvo com ID:", newDoc.id);
+    console.log("🧠 Iniciando chamada ao LLM...");
+
+    // Chamada direta à API do LLM (MVP)
+    let resposta = null;
+    try {//llm-api-319776447667.us-central1.run.app
+      resposta = await fetch("https://llm-api-cr63nls7za-uc.a.run.app/processar-jornada", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: docId,
+          descricao: jornadaFinal.descricao,
+          idade: jornadaFinal.idade,
+          sexo: jornadaFinal.genero,
+          classificacao: jornadaFinal.classificacao
+        })
+      });
+      console.log("✅ LLM acionado com sucesso.");
+    } catch (erro) {
+      console.warn("⚠️ Falha ao acionar a LLM:", erro);
+      // (opcional) salvar log em outra coleção ou campo no Firestore
+    }
+    if (resposta && resposta.ok) {
+      console.log("✅ LLM foi acionado com sucesso.");
+      console.log("🗂️ Resposta da requisicao ao LLM:", resposta);
+    } else {
+      console.error("⚠️ Erro ao acionar LLM:", resposta.statusText);
+    }
+    // resetar se quiser aqui
+    jornadaFinal.limpar(); // Limpa o objeto jornadaFinal
+    progresso.value = 100;
+    sucesso.value = true;
+
+    setTimeout(() => {
+      carregando.value = false;
+      sucesso.value = false;
+      etapa.value = 1;
+      resetarFormulario();
+      emit("fechar");
+      //emit('uploadFinalizado', newDoc.id);
+
+    }, 2500);
+
+  } catch (err) {
+    console.error("Erro ao enviar:", err);
+    alert("Erro ao enviar. Tente novamente.");
+    emit('uploadFalhou', new Error('Erro ao enviar arquivos'));
     carregando.value = false;
     clearInterval(interval);
   }
+};
 
-  
+function listaSimuladaTags() {
+  const listaFixa = [
+    "vitamina D", "corticóides", "imunossupressores", "hidratantes",
+    "alimentação", "laticinios", "acaros", "alergia", "dupixent", "dupilumabe",
+    "medicamentos orais", "ciclosporina", "metrexato", "baricitinibe",
+    "pomadas", "autohemoterapia", "ozonioterapia", "gabapentina",
+    "alergia a medicamentos", "alergia alimentar", "alergia a poeira",
+    "predsolona", "prednisona", "dexametasona", "hidroxicloroquina", "imunoterapia",
+    "fototerapia", "laser", "biologicos", "imunobiologicos",
+    "imunomoduladores", "fotoproteção", "protetor solar", "hidratação",
+    "hidratação oral", "hidratação tópica", "hidratantes emolientes"
+  ];
+  // Embaralha a lista e pega entre 2 e 6 itens
+  const shuffled = listaFixa.sort(() => 0.5 - Math.random());
+  const selected = shuffled.slice(0, Math.floor(Math.random() * 5) + 2);
+  return selected;
+}
+
+function cancelarUpload() {
+  emit('uploadCancelado', new Error('Upload cancelado pelo usuário'));
+  carregando.value = false;
+  clearInterval(interval);
+}
+
+
 
 function resetarFormulario() {
-    jornadaFinal.classificacao = '';
-    jornadaFinal.genero = '';
-    jornadaFinal.regioesAfetadas = [];
-    jornadaFinal.tags = [];
-    jornadaFinal.descricao = '';
-    jornadaFinal.consentimentos = { imagemSegura: false, exibirGaleria: false };
-    jornadaFinal.imagens = { antes: null, durante: [], depois: null };
-    regiaoAtual.value = '';
-    regioesSelecionadas.value = [];
-    progresso.value = 0;
+  jornadaFinal.classificacao = '';
+  jornadaFinal.genero = '';
+  jornadaFinal.regioesAfetadas = [];
+  jornadaFinal.tags = [];
+  jornadaFinal.descricao = '';
+  jornadaFinal.consentimentos = { imagemSegura: false, exibirGaleria: false };
+  jornadaFinal.imagens = { antes: null, durante: [], depois: null };
+  regiaoAtual.value = '';
+  regioesSelecionadas.value = [];
+  progresso.value = 0;
 }
 
 </script>
@@ -447,18 +403,19 @@ function resetarFormulario() {
 input[type='file'] {
   flex: 1;
 }
+
 .badge button {
-margin-left: 0.25rem;
-background: transparent;
-border: none;
-padding: 0;
+  margin-left: 0.25rem;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .bg-gradient {
-background-image: linear-gradient(to right, #7b2ff7, #f107a3);
-color: white;
-font-weight: bold;
-text-align: center;
-line-height: 24px;
+  background-image: linear-gradient(to right, #7b2ff7, #f107a3);
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  line-height: 24px;
 }
 </style>

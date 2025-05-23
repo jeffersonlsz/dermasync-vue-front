@@ -93,6 +93,9 @@ function curtir(card) {
 }
 
 console.log('Card recebido:', props.card);
+
+
+
 </script>
 
 <template>
@@ -119,6 +122,7 @@ console.log('Card recebido:', props.card);
           class="thumb-jornada p-1 w-100 h-100 rounded-start fade-in-img"
           :class="{ loaded: !carregandoAntes }"
           style="object-fit: cover;"
+          @click.prevent="verJornada(card)"
         />
         <div v-if="carregandoAntes" class="w-100 h-100 bg-light shimmer rounded-start position-absolute top-0 start-0"></div>
       </div>
@@ -132,6 +136,7 @@ console.log('Card recebido:', props.card);
           class="thumb-jornada p-1 w-100 h-100 rounded-end fade-in-img"
           :class="{ loaded: !carregandoDepois }"
           style="object-fit: cover;"
+          @click.prevent="verJornada(card)"
         />
         <div v-if="carregandoDepois" class="w-100 h-100 bg-light shimmer rounded-end position-absolute top-0 start-0"></div>
       </div>
