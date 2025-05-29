@@ -11,8 +11,22 @@
         </h1>
         <p class="mb-3 remove-mobile">Relatos reais. Soluções aprovadas. Totalmente anônimo.</p>
         <div class="d-flex gap-3 flex-wrap mb-2">
-          <RouterLink to="/galeria" class="btn btn-lg btn-primary btn-lg w-50 mb-0 remove-mobile">Explorar Galeria</RouterLink> 
-          <!--a href="#" class="btn btn-purple">Compartilhar Experiência</a-->
+          <RouterLink to="/galeria" class="">
+          <button class="animated-button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
+              <path
+                d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+              ></path>
+            </svg>
+            <span class="text">Explorar Galeria</span>
+            <span class="circle"></span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
+              <path
+                d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+              ></path>
+            </svg>
+          </button>
+           </RouterLink> 
         </div>
         <div class="hero-subtext mt-2 remove-mobile">
           <span class="me-2">👁️</span>Veja como outras pessoas venceram a coceira
@@ -32,7 +46,7 @@
         </div>
         <div class="hero-img-wrapper ms-3 remove-mobile" style="margin-top: 72px;">
           <img src="/img/hero-007.jpg" class="hero-img" alt="capsule 4" />
-          <img src="/img/hero-003.jpg" class="hero-img" alt="capsule 5" />
+          <img src="/img/hero-008.png" class="hero-img" alt="capsule 5" />
         </div>
       </div>
     </div>
@@ -118,7 +132,8 @@
   import BaseLayout from '../layouts/BaseLayout.vue';
   import HomeGaleriaColaborativa from '../components/HomeGaleriaColaborativa.vue';
   import HomeComoFunciona from '../components/HomeComoFunciona.vue';
-
+  
+  const numeros_imagens= ref([1, 2, 3, 4, 5, 6, 7]);
   const mostrarVideo = ref(false);
 
   function fecharOverlay() {
@@ -127,7 +142,95 @@
   </script>
   
   <style scoped>
- 
+ /* From Uiverse.io by Matilemak */ 
+.animated-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 36px;
+  border: 4px solid;
+  border-color: transparent;
+  font-size: 16px;
+  background-color: inherit;
+  border-radius: 100px;
+  font-weight: 600;
+  color: #1e1e1e;
+  box-shadow: 0 0 0 2px #1e1e1e;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.animated-button svg {
+  position: absolute;
+  width: 24px;
+  fill: #1e1e1e;
+  z-index: 9;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.animated-button .arr-1 {
+  right: 16px;
+}
+
+.animated-button .arr-2 {
+  left: -25%;
+}
+
+.animated-button .circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background-color: #fd8a26;
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.animated-button .text {
+  position: relative;
+  z-index: 1;
+  transform: translateX(-12px);
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.animated-button:hover {
+  box-shadow: 0 0 0 12px transparent;
+  color: #1e1e1e;
+  border-radius: 12px;
+}
+
+.animated-button:hover .arr-1 {
+  right: -25%;
+}
+
+.animated-button:hover .arr-2 {
+  left: 16px;
+}
+
+.animated-button:hover .text {
+  transform: translateX(12px);
+}
+
+.animated-button:hover svg {
+  fill: #1e1e1e;
+}
+
+.animated-button:active {
+  scale: 0.95;
+  box-shadow: 0 0 0 4px #fd8a26;
+}
+
+.animated-button:hover .circle {
+  width: 220px;
+  height: 220px;
+  opacity: 1;
+}
+
 
 .hero-img {
   width: 100%;

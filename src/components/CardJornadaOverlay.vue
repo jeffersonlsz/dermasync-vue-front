@@ -7,130 +7,153 @@
           <h5 class="mb-0">
             🧴 {{ jornadaSelecionada?.titulo || 'Detalhes da Jornada' }}
           </h5>
-          <button
-            class="btn-fechar-overlay btn-close position-absolute top-0 end-0 m-3"
-            @click="$emit('update:jornadaSelecionada', null)"
-          ></button>
+          <button class="btn-fechar-overlay btn-close position-absolute top-0 end-0 m-3"
+            @click="$emit('update:jornadaSelecionada', null)"></button>
         </div>
-          
-      <!-- Nav Pills bonitos -->
-      <div class="nav nav-pills nav-fills my-3 hidden remove_mobile">
-        <div class="d-flex gap-3 bg-[#f8f9fa] p-1 rounded-pill shadow-inner w-full max-w-md mx-auto">
-          <button
-            v-for="tab in tabs"
-            :key="tab"
-            @click="activeTab = tab"
-            :class="[
+
+        <!-- Nav Pills bonitos -->
+        <div class="nav nav-pills nav-fills my-3 hidden remove_mobile">
+          <div class="d-flex gap-3 bg-[#f8f9fa] p-1 rounded-pill shadow-inner w-full max-w-md mx-auto">
+            <button v-for="tab in tabs" :key="tab" @click="activeTab = tab" :class="[
               'nav-item border flex-1 text-center py-2 rounded-pill text-sm font-medium transition-all duration-200',
               activeTab === tab
                 ? 'bg-white text-primary shadow-md'
                 : 'text-gray-600 hover:text-primary'
-            ]"
-          >
-            {{ tab }}
-          </button>
+            ]">
+              {{ tab }}
+            </button>
+          </div>
         </div>
-      </div>
 
-            <!-- Conteúdo das Abas -->
+        <!-- Conteúdo das Abas -->
         <div class="bg-white rounded-xl shadow-inner h-[500px]">
           <div v-if="activeTab === 'Informações da jornada'">
-            
-                <!--CONTEUDO DA PRIMEIRA ABA -->
-        <div class="row g-4 mt-3">
-          <!-- LADO ESQUERDO -->
-          <div class="col-md-6 border-end">
 
-            <!-- Título + ícone -->
-            <div class="d-flex align-items-center mt-3 mb-5">
-              <i class="bi bi-images me-2 fs-5 text-secondary"></i>
-              <h5 class="m-0">Fotos da jornada</h5>
+            <!--CONTEUDO DA PRIMEIRA ABA -->
+            <div class="row g-4 mt-3">
+              <!-- LADO ESQUERDO -->
+              <div class="col-md-6 border-end">
+
+                <!-- Título + ícone -->
+                <div class="d-flex align-items-center mt-3 mb-5">
+                  <i class="bi bi-images me-2 fs-5 text-secondary"></i>
+                  <h5 class="m-0">Fotos da jornada</h5>
 
 
-            </div>
+                </div>
 
-            <div class="text-center">
-              <!-- Imagem Principal -->
-              <img :src="imagens[currentIndex]" class="img-fluid rounded shadow-sm mb-2" alt="Imagem selecionada"
-                style="max-height: 300px; object-fit: contain; width: 100%;" @click="abrirImagemAmpliada" />
+                <div class="text-center">
+                  <div id="carouselFotos" class="carousel slide mb-3" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                      <div
+                        v-for="(foto, index) in imagens"
+                        :key="index"
+                        :class="['carousel-item', { active: index === 0 }]"
+                        @click="abrirImagemAmpliada"
+                      >
+                        <img :src="imagens[fotoAtual]" class="d-block w-100 rounded" style="max-height: 400px; object-fit: contain;" />
+                      </div>
+                    </div>
 
-              <!-- Thumbnails -->
-              <div class="d-flex justify-content-center gap-2 mt-2 flex-wrap">
-                <img v-for="(img, index) in imagens" :key="index" :src="img" @click="currentIndex = index"
-                  class="miniatura" :class="{ 'border border-primary': index === currentIndex }" alt="Thumbnail"
-                  style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" />
+                    <!-- Botões de navegação -->
+
+                     <!-- Seta esquerda -->
+                    <button
+                      class="carousel-control-prev"
+                      type="button"
+                      @click="fotoAnterior"
+                      style="width: 5%;"
+                    >
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Anterior</span>
+                    </button>
+
+                    <!-- Seta direita -->
+                    <button
+                      class="carousel-control-next"
+                      type="button"
+                      @click="proximaFoto"
+                      style="width: 5%;"
+                    >
+                      <span class="carousel-control-next-icon"></span>
+                    </button>
+
+                     <div class="d-flex justify-content-center gap-2 flex-wrap mb-3">
+                    <img
+                      v-for="(foto, index) in imagens"
+                      :key="index"
+                      :src="foto"
+                      class="miniatura-foto"
+                      :class="{ ativa: fotoAtual === index }"
+                      @click="selecionarFoto(index)"
+                    />
+                  </div>
+                  </div>
+
+                </div>
+
+
+              </div>
+
+              <!-- LADO DIREITO -->
+              <div class="col-md-6">
+
+                <!-- Título + ícone -->
+                <div class="d-flex align-items-center  mt-3 mb-5">
+                  <i class="bi bi-info-circle me-2 fs-5 text-secondary"></i>
+                  <h5 class="m-0">Informações adicionais</h5>
+                </div>
+
+                <p><strong>Faixa etária:</strong> {{ jornadaSelecionada.classificacao }}</p>
+                <p><strong>Gênero:</strong> {{ jornadaSelecionada.genero }}</p>
+                <p><strong>Áreas afetadas:</strong></p>
+                <div>
+                  <span v-for="(regiao, index) in jornadaSelecionada.regioesAfetadas" :key="index"
+                    class="badge bg-gradient-faded-info  me-1">{{ regiao }}</span>
+                </div>
+
+                <p class="mt-3"><strong>Descrição:</strong></p>
+                <p class="text-muted">{{ jornadaSelecionada.descricao }}</p>
+
+                <div class="mt-4">
+                  <span v-for="tag in jornadaSelecionada.tags" :key="tag" class="badge bg-primary me-2 mb-1">{{ tag
+                    }}</span>
+                </div>
+
+                <hr />
+
+
+                <button class="btn btn-primary w-100 mt-3">Quero seguir essa jornada</button>
               </div>
             </div>
 
-
-          </div>
-
-          <!-- LADO DIREITO -->
-          <div class="col-md-6">
-
-            <!-- Título + ícone -->
-            <div class="d-flex align-items-center  mt-3 mb-5">
-              <i class="bi bi-info-circle me-2 fs-5 text-secondary"></i>
-              <h5 class="m-0">Informações adicionais</h5>
-            </div>
-
-            <p><strong>Faixa etária:</strong> {{ jornadaSelecionada.classificacao }}</p>
-            <p><strong>Gênero:</strong> {{ jornadaSelecionada.genero }}</p>
-            <p><strong>Áreas afetadas:</strong></p>
-            <div>
-              <span v-for="(regiao, index) in jornadaSelecionada.regioesAfetadas" :key="index"
-                class="badge bg-gradient-faded-info  me-1">{{ regiao }}</span>
-            </div>
-
-            <p class="mt-3"><strong>Descrição:</strong></p>
-            <p class="text-muted">{{ jornadaSelecionada.descricao }}</p>
-
-            <div class="mt-4">
-              <span v-for="tag in jornadaSelecionada.tags" :key="tag" class="badge bg-primary me-2 mb-1">{{ tag
-                }}</span>
-            </div>
-
-            <hr />
-
-
-            <button class="btn btn-primary w-100 mt-3">Quero seguir essa jornada</button>
-          </div>
-        </div>
-
-        <!-- FIM CONTEUDO DA PRIMEIRA ABA -->
+            <!-- FIM CONTEUDO DA PRIMEIRA ABA -->
 
           </div>
 
           <div v-if="activeTab === 'Casos semelhantes'">
             <p>Você pode listar aqui os casos com maior similaridade vetorial com base no embedding.</p>
-             <div class="px-3 py-2">
-          <p class="mb-3 text-muted">Encontramos {{ casos.length }} casos com alta similaridade:</p>
+            <div class="px-3 py-2">
+              <p class="mb-3 text-muted">Encontramos {{ casos.length }} casos com alta similaridade:</p>
 
-          <div
-            v-for="(caso, index) in casos"
-            :key="index"
-            class="d-flex align-items-start mb-3 p-3 border rounded shadow-sm bg-white"
-          >
-            <img
-              :src="caso.imagem"
-              alt="Foto do caso semelhante"
-              class="me-3 rounded"
-              style="width: 64px; height: 64px; object-fit: cover;"
-            />
+              <div v-for="(caso, index) in casos" :key="index"
+                class="d-flex align-items-start mb-3 p-3 border rounded shadow-sm bg-white">
+                <img :src="caso.imagem" alt="Foto do caso semelhante" class="me-3 rounded"
+                  style="width: 64px; height: 64px; object-fit: cover;" />
 
-            <div class="flex-grow-1">
-              <p class="mb-1">
-                <i class="bi bi-person-fill"></i>
-                <strong>{{ caso.genero }}</strong> · <strong>{{ caso.faixaEtaria }}</strong>
-                | Áreas: <strong>{{ caso.areas }}</strong>
-              </p>
-              <p class="text-muted mb-1" style="font-size: 0.9rem;">{{ caso.descricao }}</p>
-              <a href="#" class="text-primary" style="font-size: 0.9rem;">
-                🔍 Ver jornada completa
-              </a>
+                <div class="flex-grow-1">
+                  <p class="mb-1">
+                    <i class="bi bi-person-fill"></i>
+                    <strong>{{ caso.genero }}</strong> · <strong>{{ caso.faixaEtaria }}</strong>
+                    | Áreas: <strong>{{ caso.areas }}</strong>
+                  </p>
+                  <p class="text-muted mb-1" style="font-size: 0.9rem;">{{ caso.descricao }}</p>
+                  <a href="#" class="text-primary" style="font-size: 0.9rem;">
+                    🔍 Ver jornada completa
+                  </a>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
             <div class="text-center mt-3">
               <button class="btn btn-outline-primary">Ver mais casos semelhantes</button>
@@ -142,52 +165,47 @@
           <div v-if="activeTab === 'Dicas de tratamentos'">
             <p>Exiba aqui sugestões extraídas com LLM ou baseadas em recorrência de soluções na sua base.</p>
             <div class="px-3 py-2">
-            <h5 class="mb-2">💡 Dicas de tratamentos</h5>
-            <p class="text-muted mb-4">Baseado em experiências de usuários com casos semelhantes</p>
+              <h5 class="mb-2">💡 Dicas de tratamentos</h5>
+              <p class="text-muted mb-4">Baseado em experiências de usuários com casos semelhantes</p>
 
-            <ul class="list-unstyled">
-              <li v-for="(dica, index) in dicas" :key="index" class="mb-2 d-flex align-items-start">
-                <span class="me-2" style="font-size: 1.2rem;">{{ dica.icone }}</span>
-                <span>{{ dica.texto }}</span>
-              </li>
-            </ul>
+              <ul class="list-unstyled">
+                <li v-for="(dica, index) in dicas" :key="index" class="mb-2 d-flex align-items-start">
+                  <span class="me-2" style="font-size: 1.2rem;">{{ dica.icone }}</span>
+                  <span>{{ dica.texto }}</span>
+                </li>
+              </ul>
 
-            <p class="text-muted mt-4" style="font-size: 0.85rem;">
-              ⚠️ Essas dicas não substituem avaliação médica.
-            </p>
-          </div>
+              <p class="text-muted mt-4" style="font-size: 0.85rem;">
+                ⚠️ Essas dicas não substituem avaliação médica.
+              </p>
+            </div>
 
           </div>
         </div>
       </div>
-         
-     
-        
-      </div>
-   
+
+
+
+    </div>
+
   </transition>
   <!-- OVERLAY IMAGEM AMPLIADA-->
   <div v-if="showImagemAmpliada"
     class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-75"
     style="z-index: 9999;" @click.self="fecharImagemAmpliada">
-    <img :src="imagens[currentIndex]" alt="Imagem ampliada"
+    <img :src="imagens[fotoAtual]" alt="Imagem ampliada"
       style="max-height: 90vh; max-width: 90vw; object-fit: contain;" class="rounded shadow" />
-    <button @click="fecharImagemAmpliada" class="btn btn-light position-absolute top-0 end-0 m-3">
+    <button @click="fecharImagemAmpliada" class="btn-fechar-overlay btn-light position-absolute top-0 end-0 m-3">
       &times;
     </button>
   </div>
   <!-- Nav flutuante visível apenas no mobile -->
-<div v-if="jornadaSelecionada"
-    class="tab-overlay-mobile d-md-none">
-  <button
-    v-for="(aba, index) in abas"
-    :key="index"
-    @click="activeTab = tabs[aba.id]"
-    :class="['btn-tab', { ativo: activeTab === tabs[aba.id] }]"
-  >
-    {{ aba.label }}
-  </button>
-</div>
+  <div v-if="jornadaSelecionada" class="tab-overlay-mobile d-md-none">
+    <button v-for="(aba, index) in abas" :key="index" @click="activeTab = tabs[aba.id]"
+      :class="['btn-tab', { ativo: activeTab === tabs[aba.id] }]">
+      {{ aba.label }}
+    </button>
+  </div>
 
 
 </template>
@@ -234,13 +252,38 @@ const abas = [
   { id: 'dicas', label: 'Tratamentos' },
 ];
 
-const tabs = {'info':'Informações da jornada', 'casos':'Casos semelhantes', 'dicas':'Dicas de tratamentos'}
+const tabs = { 'info': 'Informações da jornada', 'casos': 'Casos semelhantes', 'dicas': 'Dicas de tratamentos' }
 const activeTab = ref(tabs['info'])
 
 // Organiza as imagens da jornada
 const props = defineProps({
   jornadaSelecionada: Object
 })
+
+const fotoAtual = ref(0);
+const selecionarFoto = (index) => {
+  console.log('Selecionando foto:', index);
+  if (index < 0 || index >= imagens.value.length) {
+    console.error('Índice inválido para a foto:', index);
+    return;
+  }
+  fotoAtual.value = index;
+};
+const proximaFoto = () => {
+  if (fotoAtual.value < imagens.value.length - 1) {
+    fotoAtual.value++;
+  }else {
+    fotoAtual.value = 0; // Volta para a primeira imagem
+  }
+};
+
+const fotoAnterior = () => {
+  if (fotoAtual.value > 0) {
+    fotoAtual.value--;
+  }else {
+    fotoAtual.value = imagens.value.length - 1; // Volta para a última imagem
+  }
+};
 
 const emit = defineEmits(['update:jornadaSelecionada'])
 const showImagemAmpliada = ref(false)
@@ -345,10 +388,26 @@ const currentIndex = ref(0)
   padding: 8px 12px;
   border-radius: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-   z-index: 9999; /* aumente isso! */
+  z-index: 9999;
+  /* aumente isso! */
   display: flex;
   gap: 10px;
 }
+.miniatura-foto {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.miniatura-foto.ativa {
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 2px #6c63ff33;
+}
+
 
 .btn-tab {
   border: none;
@@ -366,7 +425,7 @@ const currentIndex = ref(0)
   font-weight: bold;
 }
 
-.rounded-pill{
+.rounded-pill {
   border-radius: 5% !important;
 }
 
@@ -396,39 +455,41 @@ const currentIndex = ref(0)
 }
 
 @media (max-width: 768px) {
-  .remove_mobile{
+  .remove_mobile {
     display: none;
   }
 
   .overlay-wrapper {
-   position: fixed;
-  inset: 0; /* equivale a top:0, right:0, bottom:0, left:0 */
-  z-index: 9990;
-  background-color: white;
-  overflow-y: auto;
-  padding: 1.5rem 1rem 5rem; /* espaço inferior para as tabs flutuantes */
-  border-radius: 0 !important; /* remove bordas arredondadas */
-}
+    position: fixed;
+    inset: 0;
+    /* equivale a top:0, right:0, bottom:0, left:0 */
+    z-index: 9990;
+    background-color: white;
+    overflow-y: auto;
+    padding: 1.5rem 1rem 5rem;
+    /* espaço inferior para as tabs flutuantes */
+    border-radius: 0 !important;
+    /* remove bordas arredondadas */
+  }
 
 .btn-fechar-overlay {
-  position: fixed;
+  position: fixed !important;
   top: 1rem;
   right: 1rem;
   z-index: 9999;
-  background: #ffffffcc;
-  backdrop-filter: blur(4px);
-  border: none;
-  border-radius: 9999px;
+  background: white;
+  color: #333;
+  font-size: 1.5rem;
   width: 36px;
   height: 36px;
-  font-size: 1.25rem;
-  color: #333;
+  border: none;
+  border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
 }
-
 </style>
