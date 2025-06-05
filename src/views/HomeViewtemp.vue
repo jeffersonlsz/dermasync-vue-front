@@ -116,7 +116,11 @@
 
     <HomeGaleriaColaborativa />
     <HomeComoFunciona />
-    
+    <section>
+      <h2 class="text-center">O que mais aparece nos relatos?</h2>
+      <WordCloud />
+    </section>
+
     <section class="container text-center py-5">
       <!-- Rodapé de confiança -->
       <p class="text-muted fw-semibold mt-5">
@@ -136,6 +140,14 @@ import HomeGaleriaColaborativa from '../components/HomeGaleriaColaborativa.vue';
 import HomeComoFunciona from '../components/HomeComoFunciona.vue';
 import WordCloud from '../components/WordCloud.vue';
 
+const tagsCloud = [
+  { text: 'corticóides', size: 30 },
+  { text: 'alimentação', size: 20 },
+  { text: 'vitamina D', size: 25 },
+  { text: 'dupixent', size: 18 },
+  { text: 'ozonioterapia', size: 12 },
+  { text: 'hidratação', size: 28 }
+]
 
 const numeros_imagens = ref([1, 2, 3, 4, 5, 6, 7]);
 const mostrarVideo = ref(false);

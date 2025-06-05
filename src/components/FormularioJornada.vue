@@ -312,7 +312,15 @@ const enviarJornada = async () => {
     // Chamada direta à API do LLM (MVP)
     let resposta = null;
     try {//llm-api-319776447667.us-central1.run.app
-      resposta = await fetch("https://llm-api-cr63nls7za-uc.a.run.app/processar-jornada", {
+      console.log("🔗 Enviando dados para o LLM...") ;
+      console.log("🗂️ Dados enviados:", {
+        id: docId,
+        descricao: jornadaFinal.descricao,
+        idade: jornadaFinal.idade,
+        sexo: jornadaFinal.genero,
+        classificacao: jornadaFinal.classificacao
+      }); ///docs  https://dermasync-api-319776447667.southamerica-east1.run.app
+      resposta = await fetch("http://localhost:8000/processar-jornada", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -323,13 +331,13 @@ const enviarJornada = async () => {
           classificacao: jornadaFinal.classificacao
         })
       });
-      console.log("✅ LLM acionado com sucesso.");
+      console.log("✅ Chamada ao LLM realizada");
     } catch (erro) {
-      console.warn("⚠️ Falha ao acionar a LLM:", erro);
+      console.warn("⚠️ Falha ao chamar LLM:", erro);
       // (opcional) salvar log em outra coleção ou campo no Firestore
     }
     if (resposta && resposta.ok) {
-      console.log("✅ LLM foi acionado com sucesso.");
+      console.log("✅ LLM processado");
       console.log("🗂️ Resposta da requisicao ao LLM:", resposta);
     } else {
       console.error("⚠️ Erro ao acionar LLM:", resposta.statusText);

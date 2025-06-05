@@ -105,7 +105,7 @@ console.log('Card recebido:', props.card);
   >
     <div class="card-header d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center">
-      <h6 class="mb-0">{{ card.classificacao }}</h6>
+      <h6 class="mb-0">{{ card.tituloRelato || card.classificacao }}</h6>
       </div>
       <div>
       <i class="bi bi-info-circle text-muted"></i>

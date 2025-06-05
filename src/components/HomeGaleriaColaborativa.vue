@@ -4,9 +4,30 @@
         <h2 class="text-center mb-4 fw-semibold">Nossos serviços</h2>
         <div class="row justify-content-center gap-4 flex-wrap">   
             <div class="galeria-grid"> 
-            
-                <div
-                    v-for="(item, index) in cards"
+                
+                <div class="galeria-card col-12 col-sm-6 col-md-4">
+                  
+                    <div class="galeria-img-dupla">
+                       <img src="/img/card-home-001.png" alt="Antes" />
+                       <img src="/img/card-home-002.png" alt="Depois" />
+                    </div>
+                    <h5 class="galeria-titulo">Jornadas de tratamentos</h5>
+                    <p class="text-center">Veja relatos de antes e depois feitos por pessoas reais</p>
+                    <div class="galeria-badges" v-for="(badge, badgeIndex) in cards[0].badge" :key="badgeIndex">
+                        <span class="galeria-badge">{{ badge }}</span>
+                    </div>
+                 </div>
+                 
+                <div class="galeria-card col-12 col-sm-6 col-md-4">
+                   <h5 class="galeria-titulo">Sobre o que estamos falando ? </h5>
+                   <div class="word-cloud">
+                    <!-- Aqui você pode passar as palavras que deseja exibir no WordCloud --> 
+                   <WordCloud />
+                   </div>
+                </div>
+                
+                 <div
+                    v-for="(item, index) in cards.slice(2,3)"
                     :key="index"
                     class="galeria-card col-12 col-sm-6 col-md-4"
                 >
@@ -38,6 +59,7 @@
   </template>
   
   <script setup>
+  import WordCloud from './WordCloud.vue';
 const cards = [
   {
     imgAntes: 'img/card-home-001.png',
@@ -147,6 +169,15 @@ const cards = [
     height: 220px; /* Defina a altura desejada */
     overflow: hidden;
 
+  }
+
+  .word-cloud {
+    width: 100%;
+    height: 300px; /* Defina a altura desejada */
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   </style>
   

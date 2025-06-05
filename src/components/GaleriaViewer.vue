@@ -212,6 +212,7 @@ async function carregarGaleria() {
           regioesAfetadas: data.regioesAfetadas || [],
           genero: data.genero || 'Não informado',
           solucao: data.solucao || '',
+          tituloRelato: data.tituloRelato || data.classificacao + ' com dermatite em ' + data.regioesAfetadas[0] // Adiciona o título da jornada
           // outros campos se precisar
         };
     }));
@@ -299,6 +300,7 @@ async function carregarNovoCard(idNovoDoc) {
       genero: data.genero || 'Não informado',
       tags: data.tags_extraidas || [],
       solucao: data.solucao || '',
+      tituloRelato: data.tituloRelato || data.classificacao +' com dermatite em ' + data.regioesAfetadas[0], // Adiciona o título da jornada
     };
     if (galeria.value.some(card => card.id === docSnap.id)) {
       console.warn(`Card duplicado detectado (${docSnap.id}). Ignorando.`);
