@@ -132,20 +132,28 @@
           </div>
 
           <div v-if="activeTab === 'Casos semelhantes'">
-            <p>Você pode listar aqui os casos com maior similaridade vetorial com base no embedding.</p>
+            
             <div class="px-3 py-2">
-              <p class="mb-3 text-muted">Encontramos {{ casos.length }} casos com alta similaridade:</p>
+              <p v-if="loadingCasos" class="text-muted">🔄 Buscando casos semelhantes...</p>
+                <p v-else class="mb-3 text-muted">Encontramos {{ casos.length }} casos com alta similaridade:</p>
+
 
               <div v-for="(caso, index) in casos" :key="index"
                 class="d-flex align-items-start mb-3 p-3 border rounded shadow-sm bg-white">
-                <img :src="caso.imagem" alt="Foto do caso semelhante" class="me-3 rounded"
+                <img :src="caso.imgAntes" alt="Foto do caso semelhante" class="me-3 rounded"
+                  style="width: 64px; height: 64px; object-fit: cover;" />
+                <img :src="caso.imgDepois" alt="Foto do caso semelhante" class="me-3 rounded"
                   style="width: 64px; height: 64px; object-fit: cover;" />
 
                 <div class="flex-grow-1">
                   <p class="mb-1">
                     <i class="bi bi-person-fill"></i>
                     <strong>{{ caso.genero }}</strong> · <strong>{{ caso.faixaEtaria }}</strong>
-                    | Áreas: <strong>{{ caso.areas }}</strong>
+                    |<strong>
+                      <span v-for="(area, index) in caso.areasAfetadas" :key="index">
+                      {{ area }}{{ index < caso.areasAfetadas.length - 1 ? ', ' : '' }}
+                      </span>
+                    </strong>
                   </p>
                   <p class="text-muted mb-1" style="font-size: 0.9rem;">{{ caso.descricao }}</p>
                   <a href="#" class="text-primary" style="font-size: 0.9rem;">
@@ -156,14 +164,17 @@
             </div>
 
             <div class="text-center mt-3">
-              <button class="btn btn-outline-primary">Ver mais casos semelhantes</button>
+             <button class="btn btn-outline-primary" @click="buscarCasosSemelhantes">
+              Ver mais casos semelhantes
+            </button>
+
             </div>
 
 
           </div>
 
           <div v-if="activeTab === 'Dicas de tratamentos'">
-            <p>Exiba aqui sugestões extraídas com LLM ou baseadas em recorrência de soluções na sua base.</p>
+            
             <div class="px-3 py-2">
               <h5 class="mb-2">💡 Dicas de tratamentos</h5>
               <p class="text-muted mb-4">Baseado em experiências de usuários com casos semelhantes</p>
@@ -212,31 +223,45 @@
 
 <script setup>
 
-import { ref, computed, onMounted, onUpdated } from 'vue'
+import { ref, computed, onMounted, onUpdated, watch } from 'vue'
+import { buscarCasosSemelhantesAPI } from '../services/casosService'
 
-const casos = [
-  {
-    imagem: "https://placehold.co/64x64.png?text=Img1",
-    genero: "Mulher",
-    faixaEtaria: "Adulto",
-    areas: "braços",
-    descricao: "Comecei a usar compressas frias e corticoide leve...",
-  },
-  {
-    imagem: "https://placehold.co/64x64.png?text=Img2",
-    genero: "Mulher",
-    faixaEtaria: "Adulto",
-    areas: "braços",
-    descricao: "Sofri por anos até descobrir um hidratante alemão...",
-  },
-  {
-    imagem: "https://placehold.co/64x64.png?text=Img3",
-    genero: "Mulher",
-    faixaEtaria: "Adulto",
-    areas: "braços",
-    descricao: "A alimentação foi chave no meu caso...",
-  },
-];
+// Organiza as imagens da jornada
+const props = defineProps({
+  jornadaSelecionada: Object
+})
+
+
+const casos = ref([])
+const loadingCasos = ref(false)
+
+const buscarCasosSemelhantes = async () => {
+  console.log('Buscando casos semelhantes para:', props.jornadaSelecionada);
+  let info = {
+    id:props.jornadaSelecionada.id,
+    genero: props.jornadaSelecionada.genero,
+    classificacao: props.jornadaSelecionada.classificacao,
+    regioesAfetadas: props.jornadaSelecionada.regioesAfetadas,
+    tags: props.jornadaSelecionada.tags,
+    descricao: props.jornadaSelecionada.descricao
+
+  };
+  loadingCasos.value = true;
+  console.log('Informações da jornada:', info);
+  // chamada à API para buscar casos semelhantes
+  try {
+    const response = await buscarCasosSemelhantesAPI(info);
+    console.log('Casos semelhantes encontrados:', response.data);
+    casos.value = response.data;
+  } catch (error) {
+    console.error('Erro ao buscar casos semelhantes:', error);
+    casos.value = [];
+  } finally {
+    loadingCasos.value = false;
+    jaBuscou.value = true; // Marca que já buscou
+  }
+}
+
 
 const dicas = [
   { icone: "🧴", texto: "Hidratantes espessos aplicados 2x/dia" },
@@ -254,11 +279,16 @@ const abas = [
 
 const tabs = { 'info': 'Informações da jornada', 'casos': 'Casos semelhantes', 'dicas': 'Dicas de tratamentos' }
 const activeTab = ref(tabs['info'])
+const jaBuscou = ref(false)
 
-// Organiza as imagens da jornada
-const props = defineProps({
-  jornadaSelecionada: Object
-})
+watch( ()=> activeTab.value, async (novoValor) => { 
+  console.log('Aba ativa alterada para:', novoValor);
+  if (novoValor === tabs.casos && !jaBuscou.value) {
+    // Se a aba de casos semelhantes for ativada e ainda não buscou, faz a busca  
+    console.log('Buscando casos semelhantes...');
+    await buscarCasosSemelhantes();
+  }
+}  );
 
 const fotoAtual = ref(0);
 const selecionarFoto = (index) => {
