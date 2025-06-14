@@ -9,8 +9,8 @@
     </p>
 
     <!-- Botão CTA -->
-    <button class="btn btn-primary btn-lg px-4 py-4 shadow rounded-pill" @click.stop.prevent="mostrandoFormulario = true">
-      <i class="bi bi-heart-fill me-2"></i> Compartilhe sua jornada e ajude alguém hoje!
+    <button class="btn btn-primary btn-lg px-4 py-4 shadow " @click.stop.prevent="mostrandoFormulario = true">
+       Compartilhe sua jornada e ajude alguém hoje!
     </button>
 
     <!-- Alerta de responsabilidade -->
@@ -457,10 +457,14 @@ background-attachment: fixed;
 background-size: cover;
 }
 
+.btn{
+  letter-spacing: 0rem !important;
+}
 .btn-primary {
-  background-image: linear-gradient(135deg, #4c7ef3, #6a55f4);
+  background: #927257;
   border: none;
   transition: transform 0.2s, box-shadow 0.2s;
+  font-size: 17px;
 }
 
 .btn-primary:hover {

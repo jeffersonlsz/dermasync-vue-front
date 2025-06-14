@@ -5,10 +5,10 @@
       <div class="overlay-content bg-white p-4 rounded shadow position-relative">
         <div class="overlay-header d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
           <h5 class="mb-0">
-            🧴 {{ jornadaSelecionada?.titulo || 'Detalhes da Jornada' }}
+             {{ jornadaSelecionada?.tituloRelato || 'Detalhes da Jornada' }}
           </h5>
           <button class="btn-fechar-overlay btn-close position-absolute top-0 end-0 m-3"
-            @click="$emit('update:jornadaSelecionada', null)"></button>
+            @click="$emit('update:jornadaSelecionada', null)">X</button>
         </div>
 
         <!-- Nav Pills bonitos -->
@@ -32,19 +32,13 @@
             <!--CONTEUDO DA PRIMEIRA ABA -->
             <div class="row g-4 mt-3">
               <!-- LADO ESQUERDO -->
-              <div class="col-md-6 border-end">
+              <div class="col-md-6">
 
-                <!-- Título + ícone -->
-                <div class="d-flex align-items-center mt-3 mb-5">
-                  <i class="bi bi-images me-2 fs-5 text-secondary"></i>
-                  <h5 class="m-0">Fotos da jornada</h5>
-
-
-                </div>
+                
 
                 <div class="text-center">
                   <div id="carouselFotos" class="carousel slide mb-3" data-bs-ride="carousel">
-                    <div class="carousel-inner">
+                    <div class="carousel-inner mb-4">
                       <div
                         v-for="(foto, index) in imagens"
                         :key="index"
@@ -98,25 +92,25 @@
               <!-- LADO DIREITO -->
               <div class="col-md-6">
 
-                <!-- Título + ícone -->
-                <div class="d-flex align-items-center  mt-3 mb-5">
-                  <i class="bi bi-info-circle me-2 fs-5 text-secondary"></i>
-                  <h5 class="m-0">Informações adicionais</h5>
+                <!-- Badges descritivos -->
+                <div class="mt-1 text-center" >
+                  <div class="btn genero-tag">{{ jornadaSelecionada.classificacao }}</div>
+                  <div class="btn genero-tag">{{ jornadaSelecionada.genero }}</div>
+                  
                 </div>
 
-                <p><strong>Faixa etária:</strong> {{ jornadaSelecionada.classificacao }}</p>
-                <p><strong>Gênero:</strong> {{ jornadaSelecionada.genero }}</p>
-                <p><strong>Áreas afetadas:</strong></p>
+                
+                <p class="text-center"><strong>Áreas afetadas:</strong></p>
                 <div>
                   <span v-for="(regiao, index) in jornadaSelecionada.regioesAfetadas" :key="index"
-                    class="badge bg-gradient-faded-info  me-1">{{ regiao }}</span>
+                    class="badge bg-gradient-faded-info me-1">{{ regiao }}</span>
                 </div>
-
-                <p class="mt-3"><strong>Relato:</strong></p>
-                <div class="texto-inicial">
+                
+                 <div class="">
+                  <p class="mt-3 text-center"><strong>Relato:</strong></p>
+                
                   <p class="text-muted">{{ textoJornada }}</p>
                 </div>
-                 
                 <button class="botao-ver-mais" @click.prevent="expandirTexto" >Ver Mais</button>
                 <div class="mt-4">
                   <span v-for="tag in jornadaSelecionada.tags" :key="tag" class="badge bg-primary me-2 mb-1">{{ tag
@@ -424,7 +418,9 @@ const currentIndex = ref(0)
   overflow-y: auto;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
-
+.overlay-content .overlay-header h5{
+   font-size:18px;
+}
 
 .tab-overlay-mobile {
   position: fixed;
@@ -566,6 +562,10 @@ const currentIndex = ref(0)
   justify-content: center;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   cursor: pointer;
+}
+
+.genero-tag{
+
 }
 
 }

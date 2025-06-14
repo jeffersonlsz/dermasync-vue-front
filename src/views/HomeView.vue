@@ -56,15 +56,16 @@
     </section>
 
 
-    <section class="hero-section px-3 py-5 remove-desktop position-relative">
+    <section class="hero-section px-3 py-7 remove-desktop position-relative">
        
       <div class="d-flex justify-content-between align-items-start" style="width: 100%;">
         <!-- Texto à esquerda -->
-        <div class="flex-column align-items-center mb-4" style="margin-top: 3rem;">
+        <div class="hero-text flex-column align-items-center mb-4" style="margin-top: 3rem;">
           <h1 class="fw-bold mb-3">
-            Veja como outras pessoas superaram a <span class="text-primary">Dermatite Atópica</span>
+            Veja como outras pessoas superaram a <span class="highlight">Dermatite Atópica</span>
           </h1>
-          <p class="mb-3">Relatos reais. Soluções aprovadas. Totalmente anônimo.</p>  
+         
+          <p class="sub">Relatos reais. Soluções aprovadas. Totalmente anônimo.</p>  
           <RouterLink to="/galeria" class="btn btn-primary w-75">Veja pessoas reais e aprenda</RouterLink>
           <button class="btn-video-explicativo btn  mt-3" @click="mostrarVideo = true">
             ▶️ Veja um vídeo explicativo
@@ -255,6 +256,20 @@ function fecharOverlay() {
   gap: 22px;
 }
 
+.origem-dados {
+  font-size: 0.9rem;
+  color: #4A4A4A;
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+.origem-dados i {
+  font-size: 1rem;
+  margin: 0 0.2rem;
+  color: #8B5E3C; /* tom terroso */
+}
+
 .btn-video-explicativo{
     background-image: linear-gradient(#0dccea, #0d70ea);
     border: 0;
@@ -314,7 +329,7 @@ function fecharOverlay() {
 
 .hero-section {
   position: relative;
-  background-image: url('/img/background-layer-1.png');
+  background-image: url('/img/background-layer-1.jpg');
   background-size: cover;
   
   
@@ -401,7 +416,7 @@ video {
     box-sizing: border-box;
     color: #fff;
     cursor: pointer;
-    font-family: Montserrat, sans-serif;
+    font-family: 'Open Sans';
     font-size: .9em;
     margin: 5px;
     padding: 10px 15px;
@@ -506,13 +521,43 @@ video {
   }
 
   .hero-section {
-    position: relative;
-    overflow: hidden;
-    background-size: cover;
-   
-    padding-top: 5rem; /* desce tudo um pouco */
-    padding-bottom: 3rem;
+      position: relative;
+      background-color: #fef7eb;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      overflow: hidden;
   }
+
+  .hero-bg {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 0 0 24px 24px;
+  margin-bottom: 1.5rem;
+}
+
+  .hero-text {
+  padding: 0 1rem;
+  font-family: 'Open Sans';
+}
+
+.hero-text h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #2c2c2c;
+}
+
+.hero-text .highlight {
+  color: #2a7750;
+}
+
+.hero-text .sub {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  color: #555;
+
+}
 
   .hero-overlay {
     position: absolute;
@@ -549,7 +594,7 @@ video {
     flex-direction: column;
   }
   .btn-video-explicativo{
-           background: #4cc7c7;
+           background: #3f6f4a;
   }
   .btn-primary {
         background-image: linear-gradient(334deg, #a8ff7287, #0000001a); 
@@ -557,7 +602,7 @@ video {
         font-size: 1.2rem;
         /* border: none; */
         box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
-        background: rosybrown;
+        background: #927257;
   }
 
   .btn-outline-secondary {
