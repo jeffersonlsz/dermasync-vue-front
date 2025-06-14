@@ -112,9 +112,12 @@
                     class="badge bg-gradient-faded-info  me-1">{{ regiao }}</span>
                 </div>
 
-                <p class="mt-3"><strong>Descrição:</strong></p>
-                <p class="text-muted">{{ jornadaSelecionada.descricao }}</p>
-
+                <p class="mt-3"><strong>Relato:</strong></p>
+                <div class="texto-inicial">
+                  <p class="text-muted">{{ textoJornada }}</p>
+                </div>
+                 
+                <button class="botao-ver-mais" @click.prevent="expandirTexto" >Ver Mais</button>
                 <div class="mt-4">
                   <span v-for="tag in jornadaSelecionada.tags" :key="tag" class="badge bg-primary me-2 mb-1">{{ tag
                     }}</span>
@@ -122,8 +125,6 @@
 
                 <hr />
 
-
-                <button class="btn btn-primary w-100 mt-3">Quero seguir essa jornada</button>
               </div>
             </div>
 
@@ -234,6 +235,22 @@ const props = defineProps({
 
 const casos = ref([])
 const loadingCasos = ref(false)
+
+const textoJornada = ref("");
+
+watch(() => props.jornadaSelecionada, (novaJornada) => {
+  if (novaJornada) {
+    textoJornada.value = novaJornada.descricao.slice(0,140) + '...'; // Resumo inicial do texto
+  }
+});
+const expandirTexto = () => {
+  console.log('Expandindo texto da jornada');
+  textoJornada.value = props.jornadaSelecionada.descricao; // Exibe o texto completo
+  const botao = document.querySelector('.botao-ver-mais');
+  if (botao) {
+    botao.style.display = 'none'; // Esconde o botão "Ver Mais"
+  }
+}
 
 const buscarCasosSemelhantes = async () => {
   console.log('Buscando casos semelhantes para:', props.jornadaSelecionada);
@@ -416,7 +433,7 @@ const currentIndex = ref(0)
   transform: translateX(-50%);
   background: white;
   padding: 8px 12px;
-  border-radius: 2rem;
+  
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 9999;
   /* aumente isso! */
@@ -443,8 +460,8 @@ const currentIndex = ref(0)
   border: none;
   padding: 8px 14px;
   background-color: #f1f1f1;
-  border-radius: 1.5rem;
-  font-size: 0.85rem;
+  
+  
   color: #333;
   transition: all 0.2s ease;
 }
@@ -483,6 +500,36 @@ const currentIndex = ref(0)
 .fade-overlay-leave-from {
   opacity: 1;
 }
+
+.texto-resumo {
+  max-height: 100px; /* Altura máxima do resumo */
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.texto-completo {
+  padding-top: 0px;
+}
+
+.botao-ver-mais {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 10px 0;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.botao-ver-mais:hover {
+  background-color: #45a049;
+}
+
 
 @media (max-width: 768px) {
   .remove_mobile {

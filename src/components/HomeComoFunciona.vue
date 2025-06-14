@@ -4,17 +4,17 @@
   <div class="grid-funciona">
     <div class="etapa">
       <img src="/img/compartilhe.png" alt="Compartilhe">
-      <h3>1. Compartilhe sua história</h3>
+      <h3>Compartilhe sua história</h3>
       <p>Envie fotos e relatos da sua luta contra a dermatite. Sua experiência pode mudar a vida de alguém.</p>
     </div>
     <div class="etapa">
       <img src="/img/explore.png" alt="Explore">
-      <h3>2. Explore histórias de verdade</h3>
+      <h3>Explore histórias de verdade</h3>
       <p>Veja fotos reais de quem enfrentou os mesmos desafios que você — e descubra que não está sozinho.</p>
     </div>
     <div class="etapa">
       <img src="/img/descubra.png" alt="Descubra">
-      <h3>3. Descubra soluções que funcionam de verdade</h3>
+      <h3>Descubra soluções que funcionam de verdade</h3>
       <p>Filtre, compare e encontre caminhos que ajudaram outras pessoas. Você pode se surpreender.</p>
     </div>
   </div>

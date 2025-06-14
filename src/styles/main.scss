@@ -1,30 +1,4 @@
-// sobrescrições (opcional)
-$primary: #3b82f6;
-$font-family-base: 'Open Sans', sans-serif;
-//$font-size-base: 1rem;
-$font-size-sm: 1rem;
+@use './argon-dashboard.scss';
 
-$bs-card-border-width: 0;
-/*
-// =========================================================
-Customização do tema Argon Dashboard
-*/
 
-body {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 1rem; // padrão do bootstrap é 1rem (16px), isso dá 16.8px
-    line-height: 1.6;
-    color: #344767; // cor padrão do Argon para textos
-  }
 
-  .btn-close {
-    width: 1em;
-    height: 1em;
-    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 16 16'%3e%3cpath d='M2.146 2.146a.5.5 0 011 0L8 6.293l4.854-4.854a.5.5 0 01.708.708L8.707 7l4.854 4.854a.5.5 0 01-.708.708L8 7.707l-4.854 4.854a.5.5 0 01-.708-.708L7.293 7 2.146 2.854a.5.5 0 010-.708z'/%3e%3c/svg%3e") center/1em auto no-repeat;
-    border: none;
-    opacity: 0.5;
-  }
-
-// importar argon
-
-@import './argon-dashboard.scss';

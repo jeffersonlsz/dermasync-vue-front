@@ -1,5 +1,5 @@
 <template>
-<nav class="bg-white blur border-radius-xl mt-2 navbar navbar-expand-lg px-4 py-1 sticky-top top-0 z-index-3">
+<nav class="bg-white blur border-radius-xl  navbar navbar-expand-lg sticky-top  z-index-3">
     <div class="container-fluid">
       <!-- Logo -->
       <RouterLink class="navbar-brand fw-bolder text-dark" to="/">DermaSync</RouterLink>
@@ -30,6 +30,11 @@
           <li class="nav-item">
             <RouterLink class="nav-link text-dark me-2 px-3 " to="/cadastro">
               Cadastrar-se
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link text-dark me-2 px-3 " to="/videos-explicativos">
+              Relatos em vídeo
             </RouterLink>
           </li>
           <li class="nav-item">

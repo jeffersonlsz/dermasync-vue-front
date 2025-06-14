@@ -1,65 +1,73 @@
 <template>
-    <section class="home-galeria">
-      <div class="container">
-        <h2 class="text-center mb-4 fw-semibold">Nossos serviços</h2>
-        <div class="row justify-content-center gap-4 flex-wrap">   
-            <div class="galeria-grid"> 
-                
-                <div class="galeria-card col-12 col-sm-6 col-md-4">
-                  
-                    <div class="galeria-img-dupla">
-                       <img src="/img/card-home-001.png" alt="Antes" />
-                       <img src="/img/card-home-002.png" alt="Depois" />
-                    </div>
-                    <h5 class="galeria-titulo">Jornadas de tratamentos</h5>
-                    <p class="text-center">Veja relatos de antes e depois feitos por pessoas reais</p>
-                    <div class="galeria-badges" v-for="(badge, badgeIndex) in cards[0].badge" :key="badgeIndex">
-                        <span class="galeria-badge">{{ badge }}</span>
-                    </div>
-                 </div>
-                 
-                <div class="galeria-card col-12 col-sm-6 col-md-4">
-                   <h5 class="galeria-titulo">Sobre o que estamos falando ? </h5>
-                   <div class="word-cloud">
-                    <!-- Aqui você pode passar as palavras que deseja exibir no WordCloud --> 
-                   <WordCloud />
-                   </div>
-                </div>
-                
-                 <div
-                    v-for="(item, index) in cards.slice(2,3)"
-                    :key="index"
-                    class="galeria-card col-12 col-sm-6 col-md-4"
-                >
-                <div v-if="item.isunica">
-                  <div class="galeria-img-unica">
-                    <img :src="item.imgUnica" alt="Imagem única" class="galeria-img" />
-                  </div>
-                </div>
-                <div v-else>
-                  <div class="galeria-img-dupla">
-                    <img :src="item.imgAntes" alt="Antes" />
-                    <img :src="item.imgDepois" alt="Depois" />
-                    
-                </div>
-                </div>
-                
-                    <h5 class="galeria-titulo">{{ item.titulo }}</h5>
-                    <p class="text-center">{{ item.descricao }}</p>
-                    <div class="galeria-badges" v-for="(badge, badgeIndex) in item.badge" :key="badgeIndex">
-                        <span class="galeria-badge">{{ badge }}</span>
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
+  <section class="home-galeria">
+    <div class="container">
+      <h2 class="text-center mb-4 fw-semibold">O que fazemos</h2>
+<!-- 🔄 CARROSSEL (MOBILE) -->
+<div id="carouselCards" class="carousel slide d-md-none" data-bs-ride="carousel">
+  <div class="carousel-inner">
 
+    <!-- CARD 1 -->
+    <div class="carousel-item active">
+      <div class="galeria-card mx-3">
+        <div class="galeria-img-dupla">
+          <img src="/img/card-home-001.png" alt="Antes" />
+          <img src="/img/card-home-002.png" alt="Depois" />
+        </div>
+        <h5 class="galeria-titulo">Jornadas de tratamentos</h5>
+        <p class="text-center">Veja relatos de antes e depois feitos por pessoas reais</p>
+        <div class="galeria-badges" v-for="(badge, badgeIndex) in cards[0].badge" :key="badgeIndex">
+          <span class="galeria-badge">{{ badge }}</span>
+        </div>
       </div>
-    </section>
-  </template>
-  
-  <script setup>
-  import WordCloud from './WordCloud.vue';
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="carousel-item">
+      <div class="galeria-card mx-3">
+        <h5 class="galeria-titulo">Sobre o que estamos falando?</h5>
+        <div class="word-cloud">
+          <WordCloud />
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="carousel-item">
+      <div class="galeria-card mx-3">
+        <div class="galeria-img-unica">
+          <img src='/img/card-home-004.png' alt="Imagem única" class="galeria-img" />
+        </div>
+        <h5 class="galeria-titulo">Ajuda com descontos e promoções</h5>
+        <p class="text-center">Descontos e promoções exclusivas com parceiros</p>
+        <div class="galeria-badges">
+          <span class="galeria-badge">descontos</span>
+          <span class="galeria-badge">promocoes</span>
+          <span class="galeria-badge">parceiros</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ⬅️➡️ Botões do carrossel -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselCards" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+    <span class="visually-hidden">Anterior</span>
+  </button>
+
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselCards" data-bs-slide="next">
+    <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+    <span class="visually-hidden">Próximo</span>
+  </button>
+</div>
+
+
+    </div>
+  </section>
+</template>
+
+<script setup>
+import WordCloud from './WordCloud.vue';
 const cards = [
   {
     imgAntes: 'img/card-home-001.png',
@@ -84,100 +92,105 @@ const cards = [
     badge: ['descontos', 'promoções', 'parceiros'],
   }
 ]
-  </script>
-  
-  <style scoped>
+</script>
+
+<style scoped>
 .home-galeria {
   background-color: #f9fafb;
-  
+
   padding-bottom: 4rem;
 }
-  
-  .galeria-grid {
+
+.galeria-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 2rem 6rem; /* espaço vertical, horizontal */
+  gap: 2rem 6rem;
+  /* espaço vertical, horizontal */
   margin-top: 2rem;
 }
-  .galeria-card {
-    max-width: 280px;
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    padding: 1rem;
-    text-align: center;
-    transition: transform 0.2s ease;
-    
-  }
 
-  .galeria-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
-    }
-  
-  .galeria-card:hover {
-    transform: translateY(-4px);
-  }
-  .galeria-badges{
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-  }
-  
-  .galeria-img {
-    width: 100%;
-    height: auto;
-    border-radius: 0.75rem;
-    object-fit: cover;
-  }
-  
-  .galeria-img-dupla {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    }
+.galeria-card {
+  max-width: 280px;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  padding: 1rem;
+  text-align: center;
+  transition: transform 0.2s ease;
+
+}
+
+.galeria-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.galeria-card:hover {
+  transform: translateY(-4px);
+}
+
+.galeria-badges {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.galeria-img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  object-fit: cover;
+}
+
+.galeria-img-dupla {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
 
 
-    .galeria-img-dupla img {
+.galeria-img-dupla img {
   width: 48%;
   height: auto;
   border-radius: 0.75rem;
   object-fit: cover;
 }
-  .galeria-titulo {
-    font-weight: 600;
-    font-size: 1rem;
-    margin-top: 0.5rem;
-  }
-  
-  .galeria-badge {
-    margin-top: 0.5rem;
-    display: inline-flex;
-    background-color: #eef2f7;
-    border-radius: 1%;
-    padding: 0.2rem 0.75rem;
-    font-size: 0.7rem;
-    color: #333;
-  }
 
-  .galeria-img-unica {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 220px; /* Defina a altura desejada */
-    overflow: hidden;
+.galeria-titulo {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
 
-  }
+.galeria-badge {
+  margin-top: 0.5rem;
+  display: inline-flex;
+  background-color: #eef2f7;
+  border-radius: 1%;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.7rem;
+  color: #333;
+}
 
-  .word-cloud {
-    width: 100%;
-    height: 300px; /* Defina a altura desejada */
-    margin-top: 1.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  </style>
-  
+.galeria-img-unica {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 220px;
+  /* Defina a altura desejada */
+  overflow: hidden;
+
+}
+
+.word-cloud {
+  width: 100%;
+  height: 260px;
+  /* Defina a altura desejada */
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

@@ -1,0 +1,59 @@
+// =========================================================
+// * Argon Dashboard 3 - v2.1.0
+// =========================================================
+//
+// * Product Page: https://www.creative-tim.com/product/argon-dashboard
+// * Copyright 2024 Creative Tim (https://www.creative-tim.com)
+//
+// Coded by www.creative-tim.com
+//
+// =========================================================
+//
+// * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+@use "sass:color";
+@use "sass:math";
+// Em src/styles/argon-dashboard.scss ou seu arquivo de entrada principal
+
+// 1. Funções primeiro
+@use "argon-dashboard/bootstrap/functions";
+
+// 2. Variáveis em seguida (onde o seu erro está ocorrendo)
+@use "argon-dashboard/bootstrap/variables";
+
+// 3. Mixins depois
+@use "argon-dashboard/bootstrap/mixins";
+
+
+
+// Bootstrap Core
+@use "argon-dashboard/bootstrap/bootstrap" as bootstrap;
+
+
+// Bootstrap Functions
+@use "argon-dashboard/bootstrap/functions";
+
+// Custom Variables
+@use "argon-dashboard/custom/variables";
+
+// Theme Variables
+@use "argon-dashboard/variables";
+
+
+
+// Theme Core
+@use "argon-dashboard/theme";
+
+// Custom Variables
+@use "argon-dashboard/custom/styles";
+
+@use "argon-dashboard/forms/forms";
+
+@use "argon-dashboard/nav";
+@use "argon-dashboard/navbar";
+@use "argon-dashboard/buttons";
+// ======================================
+// 🔧 Customizações finais do projeto
+// ======================================
+
+//@use './custom';

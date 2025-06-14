@@ -320,7 +320,7 @@ const enviarJornada = async () => {
         sexo: jornadaFinal.genero,
         classificacao: jornadaFinal.classificacao
       }); ///docs  https://dermasync-api-319776447667.southamerica-east1.run.app
-      resposta = await fetch("http://localhost:8000/processar-jornada", {
+      resposta = await fetch("http://localhost:8080/processar-jornada", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

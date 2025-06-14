@@ -11,10 +11,6 @@
 //
 // * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-// Bootstrap Core
-@import "argon-dashboard/bootstrap/bootstrap";
-
-
 // Bootstrap Functions
 @import "argon-dashboard/bootstrap/functions";
 
@@ -24,21 +20,11 @@
 // Theme Variables
 @import "argon-dashboard/variables";
 
-
+// Bootstrap Core
+@import "argon-dashboard/bootstrap/bootstrap";
 
 // Theme Core
 @import "argon-dashboard/theme";
 
 // Custom Variables
 @import "argon-dashboard/custom/styles";
-
-@import "argon-dashboard/forms/forms";
-
-@import "argon-dashboard/nav";
-@import "argon-dashboard/navbar";
-@import "argon-dashboard/buttons";
-// ======================================
-// 🔧 Customizações finais do projeto
-// ======================================
-
-//@import './custom';
