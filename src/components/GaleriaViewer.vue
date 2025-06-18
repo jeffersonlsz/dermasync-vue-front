@@ -3,14 +3,14 @@
   <div class="container py-4">
   <div class="text-center">
     <!-- Título -->
-    <h1 class="display-5">Relatos reais</h1>
-    <p class="lead text-muted">
+    <h1 class="display-5">Relatos que transformam</h1>
+    <p class="">
       Histórias reais. Inspire-se. Compartilhe sua experiência e ajude outras pessoas.
     </p>
 
     <!-- Botão CTA -->
     <button class="btn btn-primary btn-lg px-4 py-4 shadow " @click.stop.prevent="mostrandoFormulario = true">
-       Compartilhe sua jornada e ajude alguém hoje!
+       Envie seu relato e aprenda!
     </button>
 
     <!-- Alerta de responsabilidade -->
@@ -20,7 +20,7 @@
     </div>
   </div>
 
-
+    <div class="areaexibicao"></div>
 
     <FiltroGaleria :contadores="contadores" @filtrosAlterados="filtrosAtuais = $event" />
  

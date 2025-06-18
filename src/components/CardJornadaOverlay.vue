@@ -34,9 +34,13 @@
               <!-- LADO ESQUERDO -->
               <div class="col-md-6">
 
-                
-
                 <div class="text-center">
+                   <!-- Badges descritivos -->
+                <div class="mt-1 text-center" >
+                  <div class="btn genero-tag">{{ jornadaSelecionada.classificacao }}</div>
+                  <div class="btn genero-tag">{{ jornadaSelecionada.genero }}</div>
+                  
+                </div>
                   <div id="carouselFotos" class="carousel slide mb-3" data-bs-ride="carousel">
                     <div class="carousel-inner mb-4">
                       <div
@@ -45,7 +49,9 @@
                         :class="['carousel-item', { active: index === 0 }]"
                         @click="abrirImagemAmpliada"
                       >
-                        <img :src="imagens[fotoAtual]" class="d-block w-100 rounded" style="max-height: 400px; object-fit: contain;" />
+                        <div style="width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                              <img :src="imagens[fotoAtual]" class="rounded" style="max-height: 100%; max-width: 100%; object-fit: contain;" />
+                        </div>
                       </div>
                     </div>
 
@@ -92,12 +98,7 @@
               <!-- LADO DIREITO -->
               <div class="col-md-6">
 
-                <!-- Badges descritivos -->
-                <div class="mt-1 text-center" >
-                  <div class="btn genero-tag">{{ jornadaSelecionada.classificacao }}</div>
-                  <div class="btn genero-tag">{{ jornadaSelecionada.genero }}</div>
-                  
-                </div>
+               
 
                 
                 <p class="text-center"><strong>Áreas afetadas:</strong></p>
@@ -113,7 +114,7 @@
                 </div>
                 <button class="botao-ver-mais" @click.prevent="expandirTexto" >Ver Mais</button>
                 <div class="mt-4">
-                  <span v-for="tag in jornadaSelecionada.tags" :key="tag" class="badge bg-primary me-2 mb-1">{{ tag
+                  <span v-for="tag in jornadaSelecionada.tags.slice(1,4)" :key="tag" class="badge bg-primary me-2 mb-1">{{ tag
                     }}</span>
                 </div>
 
@@ -168,25 +169,36 @@
 
           </div>
 
-          <div v-if="activeTab === 'Dicas de tratamentos'">
-            
-            <div class="px-3 py-2">
-              <h5 class="mb-2">💡 Dicas de tratamentos</h5>
-              <p class="text-muted mb-4">Baseado em experiências de usuários com casos semelhantes</p>
+      <div v-if="activeTab === 'Dicas de tratamentos'" class="tratamentos-wrapper">
+        <div v-for="(categoria, index) in categoriasTratamento" :key="index" class="categoria-box" :style="{ backgroundColor: categoria.corFundo }">
+          <h5 class="categoria-titulo">
+            <span class="me-2">{{ categoria.icone }}</span>{{ categoria.nome }}
+          </h5>
 
-              <ul class="list-unstyled">
-                <li v-for="(dica, index) in dicas" :key="index" class="mb-2 d-flex align-items-start">
-                  <span class="me-2" style="font-size: 1.2rem;">{{ dica.icone }}</span>
-                  <span>{{ dica.texto }}</span>
-                </li>
-              </ul>
+          <ul class="list-unstyled">
+            <li v-for="(item, i) in categoria.itens" :key="i" class="dica-item">
+              <span class="item-icone">{{ item.icone }}</span>
+              <span>{{ item.texto }}</span>
+            </li>
+          </ul>
 
-              <p class="text-muted mt-4" style="font-size: 0.85rem;">
-                ⚠️ Essas dicas não substituem avaliação médica.
-              </p>
+          <div v-if="categoria.produto" class="produto-sugerido mt-3">
+            <img :src="categoria.produto.imagem" :alt="categoria.produto.nome" class="produto-img" />
+
+            <div class="produto-detalhes mt-2">
+              <p class="produto-label">⭐ Produto usado por outros usuários:</p>
+              <p class="produto-nome">{{ categoria.produto.nome }}</p>
+              <p class="produto-preco">{{ categoria.produto.preco }}</p>
+              
+              <a :href="categoria.produto.link" target="_blank" class="produto-btn">
+                Ver na Amazon
+              </a>
             </div>
-
           </div>
+        </div>
+
+        <p class="aviso-medico mt-3">⚠️ Essas dicas não substituem avaliação médica.</p>
+      </div>
         </div>
       </div>
 
@@ -287,6 +299,51 @@ const abas = [
   { id: 'casos', label: 'Semelhantes' },
   { id: 'dicas', label: 'Tratamentos' },
 ];
+
+const categoriasTratamento = [
+  {
+    nome: 'Hábitos Diários',
+    icone: '🌿',
+    corFundo: '#e7f6ec',
+    itens: [
+      { icone: '🧊', texto: 'Compressas frias antes de dormir' },
+      { icone: '🚿', texto: 'Evitar sabonetes com perfume' },
+      { icone: '🥛', texto: 'Redução de laticínios e ultraprocessados' }
+    ]
+  },
+  {
+    nome: 'Hidratantes e Óleos',
+    icone: '💧',
+    corFundo: '#e3f2fd',
+    itens: [
+      { icone: '🧴', texto: 'Hidratantes espessos aplicados 2x/dia' },
+      { icone: '🥥', texto: 'Uso de óleo de coco em áreas ressecadas' }
+    ],
+    produto: {
+      nome: 'Hidratante CeraVe Pele Seca – 473ml',
+      preco: 'R$ 79,90',
+      imagem: 'https://m.media-amazon.com/images/I/61vyW3Dl-7L._AC_UL320_.jpg',
+      link: 'www.amazon.com.br/Loção-Hidratante-Corporal-Textura-Fluida-Cerave/dp/B07RK4HST7/ref=sr_1_1_sspa'
+    }
+    //www.amazon.com.br/Loção-Hidratante-Corporal-Textura-Fluida-Cerave/dp/B07RK4HST7/ref=sr_1_1_sspa?__mk_pt_BR=ÅMÅŽÕÑ&crid=2NTKY1Y12UIR1&dib=eyJ2IjoiMSJ9.w6wZ1FsAj2iZvPC9gNawK9Tg8oo1EYaH37mk3BWNEQ0h8SW3Byi7CnkxPgWKvQxIrXCcezuM6nTvUZU06EWYzLCwybokeq1X1nPN_UFfXGmIBWu3tIslh1BzPbCiFY36hZwNlExCI-OQr3divDl-MD3Cx2-PhqqxoDPl_u56kCL7KvZplb817iwB4eGjS0tCvt1qDFaAgVEDDnZvrm_Y09_a6ofZmAhgq9gxQDmRFCRHNlvk_wU5w3nRcsnTbEgUhIMQnDkYq-YhZ1lqTm0gxCgttxRwq3SlkhvgkvKOBAk.OthJVYQJ_yDvWEuzmbg5UMaJ1Xh12Nze5mdxWYenUXE&dib_tag=se&keywords=hidratante+cerave&qid=1750169680&sprefix=hidratante+cerav%2Caps%2C292&sr=8-1-spons&ufe=app_do%3Aamzn1.fos.6d798eae-cadf-45de-946a-f477d47705b9&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1
+  },
+  {
+    nome: 'Pomadas e Cremes Dermatológicos',
+    icone: '🧴',
+    corFundo: '#fff8e1',
+    itens: [
+      { icone: '🌿', texto: 'Pomada Zudaifu' },
+      { icone: '💊', texto: 'Corticoides tópicos leves em crise aguda' }
+    ]
+  },
+  {
+    nome: 'Medicamentos Orais ou Injetáveis',
+    icone: '💊',
+    corFundo: '#fce4ec',
+    itens: [],
+    produto: null
+  }
+]
 
 const tabs = { 'info': 'Informações da jornada', 'casos': 'Casos semelhantes', 'dicas': 'Dicas de tratamentos' }
 const activeTab = ref(tabs['info'])
@@ -566,6 +623,104 @@ const currentIndex = ref(0)
 
 .genero-tag{
 
+}
+
+.tratamentos-wrapper {
+  padding: 1rem;
+  font-family: 'Nunito', sans-serif;
+}
+
+.categoria-box {
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.categoria-titulo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #4b3b36;
+  margin-bottom: 0.5rem;
+}
+
+.dica-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+.item-icone {
+  width: 28px;
+  display: inline-block;
+  font-size: 1.1rem;
+  margin-right: 8px;
+}
+
+.produto-sugerido {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.produto-img {
+  width: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.produto-detalhes {
+  flex: 1;
+  min-width: 180px;
+}
+
+.produto-label {
+  font-size: 0.88rem;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
+.produto-nome {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.3rem;
+  font-size: 0.95rem;
+}
+
+.produto-preco {
+  color: #4b3b36;
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.produto-btn {
+  display: inline-block;
+  background: linear-gradient(to right, #56d9bd, #a79cd5);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: transform 0.2s ease;
+}
+
+.produto-btn:hover {
+  transform: scale(1.03);
+}
+
+.aviso-medico {
+  font-size: 0.8rem;
+  color: #777;
+  text-align: center;
 }
 
 }

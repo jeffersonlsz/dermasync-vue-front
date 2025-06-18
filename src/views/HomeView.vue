@@ -56,20 +56,23 @@
     </section>
 
 
-    <section class="hero-section px-3 py-7 remove-desktop position-relative">
+    <section class="hero-section px-3 py-5 remove-desktop position-relative">
        
-      <div class="d-flex justify-content-between align-items-start" style="width: 100%;">
+      <div class="d-flex flex-column align-items-start" style="width: 100%;">
         <!-- Texto à esquerda -->
-        <div class="hero-text flex-column align-items-center mb-4" style="margin-top: 3rem;">
+        <div class="hero-text text-start mb-4" style="max-width: 100%;">
           <h1 class="fw-bold mb-3">
             Veja como outras pessoas superaram a <span class="highlight">Dermatite Atópica</span>
           </h1>
          
           <p class="sub">Relatos reais. Soluções aprovadas. Totalmente anônimo.</p>  
-          <RouterLink to="/galeria" class="btn btn-primary w-75">Veja pessoas reais e aprenda</RouterLink>
-          <button class="btn-video-explicativo btn  mt-3" @click="mostrarVideo = true">
-            ▶️ Veja um vídeo explicativo
-          </button>
+          <p class="sub mb-6" style="margin-right: 6rem;">Dados coletados de comunidades reais</p>  
+          <div class="hero-btns mt-8">
+            <RouterLink to="/galeria" class="btn btn-primary mb-2">Veja pessoas reais e aprenda</RouterLink>
+            <button class="btn-video-explicativo mt-3" @click="mostrarVideo = true">
+              ▶️ Veja um vídeo explicativo
+            </button>
+          </div>
         </div>
       </div>
 
@@ -329,7 +332,7 @@ function fecharOverlay() {
 
 .hero-section {
   position: relative;
-  background-image: url('/img/background-layer-1.jpg');
+  background-image: url('/img/background-layer-11.jpg');
   background-size: cover;
   
   
@@ -409,14 +412,14 @@ video {
 }
 
 .btn-primary {
-    background-image: linear-gradient(#0dccea, #0d70ea);
-    border: 0;
+    background-color: #8B5E3C;
+    border: none;
     border-radius: 4px;
     box-shadow: rgba(0, 0, 0, .3) 0 5px 15px;
     box-sizing: border-box;
     color: #fff;
     cursor: pointer;
-    font-family: 'Open Sans';
+    font-family: Montserrat, sans-serif;
     font-size: .9em;
     margin: 5px;
     padding: 10px 15px;
@@ -427,7 +430,7 @@ video {
 }
 
 .btn-primary:hover {
-  background: linear-gradient(to right, #6b46c1, #8945e0);
+  
   box-shadow: 0 6px 16px rgba(127, 86, 217, 0.3);
 }
 
@@ -522,10 +525,14 @@ video {
 
   .hero-section {
       position: relative;
-      background-color: #fef7eb;
-      font-family: 'Inter', sans-serif;
-      text-align: center;
-      overflow: hidden;
+      background-image: url('/img/background-layer-11.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: top left;
+      background-color: #fff7e6; /* fallback */
+      padding: 3rem 1rem;
+      min-height: 100vh;
+      z-index: 0;
   }
 
   .hero-bg {
@@ -539,6 +546,7 @@ video {
   .hero-text {
   padding: 0 1rem;
   font-family: 'Open Sans';
+  
 }
 
 .hero-text h1 {
@@ -546,6 +554,7 @@ video {
   font-weight: 700;
   line-height: 1.4;
   color: #2c2c2c;
+  margin-bottom: 0px !important;
 }
 
 .hero-text .highlight {
@@ -554,7 +563,7 @@ video {
 
 .hero-text .sub {
   font-size: 1rem;
-  margin: 0.5rem 0;
+  
   color: #555;
 
 }
@@ -588,22 +597,26 @@ video {
   }
 
   .hero-btns {
-    width: 100%;
-    gap: 1rem;
-    display: flex;
-    flex-direction: column;
+    
   }
   .btn-video-explicativo{
            background: #3f6f4a;
   }
-  .btn-primary {
-        background-image: linear-gradient(334deg, #a8ff7287, #0000001a); 
-        /* font-weight: bold; */
-        font-size: 1.2rem;
-        /* border: none; */
-        box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
-        background: #927257;
-  }
+.btn-primary {
+  background-color: #8B5E3C;
+  border: none;
+  display: inline-flex;
+        align-items: center;
+        
+        text-align: center;
+        padding: 0.75rem 1.25rem;
+        line-height: 1.2;
+          width: 100%;            /* estica horizontalmente */
+  max-width: 320px;       /* limite para não ficar exagerado */
+  font-size: 1.125rem;    /* ~18px */
+  font-weight: 600;
+    
+}
 
   .btn-outline-secondary {
     background: transparent;
