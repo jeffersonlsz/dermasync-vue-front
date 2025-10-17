@@ -86,15 +86,3 @@ export const buscarCasosSemelhantesAPI = async (info) => {
     return {'data' : dados};
 };
 
-
-/* export const buscarCasosSemelhantesAPI = async (query: string): Promise<any> => {
-    try {
-        const response = await axios.get(`${API_BASE_URL}/casos/semelhantes`, {
-            params: { query },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching similar cases:', error);
-        throw error;
-    }
-}; */

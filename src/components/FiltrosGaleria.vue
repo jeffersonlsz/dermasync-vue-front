@@ -37,7 +37,7 @@
         </div>
 
             <!-- Outras Tags -->
-        <label class="form-label fw-bold mb-2">Outras tags</label>
+        <!--label class="form-label fw-bold mb-2">Outras tags</label>
         <div class="d-flex flex-wrap gap-2 mb-4">
           <button
             v-for="tag in todasTags"
@@ -47,7 +47,7 @@
             style="border-radius: 20px; padding: 5px 15px;">
             {{ tag }}
           </button>
-        </div>
+        </div-->
 
         <!-- Botões ao fim -->
         <div class="d-flex justify-content-between mt-4">

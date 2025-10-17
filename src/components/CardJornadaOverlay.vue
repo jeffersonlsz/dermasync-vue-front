@@ -135,7 +135,7 @@
 
 
               <div v-for="(caso, index) in casos" :key="index"
-                class="d-flex align-items-start mb-3 p-3 border rounded shadow-sm bg-white">
+                class=" align-items-start mb-3 p-3 border rounded shadow-sm bg-white">
                 <img :src="caso.imgAntes" alt="Foto do caso semelhante" class="me-3 rounded"
                   style="width: 64px; height: 64px; object-fit: cover;" />
                 <img :src="caso.imgDepois" alt="Foto do caso semelhante" class="me-3 rounded"
