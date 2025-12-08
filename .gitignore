@@ -13,6 +13,7 @@ lerna-debug.log*
 node_modules
 dist/
 .env
+.env.development
 dist-ssr
 *.local
 src/firebase/firebase-service-account.json

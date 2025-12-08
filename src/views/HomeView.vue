@@ -1,638 +1,95 @@
 <template>
   <BaseLayout>
-   
-        
+    <!-- Hero Section -->
+    <section class="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden">
+      <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <!-- Text Column -->
+          <div class="text-left space-y-6">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-gray-900 leading-tight">
+              Supere a <span class="text-primary">Dermatite Atópica</span> com histórias reais.
+            </h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-lg leading-relaxed">
+              Uma comunidade segura para compartilhar relatos, encontrar soluções aprovadas e ver que você não está
+              sozinho.
+            </p>
 
-    
-    <section class="hero-section container py-5 remove-mobile">
-      <div class="row align-items-center">
-        <!-- Texto -->
-        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="flex flex-col sm-flex-row gap-4 pt-2">
+              <RouterLink to="/galeria"
+                class="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-primary rounded-xl shadow-lg hover:bg-primary-600 hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+                Explorar Galeria de Histórias
+              </RouterLink>
+            </div>
 
-          <h1 class="fw-bold mb-3 remove-mobile">
-            Veja como outras pessoas superaram a <span class="text-primary">Dermatite Atópica</span>
-          </h1>
-          <p class="mb-3 remove-mobile">Relatos reais. Soluções aprovadas. Totalmente anônimo.</p>
-          <div class="d-flex gap-3 flex-wrap mb-2">
-            <RouterLink to="/galeria" class="">
-              <button class="animated-button">
-                <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
-                  <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z">
-                  </path>
+            <div
+              class="flex flex-col sm:flex-row items-start sm:items-center gap-4 text-sm text-gray-500 font-medium pt-2">
+              <div class="flex items-center gap-2">
+                <div class="flex -space-x-2">
+                  <div class="w-6 h-6 rounded-full bg-gray-200 border-2 border-white"></div>
+                  <div class="w-6 h-6 rounded-full bg-gray-300 border-2 border-white"></div>
+                  <div class="w-6 h-6 rounded-full bg-gray-400 border-2 border-white"></div>
+                </div>
+                <span>Mais de 1000 relatos verificados</span>
+              </div>
+
+              <div class="hidden sm:block w-1 h-1 bg-gray-300 rounded-full"></div>
+
+              <div class="flex items-center gap-2 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clip-rule="evenodd" />
                 </svg>
-                <span class="text">Explorar Galeria</span>
-                <span class="circle"></span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
-                  <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z">
-                  </path>
-                </svg>
-              </button>
-            </RouterLink>
+                <span>100% Anônimo e Seguro</span>
+              </div>
+            </div>
           </div>
-          <div class="hero-subtext mt-2 remove-mobile">
-            <span class="me-2">👁️</span>Veja como outras pessoas venceram a coceira
-          </div>
-        </div>
 
-        <!-- Imagens em cápsulas -->
-        <div class="col-lg-6 d-flex justify-content-center gap-5 " style="overflow: visible;">
-          <div class="hero-img-wrapper ms-3 remove-mobile">
-            <img src="/img/hero-004.jpg" class="hero-img" alt="capsule 4" />
-            <img src="/img/hero-006.jpg" class="hero-img" alt="capsule 5" />
-          </div>
-          <div class="hero-img-wrapper">
-            <img src="/img/hero-005.jpg" class="hero-img" alt="capsule 1" />
-            <img src="/img/hero-002.jpg" class="hero-img" alt="capsule 2" />
-            <img src="/img/hero-001.jpg" class="hero-img" alt="capsule 3" />
-          </div>
-          <div class="hero-img-wrapper ms-3 remove-mobile" style="margin-top: 72px;">
-            <img src="/img/hero-007.jpg" class="hero-img" alt="capsule 4" />
-            <img src="/img/hero-008.png" class="hero-img" alt="capsule 5" />
+          <!-- Image Column -->
+          <div class="relative hidden md:block">
+            <!-- Decorative blob/shape behind -->
+            <div
+              class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary-100/50 rounded-full blur-3xl -z-10">
+            </div>
+
+            <!-- Placeholder Image -->
+            <div
+              class="relative rounded-2xl overflow-hidden shadow-xl border-4 border-white transform rotate-2 hover:rotate-0 transition-transform duration-500">
+              <img :src="currentHeroImage"
+                alt="Conexão humana e bem-estar" class="w-full h-auto object-cover aspect-[4/3]" />
+              <!-- Overlay gradient -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-
-    <section class="hero-section px-3 py-5 remove-desktop position-relative">
-       
-      <div class="d-flex flex-column align-items-start" style="width: 100%;">
-        <!-- Texto à esquerda -->
-        <div class="hero-text text-start mb-4" style="max-width: 100%;">
-          <h1 class="fw-bold mb-3">
-            Veja como outras pessoas superaram a <span class="highlight">Dermatite Atópica</span>
-          </h1>
-         
-          <p class="sub">Relatos reais. Soluções aprovadas. Totalmente anônimo.</p>  
-          <p class="sub mb-6" style="margin-right: 6rem;">Dados coletados de comunidades reais</p>  
-          <div class="hero-btns mt-8">
-            <RouterLink to="/galeria" class="btn btn-primary mb-2">Veja pessoas reais e aprenda</RouterLink>
-            <button class="btn-video-explicativo mt-3" @click="mostrarVideo = true">
-              ▶️ Veja um vídeo explicativo
-            </button>
-          </div>
+    <!-- How it Works Section -->
+    <section class="py-20 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <h2 class="text-3xl font-heading font-bold text-gray-900 mb-4">Como funciona o DermaSync?</h2>
+          <p class="text-lg text-gray-600">Simples, seguro e focado em ajudar você a encontrar respostas.</p>
         </div>
+
+        <HomeComoFunciona />
       </div>
-
-      <!-- Overlay com vídeo -->
-      <!-- Transição para o overlay -->
-      <transition name="fade">
-        <div v-if="mostrarVideo" class="video-overlay" @click.self="fecharOverlay">
-          <div class="video-container">
-            <button class="close-btn" @click="fecharOverlay">✖</button>
-            <video controls autoplay muted class="video-player">
-              <source
-                src="https://firebasestorage.googleapis.com/v0/b/dermasync-3d14a.firebasestorage.app/o/public%2Fvideos%2Fvideo-sample.mp4?alt=media"
-                type="video/mp4" />
-              Seu navegador não suporta o formato de vídeo.
-            </video>
-          </div>
-        </div>
-      </transition>
-    
     </section>
-
-    <section class="hero-bottom remove-mobile">
-
-
-      <!--video
-        controls
-        preload="metadata"
-        poster="/img/video-thumb.jpg"
-        class="w-full max-w-full aspect-video rounded-xl shadow-lg object-cover hero-video" 
-      >
-        <source
-          src="https://firebasestorage.googleapis.com/v0/b/dermasync-3d14a.firebasestorage.app/o/public%2Fvideos%2Fvideo-sample.mp4?alt=media"
-          type="video/mp4"
-        />
-        Seu navegador não suporta vídeos.
-      </video-->
-
-
-      <!--div class="hero-buttons flex flex-wrap gap-4 ">
-      <RouterLink to="/galeria" class="btn btn-primary">Explorar Galeria</RouterLink> 
-    </div-->
-    </section>
-
-    
-    <HomeComoFunciona />
-    <!--HomeGaleriaColaborativa /-->
-    
-    <section class="container text-center py-5">
-      <!-- Rodapé de confiança -->
-      <p class="text-muted fw-semibold mt-5">
-        <i class="bi bi-lock-fill text-warning me-2"></i>
-        <strong>100% Anônimo</strong> – Protegemos seus dados e privacidade
-      </p>
-
-    </section>
-
   </BaseLayout>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 import BaseLayout from '../layouts/BaseLayout.vue';
-import HomeGaleriaColaborativa from '../components/HomeGaleriaColaborativa.vue';
 import HomeComoFunciona from '../components/HomeComoFunciona.vue';
-import WordCloud from '../components/WordCloud.vue';
 
+const heroImages = [
+  '/img/hero-images/hero-008.png',
+  '/img/hero-images/hero-009.jpg',
+  '/img/hero-images/hero-dermatite_001.jpg',
+  '/img/hero-images/hero-dermatite_002.png'
+];
 
-const numeros_imagens = ref([1, 2, 3, 4, 5, 6, 7]);
-const mostrarVideo = ref(false);
-
-function fecharOverlay() {
-  mostrarVideo.value = false;
-}
+const currentHeroImage = ref(heroImages[Math.floor(Math.random() * heroImages.length)]);
 </script>
-
-<style scoped>
-/* From Uiverse.io by Matilemak */
-.animated-button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 16px 36px;
-  border: 4px solid;
-  border-color: transparent;
-  font-size: 16px;
-  background-color: inherit;
-  border-radius: 100px;
-  font-weight: 600;
-  color: #1e1e1e;
-  box-shadow: 0 0 0 2px #1e1e1e;
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.animated-button svg {
-  position: absolute;
-  width: 24px;
-  fill: #1e1e1e;
-  z-index: 9;
-  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.animated-button .arr-1 {
-  right: 16px;
-}
-
-.animated-button .arr-2 {
-  left: -25%;
-}
-
-.animated-button .circle {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  background-color: #fd8a26;
-  border-radius: 50%;
-  opacity: 0;
-  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.animated-button .text {
-  position: relative;
-  z-index: 1;
-  transform: translateX(-12px);
-  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.animated-button:hover {
-  box-shadow: 0 0 0 12px transparent;
-  color: #1e1e1e;
-  border-radius: 12px;
-}
-
-.animated-button:hover .arr-1 {
-  right: -25%;
-}
-
-.animated-button:hover .arr-2 {
-  left: 16px;
-}
-
-.animated-button:hover .text {
-  transform: translateX(12px);
-}
-
-.animated-button:hover svg {
-  fill: #1e1e1e;
-}
-
-.animated-button:active {
-  scale: 0.95;
-  box-shadow: 0 0 0 4px #fd8a26;
-}
-
-.animated-button:hover .circle {
-  width: 220px;
-  height: 220px;
-  opacity: 1;
-}
-
-
-.hero-img {
-  width: 100%;
-  max-width: 120px;
-  height: 180px;
-  border-radius: 60px;
-  object-fit: cover;
-  background-color: #f8f9fa;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  transform: scale(1.05);
-}
-
-.hero-img-wrapper {
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
-  overflow: visible;
-  gap: 22px;
-}
-
-.origem-dados {
-  font-size: 0.9rem;
-  color: #4A4A4A;
-  margin-top: 0.5rem;
-  display: flex;
-  gap: 0.4rem;
-  align-items: center;
-}
-.origem-dados i {
-  font-size: 1rem;
-  margin: 0 0.2rem;
-  color: #8B5E3C; /* tom terroso */
-}
-
-.btn-video-explicativo{
-    background-image: linear-gradient(#0dccea, #0d70ea);
-    border: 0;
-    border-radius: 4px;
-    box-shadow: rgba(0, 0, 0, .3) 0 5px 15px;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    font-family: Montserrat, sans-serif;
-    font-size: .9em;
-    margin: 5px;
-    padding: 10px 15px;
-    text-align: center;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-}
-
-.btn-purple {
-  background-color: #6f2dbd;
-  color: white;
-}
-
-.btn-purple:hover {
-  background-color: #5b21a3;
-}
-
-.hero-subtext {
-  font-size: 0.95rem;
-}
-
-
-.navbar {
-  background-color: rgba(20, 20, 20, 0.85) !important;
-  /* tom escuro translúcido */
-  backdrop-filter: blur(6px);
-  /* dá um efeito sutil moderno */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-
-.hero-video-wrapper {
-  width: 100%;
-  max-width: 480px;
-  margin: 2rem auto 0 auto;
-  /* margem acima, centralizado */
-}
-
-.hero-video {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: 12px;
-  /* box-shadow: 0 0 12px rgba(0, 0, 0, 0.15); */
-}
-
-.hero-section {
-  position: relative;
-  background-image: url('/img/background-layer-11.jpg');
-  background-size: cover;
-  
-  
-  z-index: 0;
-}
-
-/* Camada de overlay */
-.hero-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-  /*background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)); /* ajuste como quiser */ 
-}
-
-/* Conteúdo da hero */
-.hero-section > * {
-  position: relative;
-  z-index: 2;
-}
-
-
-
-
-.hero-title {
-  color: #5f3c3c;  
-  font-weight: 600;
-  line-height: 1.3;
-  font-size: 1.75rem;
-}
-
-.highlight {
-  color: #7f9cf5;
-  /* tom azul violeta */
-}
-
-.hero-subtext {
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.hero-buttons {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-
-video {
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  /* ou 4/3, dependendo do vídeo */
-  object-fit: cover;
-  border-radius: 1rem;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-}
-
-.hero-video-wrapper {
-  width: 100%;
-  max-width: 480px;
-  margin: 14rem auto 0 auto;
-  /* margem acima, centralizado */
-}
-
-.btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  transition: 0.2s;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.btn-primary {
-    background-color: #8B5E3C;
-    border: none;
-    border-radius: 4px;
-    box-shadow: rgba(0, 0, 0, .3) 0 5px 15px;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    font-family: Montserrat, sans-serif;
-    font-size: .9em;
-    margin: 5px;
-    padding: 10px 15px;
-    text-align: center;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-}
-
-.btn-primary:hover {
-  
-  box-shadow: 0 6px 16px rgba(127, 86, 217, 0.3);
-}
-
-.btn-secondary {
-  background-color: white;
-  color: #7f56d9;
-  border: 1px solid #7f56d9;
-}
-
-.btn-secondary:hover {
-  background-color: #f0f0f0;
-}
-
-.hero-promise {
-  font-size: 0.95rem;
-  color: #f1f1f1;
-  margin-top: 0.5rem;
-  max-width: 500px;
-}
-
-.passo-como-funciona {
-  background-color: #dee2e6;
-  border-radius: 6%;
-}
-
-/* Overlay e container */
-.video-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  padding: 1rem;
-}
-
-.video-container {
-  position: relative;
-  max-width: 90vw;
-  max-height: 90vh;
-  background: #000;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-}
-
-.video-player {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-}
-
-.close-btn {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.75rem;
-  background: transparent;
-  color: white;
-  font-size: 1.5rem;
-  border: none;
-  cursor: pointer;
-  z-index: 10000;
-}
-
-/* Transição Fade */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-
-
-@media (max-width: 767px) {
-  .remove-mobile {
-    display: none !important;
-  }
-
-  .container{
-    padding-right: 0%;
-    padding-left: 0%;
-  }
-
-  .hero-section {
-      position: relative;
-      background-image: url('/img/background-layer-11.jpg');
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: top left;
-      background-color: #fff7e6; /* fallback */
-      padding: 3rem 1rem;
-      min-height: 100vh;
-      z-index: 0;
-  }
-
-  .hero-bg {
-  width: 100%;
-  max-height: 500px;
-  object-fit: cover;
-  border-radius: 0 0 24px 24px;
-  margin-bottom: 1.5rem;
-}
-
-  .hero-text {
-  padding: 0 1rem;
-  font-family: 'Open Sans';
-  
-}
-
-.hero-text h1 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  line-height: 1.4;
-  color: #2c2c2c;
-  margin-bottom: 0px !important;
-}
-
-.hero-text .highlight {
-  color: #2a7750;
-}
-
-.hero-text .sub {
-  font-size: 1rem;
-  
-  color: #555;
-
-}
-
-  .hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    /* background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(40, 40, 40, 0.8)); */
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 0 1.5rem;
-  }
-
-  .hero-title {
-    color: #5f3c3c;
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 2rem;
-    margin-top: 2rem;
-  }
-
-  .hero-btns {
-    
-  }
-  .btn-video-explicativo{
-           background: #3f6f4a;
-  }
-.btn-primary {
-  background-color: #8B5E3C;
-  border: none;
-  display: inline-flex;
-        align-items: center;
-        
-        text-align: center;
-        padding: 0.75rem 1.25rem;
-        line-height: 1.2;
-          width: 100%;            /* estica horizontalmente */
-  max-width: 320px;       /* limite para não ficar exagerado */
-  font-size: 1.125rem;    /* ~18px */
-  font-weight: 600;
-    
-}
-
-  .btn-outline-secondary {
-    background: transparent;
-    color: #f0f0f0;
-    border: 1px solid #ccc;
-  }
-
-  .navbar {
-    border-radius: 0 !important;
-    width: 100vw;
-    margin: 0 !important;
-    padding: 0.5rem 1rem !important;
-    border: none;
-  }
-
-
-}
-
-</style>

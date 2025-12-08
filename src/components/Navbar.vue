@@ -1,118 +1,70 @@
 <template>
-  <nav
-    class="navbar navbar-expand-lg sticky-top z-index-3 navbar-transparent bg-white-glass shadow-sm my-3 mx-4 border-radius-xl">
-    <div class="container-fluid px-3">
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100">
+    <div class="container mx-auto px-4 h-16 flex items-center justify-between">
       <!-- Logo -->
-      <RouterLink class="navbar-brand fw-bolder text-dark d-flex align-items-center" to="/">
-        <span class="logo-text">DermaSync</span>
+      <RouterLink to="/" class="flex items-center gap-2">
+        <span class="font-heading font-bold text-xl text-gray-900 tracking-tight">DermaSync</span>
       </RouterLink>
 
-      <!-- Mobile Toggle -->
-      <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse"
-        data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon mt-2">
-          <span class="navbar-toggler-bar bar1"></span>
-          <span class="navbar-toggler-bar bar2"></span>
-          <span class="navbar-toggler-bar bar3"></span>
-        </span>
-      </button>
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center gap-8">
+        <RouterLink to="/" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+          Início
+        </RouterLink>
+        <RouterLink to="/galeria" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+          Galeria
+        </RouterLink>
+        <RouterLink to="/videos-explicativos"
+          class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+          Relatos em Vídeo
+        </RouterLink>
+      </div>
 
-      <!-- Navigation Links -->
-      <div class="collapse navbar-collapse" id="navigation">
-        <ul class="navbar-nav mx-auto ms-xl-auto me-xl-7">
-          <li class="nav-item">
-            <RouterLink class="nav-link d-flex align-items-center me-2 active" aria-current="page" to="/">
-              Início
-            </RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link me-2" to="/cadastro">
-              Cadastrar-se
-            </RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link me-2" to="/videos-explicativos">
-              Relatos em vídeo
-            </RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link me-2" to="/galeria">
-              Galeria
-            </RouterLink>
-          </li>
-        </ul>
+      <!-- Auth Actions -->
+      <div class="flex items-center gap-4">
+        <template v-if="isAuthenticated">
+          <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-200">
+            <div class="w-2 h-2 rounded-full bg-green-500"></div>
+            <span class="text-xs font-semibold text-gray-700">{{ userEmail }}</span>
+          </div>
+          <button @click="handleLogout" class="text-sm font-medium text-red-600 hover:text-red-700 transition-colors">
+            Sair
+          </button>
+        </template>
 
-        <!-- Right Side: Auth Actions -->
-        <ul class="navbar-nav d-lg-block d-none">
-          <!-- Logged In State -->
-          <li v-if="isAuthenticated" class="nav-item d-flex align-items-center gap-3">
-            <div class="user-profile d-flex align-items-center px-3 py-2 bg-gray-100 border-radius-lg">
-              <i class="fas fa-user-circle text-primary me-2 text-lg"></i>
-              <span class="text-sm fw-bold text-dark">{{ userEmail }}</span>
-            </div>
-            <button class="btn btn-sm btn-outline-danger mb-0 px-3" @click="handleLogout">
-              Sair
-            </button>
-          </li>
+        <template v-else>
+          <button @click="isLoginModalOpen = true"
+            class="px-5 py-2 text-sm font-semibold text-primary border border-primary rounded-full hover:bg-primary/5 transition-colors">
+            Entrar
+          </button>
+        </template>
 
-          <!-- Logged Out State -->
-          <li v-else class="nav-item">
-            <div class="dropdown">
-              <button class="btn bg-gradient-primary btn-sm mb-0 px-4" type="button" id="dropdownMenuButton"
-                @click="toggleMenu" :aria-expanded="isMenuOpen">
-                Entrar
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end px-4 py-4 me-sm-n4 shadow-lg border-radius-xl"
-                :class="{ show: isMenuOpen }" aria-labelledby="dropdownMenuButton">
-                <li class="mb-3">
-                  <h6 class="text-center font-weight-bolder">Bem-vindo de volta!</h6>
-                  <p class="text-xs text-center text-secondary">Insira suas credenciais para entrar.</p>
-                </li>
-                <li class="mb-3">
-                  <div class="form-group">
-                    <label for="email" class="form-label text-xs font-weight-bold">Email</label>
-                    <input type="email" id="email" class="form-control" placeholder="seu@email.com" v-model="email" />
-                  </div>
-                </li>
-                <li class="mb-3">
-                  <div class="form-group">
-                    <label for="password" class="form-label text-xs font-weight-bold">Senha</label>
-                    <input type="password" id="password" class="form-control" placeholder="******" v-model="password" />
-                  </div>
-                </li>
-
-                <li v-if="errorMessage" class="mb-2 text-danger text-xs text-center fw-bold">
-                  {{ errorMessage }}
-                </li>
-
-                <li class="mb-3">
-                  <button class="btn btn-primary w-100 mb-0" type="button" @click="handleLogin" :disabled="isLoading">
-                    <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
-                      aria-hidden="true"></span>
-                    {{ isLoading ? 'Entrando...' : 'Entrar' }}
-                  </button>
-                </li>
-
-                <li class="text-center my-2 position-relative">
-                  <p class="text-secondary text-xs bg-white px-2 position-relative z-index-2 d-inline-block mb-0">ou</p>
-                  <hr class="horizontal dark position-absolute w-100 top-50 z-index-1 m-0">
-                </li>
-
-                <li class="mb-2">
-                  <button
-                    class="btn btn-outline-light w-100 d-flex align-items-center justify-content-center border-gray-300 text-dark"
-                    type="button">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"
-                      class="me-2" width="18">
-                    <span class="text-xs font-weight-bold">Entrar com Google</span>
-                  </button>
-                </li>
-              </ul>
-            </div>
-          </li>
-        </ul>
+        <!-- Mobile Menu Button -->
+        <button class="md:hidden p-2 text-gray-600" @click="isMenuOpen = !isMenuOpen">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
       </div>
     </div>
+
+    <!-- Mobile Menu -->
+    <div v-if="isMenuOpen" class="md:hidden bg-white border-t border-gray-100 py-4 px-4 flex flex-col gap-4 shadow-lg">
+      <RouterLink to="/" class="text-base font-medium text-gray-700" @click="isMenuOpen = false">Início</RouterLink>
+      <RouterLink to="/galeria" class="text-base font-medium text-gray-700" @click="isMenuOpen = false">Galeria
+      </RouterLink>
+      <RouterLink to="/videos-explicativos" class="text-base font-medium text-gray-700" @click="isMenuOpen = false">
+        Relatos
+        em Vídeo</RouterLink>
+      <hr class="border-gray-100">
+      <button v-if="!isAuthenticated" @click="openLoginModalMobile"
+        class="text-base font-medium text-primary text-left">
+        Entrar
+      </button>
+    </div>
+
+    <!-- Login Modal -->
+    <LoginModal :isOpen="isLoginModalOpen" @close="isLoginModalOpen = false" />
   </nav>
 </template>
 
@@ -120,41 +72,19 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import LoginModal from './LoginModal.vue'
 
 const isMenuOpen = ref(false)
-const email = ref('')
-const password = ref('')
-const isLoading = ref(false)
-const errorMessage = ref('')
-
+const isLoginModalOpen = ref(false)
 const router = useRouter()
 const authStore = useAuthStore()
 
 const isAuthenticated = computed(() => !!authStore.accessToken)
 const userEmail = computed(() => authStore.user?.email || 'Usuário')
 
-function toggleMenu() {
-  isMenuOpen.value = !isMenuOpen.value
-}
-
-async function handleLogin() {
-  errorMessage.value = ''
-  isLoading.value = true
-
-  try {
-    await authStore.login(email.value, password.value)
-    isMenuOpen.value = false
-    // Redirect to gallery
-    router.push('/galeria')
-  } catch (error) {
-    if (error.response && error.response.status === 401) {
-      errorMessage.value = 'Credenciais inválidas.'
-    } else {
-      errorMessage.value = 'Erro ao fazer login.'
-    }
-  } finally {
-    isLoading.value = false
-  }
+function openLoginModalMobile() {
+  isMenuOpen.value = false
+  isLoginModalOpen.value = true
 }
 
 async function handleLogout() {
@@ -162,46 +92,3 @@ async function handleLogout() {
   router.push('/login')
 }
 </script>
-
-<style scoped>
-.bg-white-glass {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.logo-text {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 1.25rem;
-  letter-spacing: -0.5px;
-}
-
-.nav-link {
-  font-weight: 600;
-  font-size: 0.875rem;
-  color: #344767;
-  transition: all 0.2s ease;
-}
-
-.nav-link:hover,
-.nav-link.active {
-  color: #cb0c9f;
-  /* Primary color hint */
-}
-
-.dropdown-menu {
-  border: none;
-  box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05);
-  min-width: 20rem;
-}
-
-.form-control:focus {
-  border-color: #cb0c9f;
-  box-shadow: 0 0 0 2px rgba(203, 12, 159, 0.2);
-}
-
-.user-profile {
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-}
-</style>

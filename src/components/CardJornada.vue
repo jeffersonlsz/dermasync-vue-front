@@ -101,70 +101,69 @@ console.log('Card recebido:', props.card);
 <template>
   <div
     v-intersect="ativarAnimacao"
-    :class="['card', 'border-0', 'shadow-lg', { 'animado': visivel }]"
+    :class="['bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1', { 'opacity-100 translate-y-0': visivel, 'opacity-0 translate-y-4': !visivel }]"
   >
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center">
-      <h6 class="mb-0">{{ card.tituloRelato || card.classificacao }}</h6>
+    <div class="px-4 py-3 bg-white border-b border-gray-100 flex justify-between items-center">
+      <div class="flex items-center">
+      <h6 class="mb-0 text-gray-900 font-semibold">{{ card.tituloRelato || card.classificacao }}</h6>
       </div>
       <div>
-      <i class="bi bi-info-circle text-muted"></i>
+      <i class="bi bi-info-circle text-gray-400"></i>
       </div>
     </div>
-    <div class="d-flex" style="height: 140px;">
+    <div class="flex h-[140px]">
       
       <!-- ANTES -->
-      <div class="w-50 position-relative">
+      <div class="w-1/2 position-relative relative">
         <img
           :src="card.imgAntes"
           @load="imagemCarregou('antes')"
           @error="imagemCarregou('antes')"
-          class="thumb-jornada p-1 w-100 h-100 rounded-start fade-in-img"
+          class="thumb-jornada p-0.5 w-full h-full object-cover rounded-bl-sm fade-in-img"
           :class="{ loaded: !carregandoAntes }"
-          style="object-fit: cover;"
           @click.prevent="verJornada(card)"
         />
-        <div v-if="carregandoAntes" class="w-100 h-100 bg-light shimmer rounded-start position-absolute top-0 start-0"></div>
+        <div v-if="carregandoAntes" class="w-full h-full bg-gray-100 shimmer absolute top-0 left-0"></div>
       </div>
 
       <!-- DEPOIS -->
-      <div class="w-50 position-relative">
+      <div class="w-1/2 position-relative relative">
         <img
           :src="card.imgDepois"
           @load="imagemCarregou('depois')"
           @error="imagemCarregou('depois')"
-          class="thumb-jornada p-1 w-100 h-100 rounded-end fade-in-img"
+          class="thumb-jornada p-0.5 w-full h-full object-cover rounded-br-sm fade-in-img"
           :class="{ loaded: !carregandoDepois }"
-          style="object-fit: cover;"
           @click.prevent="verJornada(card)"
         />
-        <div v-if="carregandoDepois" class="w-100 h-100 bg-light shimmer rounded-end position-absolute top-0 start-0"></div>
+        <div v-if="carregandoDepois" class="w-full h-full bg-gray-100 shimmer absolute top-0 left-0"></div>
       </div>
     </div>
 
-    <div class="p-3">
+    <div class="p-5">
       
-      <p class="small text-muted mb-1">{{ card.solucao }}</p>
-      <p class="small text-muted mb-1">{{ card.microdepoimento }}</p>
-      <div class="mb-2 d-flex flex-wrap gap-1">
-        <span v-for="tag in tagz" :key="tag" class="badge bg-light text-dark">{{ tag }}</span>
-        <span class="bg-light badge text-dark bg-primary-subtle" @click.prevent="verMaisTags(card, $event)" >+Mais tags</span>
+      <p class="text-sm text-gray-500 mb-2 line-clamp-2">{{ card.solucao }}</p>
+      <p class="text-sm text-gray-600 mb-3 italic">"{{ card.microdepoimento }}"</p>
+      
+      <div class="mb-4 flex flex-wrap gap-2">
+        <span v-for="tag in tagz" :key="tag" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">{{ tag }}</span>
+        <button v-if="tagz.length < card.tags.length" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-skin-100 text-primary hover:bg-skin-200 transition-colors cursor-pointer" @click.prevent="verMaisTags(card, $event)" >+Mais tags</button>
       </div>
       
-      <hr />
-      <hr class="horizontal dark my-3">
-      <div class="d-flex justify-content-between align-items-center">
-        <a href="#" class="btn btn-light text-primary text-decoration-none" @click.prevent="verJornada(card)">
+      <div class="h-px bg-gray-100 my-4"></div>
+      
+      <div class="flex justify-between items-center">
+        <a href="#" class="inline-flex items-center text-primary font-bold text-sm hover:text-primary-600 transition-colors" @click.prevent="verJornada(card)">
           Ver jornada
         </a>
 
-        <div class="d-flex align-items-center gap-1 like-button" 
+        <div class="flex items-center gap-1 like-button px-2 py-1 rounded-full hover:bg-gray-50 bg-opacity-50 transition-all" 
             :class="{ active: card.curtido }"
             @click.prevent="curtir(card)"
             style="cursor: pointer;">
-          <i :class="card.curtido ? 'bi bi-heart-fill' : 'bi bi-heart'"
+          <i :class="card.curtido ? 'bi bi-heart-fill text-red-500' : 'bi bi-heart text-gray-400'"
             class="fs-5"></i>
-          <span class="text-muted small">{{ card.likes }}</span>
+          <span class="text-xs font-medium" :class="card.curtido ? 'text-red-500' : 'text-gray-500'">{{ card.likes }}</span>
         </div>
       </div>
     </div>

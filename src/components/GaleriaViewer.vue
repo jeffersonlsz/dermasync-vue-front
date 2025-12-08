@@ -1,50 +1,57 @@
 <template>
 
-  <div class="container py-4">
-  <div class="text-center">
-    <!-- Título -->
-    <h1 class="display-5">Relatos que transformam</h1>
-    <p class="">
-      Histórias reais. Inspire-se. Compartilhe sua experiência e ajude outras pessoas.
-    </p>
+  <div class="container mx-auto px-4 pt-24 pb-8">
+    <div class="text-center mb-12">
+      <!-- Título -->
+      <h1 class="text-4xl md:text-5xl font-heading font-bold text-gray-900 mb-4">Relatos que transformam</h1>
+      <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+        Histórias reais. Inspire-se. Compartilhe sua experiência e ajude outras pessoas.
+      </p>
 
-    <!-- Botão CTA -->
-    <button class="btn btn-primary btn-lg px-4 py-4 shadow " @click.stop.prevent="mostrandoFormulario = true">
-       Envie seu relato e aprenda!
-    </button>
+      <!-- Botão CTA -->
+      <button
+        class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-primary rounded-xl shadow-lg hover:bg-primary-600 hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+        @click.stop.prevent="mostrandoFormulario = true">
+        Envie seu relato e aprenda!
+      </button>
 
-    <!-- Alerta de responsabilidade -->
-    <div class="alert mt-4 mx-auto px-4 py-2 small text-muted border rounded-3 shadow-sm" style="max-width: 650px; background-color: #f9f9f9;">
-      <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
-      Este conteúdo é colaborativo e não substitui uma consulta com dermatologista ou profissional especializado.
+      <!-- Alerta de responsabilidade -->
+      <div
+        class="mt-8 mx-auto px-4 py-3 text-sm text-yellow-800 bg-yellow-50 border border-yellow-200 rounded-lg shadow-sm flex items-center justify-center gap-2 max-w-2xl">
+        <i class="bi bi-exclamation-triangle-fill text-yellow-600"></i>
+        <span>Este conteúdo é colaborativo e não substitui uma consulta com dermatologista ou profissional
+          especializado.</span>
+      </div>
     </div>
-  </div>
 
     <div class="areaexibicao"></div>
 
     <FiltroGaleria :contadores="contadores" @filtrosAlterados="filtrosAtuais = $event" />
- 
+
 
 
 
     <div>
-      <div v-if="estado === 'LOADING'" class="text-center py-5">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Carregando...</span>
+      <div v-if="estado === 'LOADING'" class="text-center py-20">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-r-transparent"
+          role="status">
+          <span class="sr-only">Carregando...</span>
         </div>
       </div>
 
-      <div v-else-if="estado === 'ERROR'" class="text-center py-5">
-        <p class="text-danger">Erro ao carregar a galeria. Tente novamente mais tarde.</p>
-        <button class="btn btn-primary mt-3" @click="carregarGaleria">Tentar novamente</button>
+      <div v-else-if="estado === 'ERROR'" class="text-center py-20">
+        <p class="text-red-600 text-lg mb-4">Erro ao carregar a galeria. Tente novamente mais tarde.</p>
+        <button class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-colors"
+          @click="carregarGaleria">Tentar novamente</button>
       </div>
 
       <div v-else-if="estado === 'EMPTY'" class="text-center py-5">
         <p class="text-muted">Nenhuma jornada encontrada ainda.</p>
       </div>
 
-      <TransitionGroup v-else-if="estado === 'SUCCESS'" name="fade-slide" tag="div" class="row g-4">
-        <div v-for="card in galeriaVisivel" :key="card.id" class="col-md-4">
+      <TransitionGroup v-else-if="estado === 'SUCCESS'" name="fade-slide" tag="div"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-for="card in galeriaVisivel" :key="card.id" class="w-full">
           <CardJornada :card="card" />
         </div>
       </TransitionGroup>
@@ -101,7 +108,7 @@ const galeria = ref([]);
 const carregando = ref(true);
 
 const mostrandoFormulario = ref(false);
-const estado = ref('LOADING'); 
+const estado = ref('LOADING');
 const sentinela = ref(null);
 
 const contadores = computed(() => {
@@ -154,67 +161,67 @@ function carregarMaisVisiveis() {
 
 // Função para carregar os dados
 async function carregarGaleria() {
-  estado.value = 'LOADING'; 
+  estado.value = 'LOADING';
   galeria.value = [];
   try {
     const querySnapshot = await getDocs(collection(db, 'jornadas'));
-    
+
     if (querySnapshot.empty) {
       estado.value = 'EMPTY';
       return;
     }
     // Se houver dados, continue
-      const dados = await Promise.all(querySnapshot.docs.map(async doc => {
-        const data = doc.data();
-        // Pega os caminhos das imagens
-        const caminhoAntes = data.imagens.antes; 
-        const caminhoDepois = data.imagens.depois; 
-        const caminhosDurante = data.imagens.durante; // Se houver 
-        let urlAntes = '';
-        let urlDepois = '';
-        let urlsDurante = [];
-        try {
-          if (caminhoAntes) {
-            urlAntes = await getDownloadURL(storageRef(storage, caminhoAntes));
-          }
-        } catch (e) {
-          console.warn(`Erro ao carregar imagem Antes do documento ${doc.id}: usando fallback.`);
+    const dados = await Promise.all(querySnapshot.docs.map(async doc => {
+      const data = doc.data();
+      // Pega os caminhos das imagens
+      const caminhoAntes = data.imagens.antes;
+      const caminhoDepois = data.imagens.depois;
+      const caminhosDurante = data.imagens.durante; // Se houver 
+      let urlAntes = '';
+      let urlDepois = '';
+      let urlsDurante = [];
+      try {
+        if (caminhoAntes) {
+          urlAntes = await getDownloadURL(storageRef(storage, caminhoAntes));
         }
+      } catch (e) {
+        console.warn(`Erro ao carregar imagem Antes do documento ${doc.id}: usando fallback.`);
+      }
 
-        try {
-          if (caminhoDepois) {
-            urlDepois = await getDownloadURL(storageRef(storage, caminhoDepois));
-          }
-        } catch (e) {
-          console.warn(`Erro ao carregar imagem Depois do documento ${doc.id}: usando fallback.`);
+      try {
+        if (caminhoDepois) {
+          urlDepois = await getDownloadURL(storageRef(storage, caminhoDepois));
         }
-       
-        if(caminhosDurante) {
-          urlsDurante = await Promise.all(caminhosDurante.map(async caminho => {
-            try {
-              return await getDownloadURL(storageRef(storage, caminho));
-            } catch (e) {
-              console.warn(`Erro ao carregar imagem Durante do documento ${doc.id}: usando fallback.`);
-              return '/img/fallback-error.png'; // ou outro fallback
-            }
-          }));
-        }
+      } catch (e) {
+        console.warn(`Erro ao carregar imagem Depois do documento ${doc.id}: usando fallback.`);
+      }
 
-        return {
-          id: doc.id,
-          imgAntes: urlAntes,
-          imgDepois: urlDepois,
-          imgDurante: urlsDurante || [],
-          descricao: data.relatoProcessado || data.descricao || 'Não informado',
-          microdepoimento: data.microdepoimento || ' -- ',
-          classificacao: data.classificacao || 'Não informado',
-          tags: data.tags_extraidas || [],
-          regioesAfetadas: data.regioesAfetadas || [],
-          genero: data.genero || 'Não informado',
-          solucao: data.solucao || '',
-          tituloRelato: data.tituloRelato || data.classificacao + ' com dermatite em ' + data.regioesAfetadas[0] // Adiciona o título da jornada
-          // outros campos se precisar
-        };
+      if (caminhosDurante) {
+        urlsDurante = await Promise.all(caminhosDurante.map(async caminho => {
+          try {
+            return await getDownloadURL(storageRef(storage, caminho));
+          } catch (e) {
+            console.warn(`Erro ao carregar imagem Durante do documento ${doc.id}: usando fallback.`);
+            return '/img/fallback-error.png'; // ou outro fallback
+          }
+        }));
+      }
+
+      return {
+        id: doc.id,
+        imgAntes: urlAntes,
+        imgDepois: urlDepois,
+        imgDurante: urlsDurante || [],
+        descricao: data.relatoProcessado || data.descricao || 'Não informado',
+        microdepoimento: data.microdepoimento || ' -- ',
+        classificacao: data.classificacao || 'Não informado',
+        tags: data.tags_extraidas || [],
+        regioesAfetadas: data.regioesAfetadas || [],
+        genero: data.genero || 'Não informado',
+        solucao: data.solucao || '',
+        tituloRelato: data.tituloRelato || data.classificacao + ' com dermatite em ' + data.regioesAfetadas[0] // Adiciona o título da jornada
+        // outros campos se precisar
+      };
     }));
 
     galeria.value = dados;
@@ -300,14 +307,14 @@ async function carregarNovoCard(idNovoDoc) {
       genero: data.genero || 'Não informado',
       tags: data.tags_extraidas || [],
       solucao: data.solucao || '',
-      tituloRelato: data.tituloRelato || data.classificacao +' com dermatite em ' + data.regioesAfetadas[0], // Adiciona o título da jornada
+      tituloRelato: data.tituloRelato || data.classificacao + ' com dermatite em ' + data.regioesAfetadas[0], // Adiciona o título da jornada
     };
     if (galeria.value.some(card => card.id === docSnap.id)) {
       console.warn(`Card duplicado detectado (${docSnap.id}). Ignorando.`);
       return;
     }
     galeria.value.unshift(novoCard);
-   
+
     watchLLM(docSnap.id); // Inicia o watcher para o novo card
     console.log('Watcher iniciado para o novo card:', docSnap.id);
 
@@ -349,13 +356,13 @@ const galeriaFiltrada = computed(() => {
     console.log('Filtros atuais:', filtrosAtuais.value.faixaEtaria, filtrosAtuais.value.genero, filtrosAtuais.value.regiao, filtrosAtuais.value.tagsSelecionadas);
     // Faixa etária (agora múltiplos)
     if (filtrosAtuais.value.faixaEtaria.length > 0 &&
-        !filtrosAtuais.value.faixaEtaria.includes(card.classificacao?.toLowerCase())) {
+      !filtrosAtuais.value.faixaEtaria.includes(card.classificacao?.toLowerCase())) {
       return false;
     }
 
     // Gênero
     if (filtrosAtuais.value.genero.length > 0 &&
-        !filtrosAtuais.value.genero.includes(card.genero?.toLowerCase())) {
+      !filtrosAtuais.value.genero.includes(card.genero?.toLowerCase())) {
       return false;
     }
 
@@ -430,36 +437,36 @@ onMounted(() => {
   configurarObserver();
   ajustarLimiteSeCurto();
   watchEffect(() => {
-  if (
-    estado.value === 'SUCCESS' &&
-    galeriaFiltrada.value.length <= limiteVisual.value &&
-    document.documentElement.scrollHeight <= window.innerHeight
-  ) {
-    limiteVisual.value = galeriaFiltrada.value.length;
+    if (
+      estado.value === 'SUCCESS' &&
+      galeriaFiltrada.value.length <= limiteVisual.value &&
+      document.documentElement.scrollHeight <= window.innerHeight
+    ) {
+      limiteVisual.value = galeriaFiltrada.value.length;
+    }
   }
-}
-  
-);
 
-watch(filtrosAtuais, () => {
-  ajustarLimiteSeCurto();
-});
+  );
+
+  watch(filtrosAtuais, () => {
+    ajustarLimiteSeCurto();
+  });
 
 });
 </script>
 
 <style scoped>
-
-.container{
+.container {
   background-color: #FFFFFF;
-background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2000 1500'%3E%3Cdefs%3E%3Crect stroke='%23FFFFFF' stroke-width='0.4' width='1' height='1' id='s'/%3E%3Cpattern id='a' width='3' height='3' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cuse fill='%23fcfcfc' href='%23s' y='2'/%3E%3Cuse fill='%23fcfcfc' href='%23s' x='1' y='2'/%3E%3Cuse fill='%23fafafa' href='%23s' x='2' y='2'/%3E%3Cuse fill='%23fafafa' href='%23s'/%3E%3Cuse fill='%23f7f7f7' href='%23s' x='2'/%3E%3Cuse fill='%23f7f7f7' href='%23s' x='1' y='1'/%3E%3C/pattern%3E%3Cpattern id='b' width='7' height='11' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23f5f5f5'%3E%3Cuse href='%23s'/%3E%3Cuse href='%23s' y='5' /%3E%3Cuse href='%23s' x='1' y='10'/%3E%3Cuse href='%23s' x='2' y='1'/%3E%3Cuse href='%23s' x='2' y='4'/%3E%3Cuse href='%23s' x='3' y='8'/%3E%3Cuse href='%23s' x='4' y='3'/%3E%3Cuse href='%23s' x='4' y='7'/%3E%3Cuse href='%23s' x='5' y='2'/%3E%3Cuse href='%23s' x='5' y='6'/%3E%3Cuse href='%23s' x='6' y='9'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='h' width='5' height='13' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23f5f5f5'%3E%3Cuse href='%23s' y='5'/%3E%3Cuse href='%23s' y='8'/%3E%3Cuse href='%23s' x='1' y='1'/%3E%3Cuse href='%23s' x='1' y='9'/%3E%3Cuse href='%23s' x='1' y='12'/%3E%3Cuse href='%23s' x='2'/%3E%3Cuse href='%23s' x='2' y='4'/%3E%3Cuse href='%23s' x='3' y='2'/%3E%3Cuse href='%23s' x='3' y='6'/%3E%3Cuse href='%23s' x='3' y='11'/%3E%3Cuse href='%23s' x='4' y='3'/%3E%3Cuse href='%23s' x='4' y='7'/%3E%3Cuse href='%23s' x='4' y='10'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='c' width='17' height='13' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23f2f2f2'%3E%3Cuse href='%23s' y='11'/%3E%3Cuse href='%23s' x='2' y='9'/%3E%3Cuse href='%23s' x='5' y='12'/%3E%3Cuse href='%23s' x='9' y='4'/%3E%3Cuse href='%23s' x='12' y='1'/%3E%3Cuse href='%23s' x='16' y='6'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='d' width='19' height='17' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23FFFFFF'%3E%3Cuse href='%23s' y='9'/%3E%3Cuse href='%23s' x='16' y='5'/%3E%3Cuse href='%23s' x='14' y='2'/%3E%3Cuse href='%23s' x='11' y='11'/%3E%3Cuse href='%23s' x='6' y='14'/%3E%3C/g%3E%3Cg fill='%23efefef'%3E%3Cuse href='%23s' x='3' y='13'/%3E%3Cuse href='%23s' x='9' y='7'/%3E%3Cuse href='%23s' x='13' y='10'/%3E%3Cuse href='%23s' x='15' y='4'/%3E%3Cuse href='%23s' x='18' y='1'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='e' width='47' height='53' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23FFFFFF'%3E%3Cuse href='%23s' x='2' y='5'/%3E%3Cuse href='%23s' x='16' y='38'/%3E%3Cuse href='%23s' x='46' y='42'/%3E%3Cuse href='%23s' x='29' y='20'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='f' width='59' height='71' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23FFFFFF'%3E%3Cuse href='%23s' x='33' y='13'/%3E%3Cuse href='%23s' x='27' y='54'/%3E%3Cuse href='%23s' x='55' y='55'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='g' width='139' height='97' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23FFFFFF'%3E%3Cuse href='%23s' x='11' y='8'/%3E%3Cuse href='%23s' x='51' y='13'/%3E%3Cuse href='%23s' x='17' y='73'/%3E%3Cuse href='%23s' x='99' y='57'/%3E%3C/g%3E%3C/pattern%3E%3C/defs%3E%3Crect fill='url(%23a)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23b)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23h)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23c)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23d)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23e)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23f)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23g)' width='100%25' height='100%25'/%3E%3C/svg%3E");
-background-attachment: fixed;
-background-size: cover;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2000 1500'%3E%3Cdefs%3E%3Crect stroke='%23FFFFFF' stroke-width='0.4' width='1' height='1' id='s'/%3E%3Cpattern id='a' width='3' height='3' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cuse fill='%23fcfcfc' href='%23s' y='2'/%3E%3Cuse fill='%23fcfcfc' href='%23s' x='1' y='2'/%3E%3Cuse fill='%23fafafa' href='%23s' x='2' y='2'/%3E%3Cuse fill='%23fafafa' href='%23s'/%3E%3Cuse fill='%23f7f7f7' href='%23s' x='2'/%3E%3Cuse fill='%23f7f7f7' href='%23s' x='1' y='1'/%3E%3C/pattern%3E%3Cpattern id='b' width='7' height='11' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23f5f5f5'%3E%3Cuse href='%23s'/%3E%3Cuse href='%23s' y='5' /%3E%3Cuse href='%23s' x='1' y='10'/%3E%3Cuse href='%23s' x='2' y='1'/%3E%3Cuse href='%23s' x='2' y='4'/%3E%3Cuse href='%23s' x='3' y='8'/%3E%3Cuse href='%23s' x='4' y='3'/%3E%3Cuse href='%23s' x='4' y='7'/%3E%3Cuse href='%23s' x='5' y='2'/%3E%3Cuse href='%23s' x='5' y='6'/%3E%3Cuse href='%23s' x='6' y='9'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='h' width='5' height='13' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23f5f5f5'%3E%3Cuse href='%23s' y='5'/%3E%3Cuse href='%23s' y='8'/%3E%3Cuse href='%23s' x='1' y='1'/%3E%3Cuse href='%23s' x='1' y='9'/%3E%3Cuse href='%23s' x='1' y='12'/%3E%3Cuse href='%23s' x='2'/%3E%3Cuse href='%23s' x='2' y='4'/%3E%3Cuse href='%23s' x='3' y='2'/%3E%3Cuse href='%23s' x='3' y='6'/%3E%3Cuse href='%23s' x='3' y='11'/%3E%3Cuse href='%23s' x='4' y='3'/%3E%3Cuse href='%23s' x='4' y='7'/%3E%3Cuse href='%23s' x='4' y='10'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='c' width='17' height='13' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23f2f2f2'%3E%3Cuse href='%23s' y='11'/%3E%3Cuse href='%23s' x='2' y='9'/%3E%3Cuse href='%23s' x='5' y='12'/%3E%3Cuse href='%23s' x='9' y='4'/%3E%3Cuse href='%23s' x='12' y='1'/%3E%3Cuse href='%23s' x='16' y='6'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='d' width='19' height='17' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23FFFFFF'%3E%3Cuse href='%23s' y='9'/%3E%3Cuse href='%23s' x='16' y='5'/%3E%3Cuse href='%23s' x='14' y='2'/%3E%3Cuse href='%23s' x='11' y='11'/%3E%3Cuse href='%23s' x='6' y='14'/%3E%3C/g%3E%3Cg fill='%23efefef'%3E%3Cuse href='%23s' x='3' y='13'/%3E%3Cuse href='%23s' x='9' y='7'/%3E%3Cuse href='%23s' x='13' y='10'/%3E%3Cuse href='%23s' x='15' y='4'/%3E%3Cuse href='%23s' x='18' y='1'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='e' width='47' height='53' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23FFFFFF'%3E%3Cuse href='%23s' x='2' y='5'/%3E%3Cuse href='%23s' x='16' y='38'/%3E%3Cuse href='%23s' x='46' y='42'/%3E%3Cuse href='%23s' x='29' y='20'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='f' width='59' height='71' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23FFFFFF'%3E%3Cuse href='%23s' x='33' y='13'/%3E%3Cuse href='%23s' x='27' y='54'/%3E%3Cuse href='%23s' x='55' y='55'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='g' width='139' height='97' patternUnits='userSpaceOnUse' patternTransform='scale(5) translate(-800 -600)'%3E%3Cg fill='%23FFFFFF'%3E%3Cuse href='%23s' x='11' y='8'/%3E%3Cuse href='%23s' x='51' y='13'/%3E%3Cuse href='%23s' x='17' y='73'/%3E%3Cuse href='%23s' x='99' y='57'/%3E%3C/g%3E%3C/pattern%3E%3C/defs%3E%3Crect fill='url(%23a)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23b)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23h)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23c)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23d)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23e)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23f)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23g)' width='100%25' height='100%25'/%3E%3C/svg%3E");
+  background-attachment: fixed;
+  background-size: cover;
 }
 
-.btn{
+.btn {
   letter-spacing: 0rem !important;
 }
+
 .btn-primary {
   background: #927257;
   border: none;
@@ -471,14 +478,16 @@ background-size: cover;
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(76, 126, 243, 0.25);
 }
-.card-filtros{
- align-items: center;
- justify-content: center;
+
+.card-filtros {
+  align-items: center;
+  justify-content: center;
 }
 
 img {
   object-fit: cover;
 }
+
 .linha-filtro {
   display: block;
   margin-bottom: 0.5rem;
@@ -498,6 +507,7 @@ img {
   justify-content: center;
   padding: 2rem;
 }
+
 .overlay-content {
   background: white;
   border-radius: 1rem;
@@ -514,20 +524,19 @@ img {
 .fade-slide-enter-active {
   transition: all 0.3s ease;
 }
+
 .fade-slide-enter-from {
   opacity: 0;
   transform: translateY(10px);
 }
+
 .fade-slide-enter-to {
   opacity: 1;
   transform: translateY(0);
 }
+
 .fade-slide-leave-active {
   opacity: 0;
   transform: translateY(-10px);
 }
-
-
-
-
 </style>

@@ -1,409 +1,321 @@
 <template>
-  <!-- OVERLAY CONTAINER -->
   <transition name="fade-overlay">
-    <div v-if="jornadaSelecionada" class="overlay-wrapper">
-      <div class="overlay-content bg-white p-4 rounded shadow position-relative">
-        <div class="overlay-header d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
-          <h5 class="mb-0">
-             {{ jornadaSelecionada?.tituloRelato || 'Detalhes da Jornada' }}
-          </h5>
-          <button class="btn-fechar-overlay btn-close position-absolute top-0 end-0 m-3"
-            @click="$emit('update:jornadaSelecionada', null)">X</button>
+    <div v-if="jornadaSelecionada" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6">
+      <!-- Backdrop -->
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="$emit('update:jornadaSelecionada', null)"></div>
+
+      <!-- Modal Content -->
+      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden transform transition-all">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white z-10">
+          <h2 class="text-xl md:text-2xl font-heading font-bold text-gray-800 line-clamp-1">
+            {{ jornadaSelecionada?.tituloRelato || 'Detalhes da Jornada' }}
+          </h2>
+          <button 
+            @click="$emit('update:jornadaSelecionada', null)"
+            class="p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+            title="Fechar"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
-        <!-- Nav Pills bonitos -->
-        <div class="nav nav-pills nav-fills my-3 hidden remove_mobile">
-          <div class="d-flex gap-3 bg-[#f8f9fa] p-1 rounded-pill shadow-inner w-full max-w-md mx-auto">
-            <button v-for="tab in tabs" :key="tab" @click="activeTab = tab" :class="[
-              'nav-item border flex-1 text-center py-2 rounded-pill text-sm font-medium transition-all duration-200',
-              activeTab === tab
-                ? 'bg-white text-primary shadow-md'
-                : 'text-gray-600 hover:text-primary'
-            ]">
-              {{ tab }}
-            </button>
-          </div>
-        </div>
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto bg-gray-50">
+          <div class="p-6">
+            
+            <!-- Tags & Tabs Mobile/Desktop -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+              <!-- Tabs -->
+              <div class="bg-gray-200/50 p-1 rounded-full inline-flex self-start md:self-auto">
+                <button 
+                  v-for="tab in tabs" 
+                  :key="tab" 
+                  @click="activeTab = tab"
+                  class="px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200"
+                  :class="activeTab === tab ? 'bg-white text-primary shadow-sm' : 'text-gray-600 hover:text-gray-800'"
+                >
+                  {{ tab }}
+                </button>
+              </div>
 
-        <!-- Conteúdo das Abas -->
-        <div class="bg-white rounded-xl shadow-inner h-[500px]">
-          <div v-if="activeTab === 'Informações da jornada'">
+               <!-- Badges -->
+               <div class="flex gap-2">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-skin-100 text-primary-600">
+                    {{ jornadaSelecionada.classificacao }}
+                  </span>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600">
+                    {{ jornadaSelecionada.genero }}
+                  </span>
+               </div>
+            </div>
 
-            <!--CONTEUDO DA PRIMEIRA ABA -->
-            <div class="row g-4 mt-3">
-              <!-- LADO ESQUERDO -->
-              <div class="col-md-6">
-
-                <div class="text-center">
-                   <!-- Badges descritivos -->
-                <div class="mt-1 text-center" >
-                  <div class="btn genero-tag">{{ jornadaSelecionada.classificacao }}</div>
-                  <div class="btn genero-tag">{{ jornadaSelecionada.genero }}</div>
-                  
-                </div>
-                  <div id="carouselFotos" class="carousel slide mb-3" data-bs-ride="carousel">
-                    <div class="carousel-inner mb-4">
-                      <div
-                        v-for="(foto, index) in imagens"
-                        :key="index"
-                        :class="['carousel-item', { active: index === 0 }]"
-                        @click="abrirImagemAmpliada"
-                      >
-                        <div style="width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
-                              <img :src="imagens[fotoAtual]" class="rounded" style="max-height: 100%; max-width: 100%; object-fit: contain;" />
+            <!-- TAB CONTENT -->
+            <div class="bg-white rounded-2xl shadow-sm p-6 md:p-8 min-h-[400px]">
+              
+              <!-- INFO TAB -->
+              <div v-if="activeTab === 'Informações da jornada'" class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+                
+                <!-- Left Column: Carousel -->
+                <div class="space-y-4">
+                  <div class="relative aspect-video lg:aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden group">
+                     <template v-if="imagens.length > 0">
+                        <img 
+                          :src="imagens[fotoAtual]" 
+                          class="w-full h-full object-contain cursor-zoom-in transition-transform duration-500"
+                          @click="abrirImagemAmpliada" 
+                          alt="Foto da jornada"
+                        />
+                        
+                        <!-- Controls -->
+                        <div v-if="imagens.length > 1" class="absolute inset-0 flex items-center justify-between p-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button @click.stop="fotoAnterior" class="pointer-events-auto p-2 rounded-full bg-white/80 hover:bg-white shadow-lg text-gray-800 transition-all transform hover:scale-110">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                          </button>
+                          <button @click.stop="proximaFoto" class="pointer-events-auto p-2 rounded-full bg-white/80 hover:bg-white shadow-lg text-gray-800 transition-all transform hover:scale-110">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                          </button>
                         </div>
-                      </div>
+
+                         <!-- Indicators -->
+                         <div v-if="imagens.length > 1" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 p-1.5 bg-black/20 backdrop-blur rounded-full">
+                            <button 
+                              v-for="(img, idx) in imagens" 
+                              :key="idx"
+                              @click.stop="selecionarFoto(idx)"
+                              class="w-2 h-2 rounded-full transition-all"
+                              :class="idx === fotoAtual ? 'bg-white w-4' : 'bg-white/50 hover:bg-white/80'"
+                            ></button>
+                         </div>
+                     </template>
+                     <div v-else class="flex items-center justify-center h-full text-gray-400">
+                        <span class="text-sm">Sem imagens disponíveis</span>
+                     </div>
+                  </div>
+
+                  <!-- Thumbnails -->
+                  <div v-if="imagens.length > 1" class="flex gap-2 overflow-x-auto pb-2 justify-center">
+                    <button 
+                      v-for="(foto, index) in imagens" 
+                      :key="index"
+                      @click="selecionarFoto(index)"
+                      class="relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0"
+                      :class="fotoAtual === index ? 'border-primary ring-2 ring-primary/20' : 'border-transparent hover:border-gray-200'"
+                    >
+                      <img :src="foto" class="w-full h-full object-cover" />
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Right Column: Text & Details -->
+                <div class="flex flex-col">
+                  <!-- Areas Afetadas -->
+                  <div class="mb-6">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Áreas Afetadas</h4>
+                    <div class="flex flex-wrap gap-2">
+                       <span v-for="(regiao, index) in jornadaSelecionada.regioesAfetadas" :key="index"
+                        class="px-3 py-1 bg-teal-50 text-teal-700 text-sm font-medium rounded-lg border border-teal-100">
+                        {{ regiao }}
+                       </span>
+                    </div>
+                  </div>
+
+                  <!-- Relato -->
+                  <div class="mb-6 flex-1">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Relato da Experiência</h4>
+                    <div class="prose prose-sm text-gray-600 leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100">
+                      <p class="whitespace-pre-line">{{ textoResumido }}</p>
+                    </div>
+                    <button 
+                      v-if="temTextoEscondido" 
+                      @click="expandirTexto" 
+                      class="mt-2 text-sm text-primary font-semibold hover:text-primary-600 flex items-center gap-1 group"
+                    >
+                      Ler relato completo 
+                      <svg class="w-4 h-4 group-hover:translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                  </div>
+
+                  <!-- Tags -->
+                  <div v-if="jornadaSelecionada.tags && jornadaSelecionada.tags.length > 0">
+                    <div class="flex flex-wrap gap-2 pt-4 border-t border-gray-100">
+                      <span v-for="tag in jornadaSelecionada.tags.slice(0, 5)" :key="tag" class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition-colors">
+                        #{{ tag }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- CASOS SEMELHANTES TAB -->
+              <div v-else-if="activeTab === 'Casos semelhantes'" class="animate-fadeIn">
+                 <div v-if="loadingCasos" class="flex flex-col items-center justify-center py-20 text-gray-400">
+                    <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <p>Buscando conexões...</p>
+                 </div>
+                 
+                 <div v-else>
+                    <div class="flex items-center justify-between mb-6">
+                      <h3 class="text-lg font-bold text-gray-800">Casos com alta similaridade</h3>
+                      <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{{ casos.length }} encontrados</span>
                     </div>
 
-                    <!-- Botões de navegação -->
-
-                     <!-- Seta esquerda -->
-                    <button
-                      class="carousel-control-prev"
-                      type="button"
-                      @click="fotoAnterior"
-                      style="width: 5%;"
-                    >
-                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                      <span class="visually-hidden">Anterior</span>
-                    </button>
-
-                    <!-- Seta direita -->
-                    <button
-                      class="carousel-control-next"
-                      type="button"
-                      @click="proximaFoto"
-                      style="width: 5%;"
-                    >
-                      <span class="carousel-control-next-icon"></span>
-                    </button>
-
-                     <div class="d-flex justify-content-center gap-2 flex-wrap mb-3">
-                    <img
-                      v-for="(foto, index) in imagens"
-                      :key="index"
-                      :src="foto"
-                      class="miniatura-foto"
-                      :class="{ ativa: fotoAtual === index }"
-                      @click="selecionarFoto(index)"
-                    />
-                  </div>
-                  </div>
-
-                </div>
-
-
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div v-for="(caso, index) in casos" :key="index" class="bg-white border boundary-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow flex gap-4">
+                         <div class="flex -space-x-4 flex-shrink-0">
+                            <img :src="caso.imgAntes" class="w-16 h-16 rounded-lg object-cover border-2 border-white shadow-sm" />
+                            <img :src="caso.imgDepois" class="w-16 h-16 rounded-lg object-cover border-2 border-white shadow-sm" />
+                         </div>
+                         <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                               <span class="text-xs font-bold text-gray-900">{{ caso.genero }}</span>
+                               <span class="text-gray-300">•</span>
+                               <span class="text-xs text-gray-500">{{ caso.faixaEtaria }}</span>
+                            </div>
+                            <p class="text-xs text-gray-600 line-clamp-2 mb-2">{{ caso.descricao }}</p>
+                            <button class="text-xs text-primary font-semibold hover:underline">Ver detalhes</button>
+                         </div>
+                      </div>
+                    </div>
+                    
+                    <div class="text-center mt-8">
+                       <button class="px-6 py-2 border-2 border-primary text-primary font-bold rounded-xl hover:bg-primary-50 transition-colors" @click="buscarCasosSemelhantes">
+                        Carregar mais casos
+                       </button>
+                    </div>
+                 </div>
               </div>
 
-              <!-- LADO DIREITO -->
-              <div class="col-md-6">
-
-               
-
-                
-                <p class="text-center"><strong>Áreas afetadas:</strong></p>
-                <div>
-                  <span v-for="(regiao, index) in jornadaSelecionada.regioesAfetadas" :key="index"
-                    class="badge bg-gradient-faded-info me-1">{{ regiao }}</span>
+              <!-- DICAS TAB -->
+              <div v-else-if="activeTab === 'Dicas de tratamentos'" class="animate-fadeIn">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div v-for="(categoria, index) in categoriasTratamento" :key="index" 
+                      class="rounded-xl p-5 border transition-all hover:shadow-md"
+                      :style="{ backgroundColor: categoria.corFundo, borderColor: categoria.corFundo }"
+                   >
+                      <h5 class="flex items-center gap-2 font-bold text-gray-800 mb-4 text-lg">
+                        <span class="text-2xl">{{ categoria.icone }}</span> {{ categoria.nome }}
+                      </h5>
+                      <ul class="space-y-3">
+                         <li v-for="(item, i) in categoria.itens" :key="i" class="flex items-start gap-3 text-gray-700">
+                            <span class="mt-0.5">{{ item.icone }}</span>
+                            <span class="text-sm font-medium leading-relaxed">{{ item.texto }}</span>
+                         </li>
+                      </ul>
+                      
+                      <div v-if="categoria.produto" class="mt-6 bg-white/60 backdrop-blur rounded-lg p-3 flex gap-4 items-center border border-white/50 shadow-sm">
+                         <img :src="categoria.produto.imagem" class="w-16 h-16 object-contain bg-white rounded-md p-1" />
+                         <div class="flex-1">
+                            <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-0.5">Sugerido pela comunidade</p>
+                            <p class="text-sm font-bold text-gray-900 leading-tight mb-1">{{ categoria.produto.nome }}</p>
+                            <p class="text-xs text-primary font-bold">{{ categoria.produto.preco }}</p>
+                         </div>
+                         <a :href="categoria.produto.link" target="_blank" class="p-2 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-full transition-colors">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                         </a>
+                      </div>
+                   </div>
                 </div>
-                
-                 <div class="">
-                  <p class="mt-3 text-center"><strong>Relato:</strong></p>
-                
-                  <p class="text-muted">{{ textoJornada }}</p>
-                </div>
-                <button class="botao-ver-mais" @click.prevent="expandirTexto" >Ver Mais</button>
-                <div class="mt-4">
-                  <span v-for="tag in jornadaSelecionada.tags.slice(1,4)" :key="tag" class="badge bg-primary me-2 mb-1">{{ tag
-                    }}</span>
-                </div>
-
-                <hr />
-
-              </div>
-            </div>
-
-            <!-- FIM CONTEUDO DA PRIMEIRA ABA -->
-
-          </div>
-
-          <div v-if="activeTab === 'Casos semelhantes'">
-            
-            <div class="px-3 py-2">
-              <p v-if="loadingCasos" class="text-muted">🔄 Buscando casos semelhantes...</p>
-                <p v-else class="mb-3 text-muted">Encontramos {{ casos.length }} casos com alta similaridade:</p>
-
-
-              <div v-for="(caso, index) in casos" :key="index"
-                class=" align-items-start mb-3 p-3 border rounded shadow-sm bg-white">
-                <img :src="caso.imgAntes" alt="Foto do caso semelhante" class="me-3 rounded"
-                  style="width: 64px; height: 64px; object-fit: cover;" />
-                <img :src="caso.imgDepois" alt="Foto do caso semelhante" class="me-3 rounded"
-                  style="width: 64px; height: 64px; object-fit: cover;" />
-
-                <div class="flex-grow-1">
-                  <p class="mb-1">
-                    <i class="bi bi-person-fill"></i>
-                    <strong>{{ caso.genero }}</strong> · <strong>{{ caso.faixaEtaria }}</strong>
-                    |<strong>
-                      <span v-for="(area, index) in caso.areasAfetadas" :key="index">
-                      {{ area }}{{ index < caso.areasAfetadas.length - 1 ? ', ' : '' }}
-                      </span>
-                    </strong>
-                  </p>
-                  <p class="text-muted mb-1" style="font-size: 0.9rem;">{{ caso.descricao }}</p>
-                  <a href="#" class="text-primary" style="font-size: 0.9rem;">
-                    🔍 Ver jornada completa
-                  </a>
+                <div class="mt-8 text-center p-4 bg-yellow-50 rounded-xl border border-yellow-100">
+                    <p class="text-sm text-yellow-800 flex items-center justify-center gap-2">
+                       <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                       Estas dicas não substituem avaliação médica profissional.
+                    </p>
                 </div>
               </div>
-            </div>
 
-            <div class="text-center mt-3">
-             <button class="btn btn-outline-primary" @click="buscarCasosSemelhantes">
-              Ver mais casos semelhantes
-            </button>
-
-            </div>
-
-
-          </div>
-
-      <div v-if="activeTab === 'Dicas de tratamentos'" class="tratamentos-wrapper">
-        <div v-for="(categoria, index) in categoriasTratamento" :key="index" class="categoria-box" :style="{ backgroundColor: categoria.corFundo }">
-          <h5 class="categoria-titulo">
-            <span class="me-2">{{ categoria.icone }}</span>{{ categoria.nome }}
-          </h5>
-
-          <ul class="list-unstyled">
-            <li v-for="(item, i) in categoria.itens" :key="i" class="dica-item">
-              <span class="item-icone">{{ item.icone }}</span>
-              <span>{{ item.texto }}</span>
-            </li>
-          </ul>
-
-          <div v-if="categoria.produto" class="produto-sugerido mt-3">
-            <img :src="categoria.produto.imagem" :alt="categoria.produto.nome" class="produto-img" />
-
-            <div class="produto-detalhes mt-2">
-              <p class="produto-label">⭐ Produto usado por outros usuários:</p>
-              <p class="produto-nome">{{ categoria.produto.nome }}</p>
-              <p class="produto-preco">{{ categoria.produto.preco }}</p>
-              
-              <a :href="categoria.produto.link" target="_blank" class="produto-btn">
-                Ver na Amazon
-              </a>
             </div>
           </div>
         </div>
-
-        <p class="aviso-medico mt-3">⚠️ Essas dicas não substituem avaliação médica.</p>
       </div>
+    
+      <!-- Lightbox for Zoomed Image -->
+      <transition name="fade">
+        <div v-if="showImagemAmpliada" class="fixed inset-0 z-[10000] bg-black/95 flex items-center justify-center p-4" @click="fecharImagemAmpliada">
+           <img :src="imagens[fotoAtual]" class="max-w-full max-h-screen object-contain rounded-lg shadow-2xl skew-y-0" />
+           <button class="absolute top-4 right-4 text-white hover:text-gray-300 p-2" @click="fecharImagemAmpliada">
+              <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+           </button>
         </div>
-      </div>
-
-
+      </transition>
 
     </div>
-
   </transition>
-  <!-- OVERLAY IMAGEM AMPLIADA-->
-  <div v-if="showImagemAmpliada"
-    class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-75"
-    style="z-index: 9999;" @click.self="fecharImagemAmpliada">
-    <img :src="imagens[fotoAtual]" alt="Imagem ampliada"
-      style="max-height: 90vh; max-width: 90vw; object-fit: contain;" class="rounded shadow" />
-    <button @click="fecharImagemAmpliada" class="btn-fechar-overlay btn-light position-absolute top-0 end-0 m-3">
-      &times;
-    </button>
-  </div>
-  <!-- Nav flutuante visível apenas no mobile -->
-  <div v-if="jornadaSelecionada" class="tab-overlay-mobile d-md-none">
-    <button v-for="(aba, index) in abas" :key="index" @click="activeTab = tabs[aba.id]"
-      :class="['btn-tab', { ativo: activeTab === tabs[aba.id] }]">
-      {{ aba.label }}
-    </button>
-  </div>
-
-
 </template>
 
 <script setup>
-
-import { ref, computed, onMounted, onUpdated, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { buscarCasosSemelhantesAPI } from '../services/casosService'
 
-// Organiza as imagens da jornada
 const props = defineProps({
   jornadaSelecionada: Object
 })
 
+const emit = defineEmits(['update:jornadaSelecionada'])
 
 const casos = ref([])
 const loadingCasos = ref(false)
+const textoExpandido = ref(false)
 
-const textoJornada = ref("");
-
-watch(() => props.jornadaSelecionada, (novaJornada) => {
-  if (novaJornada) {
-    textoJornada.value = novaJornada.descricao.slice(0,140) + '...'; // Resumo inicial do texto
-  }
+const textoResumido = computed(() => {
+   if (!props.jornadaSelecionada?.descricao) return '';
+   if (textoExpandido.value) return props.jornadaSelecionada.descricao;
+   return props.jornadaSelecionada.descricao.slice(0, 180) + (props.jornadaSelecionada.descricao.length > 180 ? '...' : '');
 });
+
+const temTextoEscondido = computed(() => {
+   return !textoExpandido.value && props.jornadaSelecionada?.descricao?.length > 180;
+});
+
 const expandirTexto = () => {
-  console.log('Expandindo texto da jornada');
-  textoJornada.value = props.jornadaSelecionada.descricao; // Exibe o texto completo
-  const botao = document.querySelector('.botao-ver-mais');
-  if (botao) {
-    botao.style.display = 'none'; // Esconde o botão "Ver Mais"
-  }
+  textoExpandido.value = true;
 }
 
+// Reset text state when journey changes
+watch(() => props.jornadaSelecionada, () => {
+   textoExpandido.value = false;
+   fotoAtual.value = 0;
+   activeTab.value = tabs['info'];
+});
+
 const buscarCasosSemelhantes = async () => {
-  console.log('Buscando casos semelhantes para:', props.jornadaSelecionada);
   let info = {
-    id:props.jornadaSelecionada.id,
+    id: props.jornadaSelecionada.id,
     genero: props.jornadaSelecionada.genero,
     classificacao: props.jornadaSelecionada.classificacao,
     regioesAfetadas: props.jornadaSelecionada.regioesAfetadas,
     tags: props.jornadaSelecionada.tags,
     descricao: props.jornadaSelecionada.descricao
-
   };
   loadingCasos.value = true;
-  console.log('Informações da jornada:', info);
-  // chamada à API para buscar casos semelhantes
   try {
     const response = await buscarCasosSemelhantesAPI(info);
-    console.log('Casos semelhantes encontrados:', response.data);
     casos.value = response.data;
   } catch (error) {
     console.error('Erro ao buscar casos semelhantes:', error);
     casos.value = [];
   } finally {
     loadingCasos.value = false;
-    jaBuscou.value = true; // Marca que já buscou
+    jaBuscou.value = true;
   }
 }
-
-
-const dicas = [
-  { icone: "🧴", texto: "Hidratantes espessos aplicados 2x/dia" },
-  { icone: "💊", texto: "Corticoides tópicos leves em crise aguda" },
-  { icone: "🧊", texto: "Compressas frias antes de dormir" },
-  { icone: "🥦", texto: "Redução de laticínios e alimentos ultraprocessados" },
-  { icone: "🧼", texto: "Evitar sabonetes com perfume" },
-  { icone: "🥥", texto: "Uso de óleo de coco em áreas ressecadas" },
-];
-const abas = [
-  { id: 'info', label: 'Informações' },
-  { id: 'casos', label: 'Semelhantes' },
-  { id: 'dicas', label: 'Tratamentos' },
-];
-
-const categoriasTratamento = [
-  {
-    nome: 'Hábitos Diários',
-    icone: '🌿',
-    corFundo: '#e7f6ec',
-    itens: [
-      { icone: '🧊', texto: 'Compressas frias antes de dormir' },
-      { icone: '🚿', texto: 'Evitar sabonetes com perfume' },
-      { icone: '🥛', texto: 'Redução de laticínios e ultraprocessados' }
-    ]
-  },
-  {
-    nome: 'Hidratantes e Óleos',
-    icone: '💧',
-    corFundo: '#e3f2fd',
-    itens: [
-      { icone: '🧴', texto: 'Hidratantes espessos aplicados 2x/dia' },
-      { icone: '🥥', texto: 'Uso de óleo de coco em áreas ressecadas' }
-    ],
-    produto: {
-      nome: 'Hidratante CeraVe Pele Seca – 473ml',
-      preco: 'R$ 79,90',
-      imagem: 'https://m.media-amazon.com/images/I/61vyW3Dl-7L._AC_UL320_.jpg',
-      link: 'www.amazon.com.br/Loção-Hidratante-Corporal-Textura-Fluida-Cerave/dp/B07RK4HST7/ref=sr_1_1_sspa'
-    }
-    //www.amazon.com.br/Loção-Hidratante-Corporal-Textura-Fluida-Cerave/dp/B07RK4HST7/ref=sr_1_1_sspa?__mk_pt_BR=ÅMÅŽÕÑ&crid=2NTKY1Y12UIR1&dib=eyJ2IjoiMSJ9.w6wZ1FsAj2iZvPC9gNawK9Tg8oo1EYaH37mk3BWNEQ0h8SW3Byi7CnkxPgWKvQxIrXCcezuM6nTvUZU06EWYzLCwybokeq1X1nPN_UFfXGmIBWu3tIslh1BzPbCiFY36hZwNlExCI-OQr3divDl-MD3Cx2-PhqqxoDPl_u56kCL7KvZplb817iwB4eGjS0tCvt1qDFaAgVEDDnZvrm_Y09_a6ofZmAhgq9gxQDmRFCRHNlvk_wU5w3nRcsnTbEgUhIMQnDkYq-YhZ1lqTm0gxCgttxRwq3SlkhvgkvKOBAk.OthJVYQJ_yDvWEuzmbg5UMaJ1Xh12Nze5mdxWYenUXE&dib_tag=se&keywords=hidratante+cerave&qid=1750169680&sprefix=hidratante+cerav%2Caps%2C292&sr=8-1-spons&ufe=app_do%3Aamzn1.fos.6d798eae-cadf-45de-946a-f477d47705b9&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1
-  },
-  {
-    nome: 'Pomadas e Cremes Dermatológicos',
-    icone: '🧴',
-    corFundo: '#fff8e1',
-    itens: [
-      { icone: '🌿', texto: 'Pomada Zudaifu' },
-      { icone: '💊', texto: 'Corticoides tópicos leves em crise aguda' }
-    ]
-  },
-  {
-    nome: 'Medicamentos Orais ou Injetáveis',
-    icone: '💊',
-    corFundo: '#fce4ec',
-    itens: [],
-    produto: null
-  }
-]
 
 const tabs = { 'info': 'Informações da jornada', 'casos': 'Casos semelhantes', 'dicas': 'Dicas de tratamentos' }
 const activeTab = ref(tabs['info'])
 const jaBuscou = ref(false)
 
-watch( ()=> activeTab.value, async (novoValor) => { 
-  console.log('Aba ativa alterada para:', novoValor);
+watch(()=> activeTab.value, async (novoValor) => { 
   if (novoValor === tabs.casos && !jaBuscou.value) {
-    // Se a aba de casos semelhantes for ativada e ainda não buscou, faz a busca  
-    console.log('Buscando casos semelhantes...');
     await buscarCasosSemelhantes();
   }
-}  );
+});
 
+/* Carousel Logic */
 const fotoAtual = ref(0);
-const selecionarFoto = (index) => {
-  console.log('Selecionando foto:', index);
-  if (index < 0 || index >= imagens.value.length) {
-    console.error('Índice inválido para a foto:', index);
-    return;
-  }
-  fotoAtual.value = index;
-};
-const proximaFoto = () => {
-  if (fotoAtual.value < imagens.value.length - 1) {
-    fotoAtual.value++;
-  }else {
-    fotoAtual.value = 0; // Volta para a primeira imagem
-  }
-};
-
-const fotoAnterior = () => {
-  if (fotoAtual.value > 0) {
-    fotoAtual.value--;
-  }else {
-    fotoAtual.value = imagens.value.length - 1; // Volta para a última imagem
-  }
-};
-
-const emit = defineEmits(['update:jornadaSelecionada'])
-const showImagemAmpliada = ref(false)
-onMounted(() => {
-  console.log('Card recebido:', props.jornadaSelecionada ? props.jornadaSelecionada : 'null');
-
-
-})
-
-onUpdated(() => {
-  console.log('Card atualizado:', props.jornadaSelecionada ? props.jornadaSelecionada : 'null');
-
-})
-
-
-const abrirImagemAmpliada = () => {
-  showImagemAmpliada.value = true
-}
-const fecharImagemAmpliada = () => {
-  showImagemAmpliada.value = false
-}
-
 const imagens = computed(() => {
   const lista = []
   if (props.jornadaSelecionada.imgAntes) lista.push(props.jornadaSelecionada.imgAntes)
@@ -414,131 +326,64 @@ const imagens = computed(() => {
   return lista
 })
 
-const currentIndex = ref(0)
+const selecionarFoto = (index) => {
+  if (index >= 0 && index < imagens.value.length) {
+    fotoAtual.value = index;
+  }
+};
 
+const proximaFoto = () => {
+  fotoAtual.value = (fotoAtual.value < imagens.value.length - 1) ? fotoAtual.value + 1 : 0;
+};
+
+const fotoAnterior = () => {
+  fotoAtual.value = (fotoAtual.value > 0) ? fotoAtual.value - 1 : imagens.value.length - 1;
+};
+
+const showImagemAmpliada = ref(false)
+const abrirImagemAmpliada = () => showImagemAmpliada.value = true
+const fecharImagemAmpliada = () => showImagemAmpliada.value = false
+
+/* Static Data for Demo/Styling */
+const categoriasTratamento = [
+  {
+    nome: 'Hábitos Diários',
+    icone: '🌿',
+    corFundo: '#f0fdf4', // green-50
+    itens: [
+      { icone: '🧊', texto: 'Compressas frias antes de dormir' },
+      { icone: '🚿', texto: 'Evitar sabonetes com perfume' },
+      { icone: '🥛', texto: 'Redução de laticínios e ultraprocessados' }
+    ]
+  },
+  {
+    nome: 'Hidratantes e Óleos',
+    icone: '💧',
+    corFundo: '#eff6ff', // blue-50
+    itens: [
+      { icone: '🧴', texto: 'Hidratantes espessos aplicados 2x/dia' },
+      { icone: '🥥', texto: 'Uso de óleo de coco em áreas ressecadas' }
+    ],
+    produto: {
+      nome: 'Hidratante CeraVe Pele Seca – 473ml',
+      preco: 'R$ 79,90',
+      imagem: 'https://m.media-amazon.com/images/I/61vyW3Dl-7L._AC_UL320_.jpg',
+      link: 'www.amazon.com.br/Loção-Hidratante-Corporal-Textura-Fluida-Cerave/dp/B07RK4HST7'
+    }
+  },
+  {
+    nome: 'Pomadas e Cremes',
+    icone: '🧴',
+    corFundo: '#fffbeb', // amber-50
+    itens: [
+      { icone: '🌿', texto: 'Pomada Zudaifu' },
+      { icone: '💊', texto: 'Corticoides tópicos leves em crise aguda' }
+    ]
+  }
+]
 </script>
 
-<style lang="css" scoped>
-.thumb-jornada {
-  border-radius: 15px;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-
-}
-
-.miniatura {
-  width: 70px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 0.5rem;
-  border: 1px solid #ccc;
-}
-
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
-
-.overlay-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  overflow: auto;
-}
-
-.overlay-content {
-  height: 100vh;
-  background: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  max-width: 960px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-}
-.overlay-content .overlay-header h5{
-   font-size:18px;
-}
-
-.tab-overlay-mobile {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  padding: 8px 12px;
-  
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 9999;
-  /* aumente isso! */
-  display: flex;
-  gap: 10px;
-}
-.miniatura-foto {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 0.5rem;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.miniatura-foto.ativa {
-  border-color: #6c63ff;
-  box-shadow: 0 0 0 2px #6c63ff33;
-}
-
-
-.btn-tab {
-  border: none;
-  padding: 8px 14px;
-  background-color: #f1f1f1;
-  
-  
-  color: #333;
-  transition: all 0.2s ease;
-}
-
-.btn-tab.ativo {
-  background-color: #6c63ff;
-  color: white;
-  font-weight: bold;
-}
-
-.rounded-pill {
-  border-radius: 5% !important;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
+<style scoped>
 .fade-overlay-enter-active,
 .fade-overlay-leave-active {
   transition: opacity 0.3s ease;
@@ -547,181 +392,5 @@ const currentIndex = ref(0)
 .fade-overlay-enter-from,
 .fade-overlay-leave-to {
   opacity: 0;
-}
-
-.fade-overlay-enter-to,
-.fade-overlay-leave-from {
-  opacity: 1;
-}
-
-.texto-resumo {
-  max-height: 100px; /* Altura máxima do resumo */
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-}
-
-.texto-completo {
-  padding-top: 0px;
-}
-
-.botao-ver-mais {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  margin: 10px 0;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-.botao-ver-mais:hover {
-  background-color: #45a049;
-}
-
-
-@media (max-width: 768px) {
-  .remove_mobile {
-    display: none;
-  }
-
-  .overlay-wrapper {
-    position: fixed;
-    inset: 0;
-    /* equivale a top:0, right:0, bottom:0, left:0 */
-    z-index: 9990;
-    background-color: white;
-    overflow-y: auto;
-    padding: 1.5rem 1rem 5rem;
-    /* espaço inferior para as tabs flutuantes */
-    border-radius: 0 !important;
-    /* remove bordas arredondadas */
-  }
-
-.btn-fechar-overlay {
-  position: fixed !important;
-  top: 1rem;
-  right: 1rem;
-  z-index: 9999;
-  background: white;
-  color: #333;
-  font-size: 1.5rem;
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 9999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-}
-
-.genero-tag{
-
-}
-
-.tratamentos-wrapper {
-  padding: 1rem;
-  font-family: 'Nunito', sans-serif;
-}
-
-.categoria-box {
-  border-radius: 14px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-.categoria-titulo {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #4b3b36;
-  margin-bottom: 0.5rem;
-}
-
-.dica-item {
-  display: flex;
-  align-items: center;
-  font-size: 0.95rem;
-  margin-bottom: 6px;
-}
-
-.item-icone {
-  width: 28px;
-  display: inline-block;
-  font-size: 1.1rem;
-  margin-right: 8px;
-}
-
-.produto-sugerido {
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 0.8rem;
-  margin-top: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.produto-img {
-  width: 100px;
-  border-radius: 8px;
-  object-fit: cover;
-}
-
-.produto-detalhes {
-  flex: 1;
-  min-width: 180px;
-}
-
-.produto-label {
-  font-size: 0.88rem;
-  color: #555;
-  margin-bottom: 0.25rem;
-}
-
-.produto-nome {
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 0.3rem;
-  font-size: 0.95rem;
-}
-
-.produto-preco {
-  color: #4b3b36;
-  font-weight: 500;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-}
-
-.produto-btn {
-  display: inline-block;
-  background: linear-gradient(to right, #56d9bd, #a79cd5);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: transform 0.2s ease;
-}
-
-.produto-btn:hover {
-  transform: scale(1.03);
-}
-
-.aviso-medico {
-  font-size: 0.8rem;
-  color: #777;
-  text-align: center;
-}
-
 }
 </style>
