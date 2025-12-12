@@ -1,79 +1,86 @@
 <template>
-    <BaseLayout>
-    <div class="container py-4">
-        <h1 class="display-5 fw-bold mb-3">Relatos Reais de Dermatite Atópica no Brasil</h1>
-        <p class="mb-4 text-muted">
-        Veja depoimentos em vídeo de pessoas que convivem com dermatite atópica. Seleção de vídeos do YouTube analisados com inteligência artificial.
-        </p>
+  <BaseLayout>
+    <div class="container mx-auto px-4 py-8">
+      <h1 class="text-3xl md:text-4xl font-bold font-heading text-gray-900 mb-3">Relatos Reais de Dermatite Atópica no
+        Brasil</h1>
+      <p class="mb-8 text-lg text-gray-600 max-w-3xl">
+        Veja depoimentos em vídeo de pessoas que convivem com dermatite atópica. Seleção de vídeos do YouTube analisados
+        com inteligência artificial.
+      </p>
 
-        <div class="row g-4">
-        <div class="col-md-6 col-lg-4" v-for="video in videos_pagina" :key="video.id">
-            <div class="card h-100 shadow-sm">
-            <a :href="video.url" target="_blank">
-                <img :src="video.thumbnail" :alt="video.title" class="card-img-top" />
-            </a>
-            <div class="card-body">
-                <h5 class="card-title">{{ video.title }}</h5>
-                <p class="card-text">{{ video.summary }}</p>
-                <div class="d-flex flex-wrap gap-1">
-                <span
-                    v-for="tag in video.tags"
-                    :key="tag"
-                    class="badge bg-primary text-light"
-                >
-                    {{ tag }}
-                </span>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-for="video in videos_pagina" :key="video.id" class="flex flex-col">
+          <div
+            class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden h-full flex flex-col hover:shadow-md transition-all duration-300 group">
+            <a :href="video.url" target="_blank" class="block overflow-hidden relative">
+              <img :src="video.thumbnail" :alt="video.title"
+                class="w-full h-48 object-cover transform transition-transform duration-500 group-hover:scale-105" />
+              <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300"></div>
+              <div
+                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div class="bg-white/90 rounded-full p-3 shadow-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary-600" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                      clip-rule="evenodd" />
+                  </svg>
                 </div>
+              </div>
+            </a>
+            <div class="p-5 flex flex-col flex-grow">
+              <h5 class="text-xl font-bold font-heading text-gray-900 mb-2 line-clamp-2">{{ video.title }}</h5>
+              <p class="text-gray-600 mb-4 text-sm line-clamp-3 flex-grow">{{ video.summary }}</p>
+              <div class="flex flex-wrap gap-2 mt-auto">
+                <span v-for="tag in video.tags" :key="tag"
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-50 text-primary-700">
+                  {{ tag }}
+                </span>
+              </div>
             </div>
-            </div>
+          </div>
         </div>
-        </div>
+      </div>
     </div>
-    </BaseLayout>
+  </BaseLayout>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import BaseLayout from '../layouts/BaseLayout.vue';
-import { buscarTodosVideos } from '../services/videosService';  
+import { buscarTodosVideos } from '../services/videosService';
 
 const videos_pagina = ref([]);
-
 
 const buscarVideosPagina = async (pagina) => {
   let response = {};
   try {
     response = await buscarTodosVideos();
-    
+
   } catch (error) {
     console.error('Erro ao buscar vídeos:', error);
-    return;
+    return [];
   }
-
-  print('')
-  console.log('Response keys from buscarTodosVideos:', Object.keys(response));
-
 
   //YT9x2q7dU   mxYT9x2q7dU
   const newLocal = [];
-  for (const video of response) {
-    console.log(`Processing video thmb ${video.link.slice(19,28)}`);
-    newLocal.push({
-      id: video.id_relato,
-      title: 'Relato sobre dermatite atópica',
-      summary: video.resumo_descritivo,
-      url: video.link,
-      thumbnail: `https://img.youtube.com/vi/${video.link.slice(17,28)}/hqdefault.jpg`,
-      tags: video.sintomas,
-    });
+  if (response && Symbol.iterator in Object(response)) {
+    for (const video of response) {
+      newLocal.push({
+        id: video.id_relato,
+        title: 'Relato sobre dermatite atópica',
+        summary: video.resumo_descritivo,
+        url: video.link,
+        thumbnail: `https://img.youtube.com/vi/${video.link.slice(17, 28)}/hqdefault.jpg`,
+        tags: video.sintomas,
+      });
+    }
   }
   return newLocal;
-
 };
 
 onMounted(async () => {
-    console.log('VideosExplicativosView component has been mounted');
-    videos_pagina.value= await buscarVideosPagina();
+  videos_pagina.value = await buscarVideosPagina();
 });
 
 const videos = [
@@ -111,11 +118,7 @@ const videos = [
   },
 ]
 </script>
+
 <style scoped>
-img {
-  transition: transform 0.2s ease;
-}
-img:hover {
-  transform: scale(1.02);
-}
+/* Scoped styles can be removed or minimalized as we are using Tailwind */
 </style>
