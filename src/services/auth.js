@@ -24,3 +24,7 @@ export async function getProfile() {
   // opcional: valida token requisitando /auth/me
   return api.get('/auth/me').then(r => r.data)
 }
+
+export function getAuthToken() {
+  return localStorage.getItem('authToken')
+}
