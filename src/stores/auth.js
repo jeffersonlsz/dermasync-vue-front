@@ -6,6 +6,7 @@ export const useAuthStore = defineStore('auth', {
         accessToken: null,
         refreshToken: localStorage.getItem('refresh_token') || null,
         user: JSON.parse(localStorage.getItem('user')) || null,
+        isLoginModalOpen: false,
     }),
     actions: {
         setTokens(accessToken, refreshToken) {
@@ -84,6 +85,14 @@ export const useAuthStore = defineStore('auth', {
             } finally {
                 this.clearTokens();
             }
+        },
+
+        openLoginModal() {
+            this.isLoginModalOpen = true;
+        },
+
+        closeLoginModal() {
+            this.isLoginModalOpen = false;
         }
     },
 });

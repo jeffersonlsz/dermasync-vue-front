@@ -18,6 +18,9 @@
           class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
           Relatos em Vídeo
         </RouterLink>
+        <RouterLink to="/faq" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+          FAQ
+        </RouterLink>
       </div>
 
       <!-- Auth Actions -->
@@ -33,7 +36,7 @@
         </template>
 
         <template v-else>
-          <button @click="isLoginModalOpen = true"
+          <button @click="authStore.openLoginModal()"
             class="px-5 py-2 text-sm font-semibold text-primary border border-primary rounded-full hover:bg-primary/5 transition-colors">
             Entrar
           </button>
@@ -56,6 +59,7 @@
       <RouterLink to="/videos-explicativos" class="text-base font-medium text-gray-700" @click="isMenuOpen = false">
         Relatos
         em Vídeo</RouterLink>
+      <RouterLink to="/faq" class="text-base font-medium text-gray-700" @click="isMenuOpen = false">FAQ</RouterLink>
       <hr class="border-gray-100">
       <button v-if="!isAuthenticated" @click="openLoginModalMobile"
         class="text-base font-medium text-primary text-left">
@@ -64,7 +68,7 @@
     </div>
 
     <!-- Login Modal -->
-    <LoginModal :isOpen="isLoginModalOpen" @close="isLoginModalOpen = false" />
+    <LoginModal :isOpen="authStore.isLoginModalOpen" @close="authStore.closeLoginModal()" />
   </nav>
 </template>
 
@@ -75,7 +79,6 @@ import { useAuthStore } from '../stores/auth'
 import LoginModal from './LoginModal.vue'
 
 const isMenuOpen = ref(false)
-const isLoginModalOpen = ref(false)
 const router = useRouter()
 const authStore = useAuthStore()
 
@@ -84,11 +87,11 @@ const userEmail = computed(() => authStore.user?.email || 'Usuário')
 
 function openLoginModalMobile() {
   isMenuOpen.value = false
-  isLoginModalOpen.value = true
+  authStore.openLoginModal()
 }
 
 async function handleLogout() {
   await authStore.logout()
-  router.push('/login')
+  router.push('/')
 }
 </script>

@@ -1,4 +1,3 @@
-// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import LoginView from '../views/LoginView.vue'
@@ -9,17 +8,33 @@ import ColaboradorDashboard from '../views/ColaboradorDashboard.vue'
 import HomeView from '../views/HomeView.vue'
 import VideosExplicativosView from '../views/VideosExplicativosView.vue'
 import CadastroView from '../views/CadastroView.vue'
+import FaqView from '../views/FaqView.vue'
+import GaleriaPublicView from '../views/GaleriaPublicView.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: HomeView },
+  { path: '/faq', name: 'Faq', component: FaqView },
   { path: '/login', name: 'Login', component: LoginView },
   { path: '/register', name: 'Register', component: RegisterView },
   { path: '/videos-explicativos', name: 'Videos', component: VideosExplicativosView },
   {
+    path: '/galeria-publica',
+    name: 'GaleriaPublica',
+    component: GaleriaPublicView
+  },
+  {
     path: '/galeria',
     name: 'Galeria',
     component: GaleriaView,
-    meta: { requiresAuth: true }
+    meta: {},
+    beforeEnter: (to, from, next) => {
+      const authStore = useAuthStore()
+      const authed = !!authStore.accessToken || !!localStorage.getItem('refresh_token')
+      if (!authed) {
+        return next({ name: 'GaleriaPublica' })
+      }
+      next()
+    }
   },
   { path: '/cadastro', name: 'Cadastro', component: CadastroView },
   {
@@ -45,15 +60,16 @@ router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   const requiresAuth = to.meta?.requiresAuth === true
   const requiredRole = to.meta?.role
-  const goingToLogin = to.name === 'Login' || to.name === 'Register'
 
   // Check if authenticated (token exists)
   const authed = !!authStore.accessToken || !!localStorage.getItem('refresh_token')
 
   // If trying to open login but already authed, redirect to dashboard or home
-  if (goingToLogin && authed) {
-    return next({ name: 'Home' }) // Or Dashboard if you have one
+  if ((to.name === 'Login' || to.name === 'Register') && authed) {
+    return next({ name: 'Home' })
   }
+
+
 
   if (!requiresAuth) {
     return next()
@@ -66,16 +82,12 @@ router.beforeEach(async (to, from, next) => {
     })
   }
 
-  // Role check (simplified for now as store might not have role yet)
-  // You might need to fetch user profile here if not in store
+  // Role check
   if (requiredRole) {
-    // TODO: Implement role check based on authStore.user or fetch profile
-    // For now, allowing if authenticated to avoid blocking during dev
-    // console.warn('Role check skipped in POC');
+    // Role checks would go here
   }
 
   return next()
 })
 
 export default router
-

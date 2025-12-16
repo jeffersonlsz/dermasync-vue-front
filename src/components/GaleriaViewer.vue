@@ -282,9 +282,9 @@ function mapRelatoParaCard(relato) {
  *
  * Observação: ajuste o path se o seu backend tiver prefixo (/api, /v1, etc).
  */
-async function fetchRelatosPublicos(limit = 50) {
+async function fetchRelatosPublicos(limit = 12) {
   try {
-    const resp = await api.get('/relatos/public/listar', { params: { limit } })
+    const resp = await api.get('/relatos/admin/galeria/preview', { params: { limit } })
     if (!resp || !resp.data) {
       console.warn('Resposta inesperada ao buscar relatos públicos:', resp)
       return []
@@ -302,7 +302,7 @@ async function fetchRelatosPublicos(limit = 50) {
 
 // Monta a galeria ao montar o componente
 onMounted(async () => {
-  const resultado = await fetchRelatosPublicos(50)
+  const resultado = await fetchRelatosPublicos(12)
   if (resultado && resultado.length > 0) {
     cards.value = resultado
   } else {

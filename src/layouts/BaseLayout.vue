@@ -28,6 +28,9 @@
                 <RouterLink to="/videos-explicativos" class="text-gray-600 hover:text-primary transition-colors">Relatos
                   em Vídeo</RouterLink>
               </li>
+              <li>
+                <RouterLink to="/faq" class="text-gray-600 hover:text-primary transition-colors">FAQ</RouterLink>
+              </li>
               <li><a href="#" class="text-gray-600 hover:text-primary transition-colors">Sobre nós</a></li>
               <li><a href="#" class="text-gray-600 hover:text-primary transition-colors">Ética e Privacidade</a></li>
             </ul>
