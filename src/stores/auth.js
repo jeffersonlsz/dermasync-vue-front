@@ -18,6 +18,8 @@ export const useAuthStore = defineStore('auth', {
             if (process.env.NODE_ENV === 'development') {
                 localStorage.setItem('refresh_token', refreshToken);
             }
+            // Compatibility with legacy services/components that use getAuthToken()
+            localStorage.setItem('authToken', accessToken);
 
             // Log for debugging/verification as requested
             console.info('DERMASYNC: TOKEN', {
@@ -36,16 +38,18 @@ export const useAuthStore = defineStore('auth', {
             this.refreshToken = null;
             this.user = null;
             localStorage.removeItem('refresh_token');
+            localStorage.removeItem('authToken');
             localStorage.removeItem('user');
         },
 
         async login(email, password) {
             try {
                 const response = await api.post('/auth/login', { email, password });
-                const { access_token, refresh_token, expires_at } = response.data;
+                const { access_token, refresh_token, expires_at, user } = response.data;
 
                 this.setTokens(access_token, refresh_token);
-                this.setUser({ email }); // Store email from input since backend might not return it
+                // Use user object from response if available, otherwise fallback to input email
+                this.setUser(user || { email });
 
                 if (expires_at) {
                     console.info('DERMASYNC: TOKEN EXPIRES AT', expires_at);

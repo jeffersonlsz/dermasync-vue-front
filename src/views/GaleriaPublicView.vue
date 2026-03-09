@@ -15,7 +15,7 @@ const error = ref(null)
 async function carregarGaleria() {
   try {
     const res = await fetch(
-      `${API_URL}/relatos/galeria/public/v3?limit=12&page=1`
+      `${API_URL}/galeria/public/v3?limit=12&page=1`
     )
     if (!res.ok) throw new Error("Erro ao carregar galeria pública")
 

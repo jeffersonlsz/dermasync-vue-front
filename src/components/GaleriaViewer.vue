@@ -45,7 +45,8 @@
 
         <!-- Modal Content Container -->
         <div class="relative w-full max-w-4xl z-10 animate-fade-in-up">
-          <FormularioJornada @fechar="mostrarFormulario = false" @uploadFinalizado="onUploadFinalizado" />
+          <FormularioJornada @fechar="mostrarFormulario = false" @sucesso="onSucesso"
+            @uploadFinalizado="onUploadFinalizado" />
         </div>
       </div>
     </Teleport>
@@ -201,13 +202,37 @@ const cardsFiltrados = computed(() => {
   return resultado
 })
 
-// Quando upload finalizado do formulário (callback)
+// Quando upload finalizado (callback)
 function onUploadFinalizado(id) {
-  // Opcional: recarregar lista ou avisar usuario
   console.log("Upload finalizado com ID:", id)
-  // Fechar modal ou recarregar galeria:
-  // mostrarFormulario.value = false
-  // fetchRelatosPublicos() // se desejar reconsultar automaticamente
+}
+
+function onSucesso(payload) {
+  // Payload pode ser objeto { id, message } ou string (legado)
+  const id = (typeof payload === 'object' && payload.id) ? payload.id : null
+
+  if (id) {
+    // Adicionar novo card placeholder no topo
+    const novoCard = {
+      id: id,
+      tituloRelato: id, // ID como título por enquanto
+      classificacao: 'Em análise',
+      imgAntes: placeholder, // Placeholder
+      imgDepois: placeholder, // Placeholder
+      solucao: 'Relato em processamento...',
+      microdepoimento: 'Seu relato foi enviado e está sendo analisado.',
+      tags: [],
+      likes: 0,
+      curtido: false,
+      regioesAfetadas: [],
+      genero: '...',
+      faixaEtaria: '...'
+    }
+    cards.value.unshift(novoCard)
+
+    // Rolar para o topo suavemente
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 }
 
 /**
@@ -216,87 +241,62 @@ function onUploadFinalizado(id) {
  * e também com relatos sem imagens ou com formatos inesperados.
  */
 function mapRelatoParaCard(relato) {
-  // relato.imagens pode ser:
-  //  - objeto { antes: url, durante: [url,...], depois: url }
-  //  - null/undefined
-  //  - string (URL única)
-  const imgsRaw = relato.imagens || null
-  let imagensNormalizadas = {}
 
-  if (!imgsRaw) {
-    imagensNormalizadas = {}
-  } else if (typeof imgsRaw === 'string') {
-    imagensNormalizadas = { antes: imgsRaw }
-  } else if (Array.isArray(imgsRaw)) {
-    // raridade: array único — mapear para 'durante'
-    imagensNormalizadas = { durante: imgsRaw }
-  } else if (typeof imgsRaw === 'object') {
-    imagensNormalizadas = { ...imgsRaw }
-  } else {
-    imagensNormalizadas = {}
-  }
+  const thumbs = relato.thumbnail || {}
 
-  // Garantir arrays e strings coerentes
-  if (imagensNormalizadas.durante && !Array.isArray(imagensNormalizadas.durante)) {
-    imagensNormalizadas.durante = [imagensNormalizadas.durante]
-  }
+  const imgAntes = thumbs.antes || null
+  const imgDepois = thumbs.depois || null
 
-  // Definir prioridades de imagens
-  const imgDepois = imagensNormalizadas.depois || (Array.isArray(imagensNormalizadas.durante) && imagensNormalizadas.durante.slice(-1)[0]) || null
-  const imgDurantePrimeira = Array.isArray(imagensNormalizadas.durante) && imagensNormalizadas.durante.length > 0 ? imagensNormalizadas.durante[0] : null
-  const imgAntes = imagensNormalizadas.antes || imgDurantePrimeira || null
-
-  // Construir array ordenado de imagens (antes, ...durante..., depois)
-  const imagensArray = []
-  if (imagensNormalizadas.antes) imagensArray.push(imagensNormalizadas.antes)
-  if (Array.isArray(imagensNormalizadas.durante)) imagensArray.push(...imagensNormalizadas.durante)
-  if (imagensNormalizadas.depois) imagensArray.push(imagensNormalizadas.depois)
-
-  // Slice/shorten microdepoimento se necessário
-  const micro = relato.microdepoimento || (relato.descricao ? (relato.descricao.length > 220 ? relato.descricao.slice(0, 220) + '...' : relato.descricao) : '')
+  const imagensArray = [
+    imgAntes,
+    imgDepois
+  ].filter(Boolean)
 
   return {
-    id: relato.id || relato._id || null,
-    tituloRelato: relato.classificacao || 'Relato',
-    classificacao: relato.classificacao || relato.tituloRelato || null,
+
+    id: relato.id,
+
+    tituloRelato: "Relato de tratamento",
+
+    classificacao: "Dermatite",
+
     imgAntes: imgAntes || placeholder,
-    imgDepois: imgDepois || (imagensArray.length > 0 ? imagensArray[imagensArray.length - 1] : placeholder),
-    imagensArray: imagensArray.filter(Boolean),
-    solucao: relato.solucao_encontrada || relato.microdepoimento || relato.solucao || (relato.descricao ? relato.descricao.split('\n')[0] : ''),
-    microdepoimento: micro,
-    tags: relato.tags || relato.tags_extraidas || [],
-    likes: relato.likes || 0,
+
+    imgDepois: imgDepois || imgAntes || placeholder,
+
+    imagensArray,
+
+    solucao: relato.excerpt || "",
+
+    microdepoimento: relato.excerpt || "",
+
+    tags: relato.tags || [],
+
+    likes: 0,
+
     curtido: false,
-    regioesAfetadas: relato.regioesAfetadas || relato.regioesAfetadas || relato.regioes || [],
-    genero: relato.genero || null,
-    faixaEtaria: relato.classificacao || null,
-    descricao: relato.descricao || '',
-    raw: relato // manter raw para debug/overlay
+
+    ux_effects: relato.ux_effects || [],
+
+    raw: relato
   }
 }
 
 /**
  * Busca relatos públicos no endpoint leve criado para a galeria.
- * Endpoint esperado: GET /relatos/public/listar?limit=50
- * Retorno esperado: { quantidade: X, dados: [ { ...relatoPublico } ] }
- *
- * Observação: ajuste o path se o seu backend tiver prefixo (/api, /v1, etc).
  */
 async function fetchRelatosPublicos(limit = 12) {
   try {
-    const resp = await api.get('/relatos/admin/galeria/preview', { params: { limit } })
-    if (!resp || !resp.data) {
-      console.warn('Resposta inesperada ao buscar relatos públicos:', resp)
-      return []
-    }
-    const relatos = resp.data.dados || []
-    // Mapear e normalizar cada relato
+    const resp = await api.get('/galeria/public/v3', {
+      params: { limit }
+    })
+
+    const relatos = resp.data?.dados || []
+
     return relatos.map(mapRelatoParaCard)
   } catch (err) {
     console.error('Erro ao buscar relatos públicos:', err)
-    // fallback sensato: retornar mocks em dev para não quebrar UI
-    // Em produção, podemos querer retornar [] e exibir "Nenhum relato"
-    return cardsMock.slice(0, 6) // mantendo alguns cards para dev/testes
+    return cardsMock.slice(0, 6)
   }
 }
 
