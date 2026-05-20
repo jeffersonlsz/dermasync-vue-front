@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue"
 import CardRelatoPublico from "@/components/CardRelatoPublico.vue"
 import BaseLayout from "../layouts/BaseLayout.vue"
+import placeholder from "@/assets/placeholder.png"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -9,30 +10,82 @@ const relatos = ref([])
 const loading = ref(true)
 const error = ref(null)
 
+const buildImageUrl = (path) => {
+  if (!path) return placeholder
+  if (/^(https?:)?\/\//.test(path)) return path
+  return `${API_URL.replace(/\/$/, '')}/${path.replace(/^\/+/, '')}`
+}
+
+async function fetchRelatoImagens(relatoId) {
+  try {
+    const res = await fetch(`${API_URL.replace(/\/$/, '')}/relatos/${relatoId}/imagens`)
+    if (!res.ok) throw new Error('Erro ao buscar imagens do relato')
+    const data = await res.json()
+
+    return {
+      antes: data.antes?.thumb_url || null,
+      depois: data.depois?.thumb_url || null
+    }
+  } catch (err) {
+    console.warn(`Falha ao buscar imagens do relato ${relatoId}:`, err)
+    return { antes: null, depois: null }
+  }
+}
+
 // ------------------------------
-// Fetch galeria pública v3
+// Map relato from /feed response
+// ------------------------------
+function mapRelatoParaCard(relato, imagens = {}) {
+  const tags = Array.isArray(relato.tags) ? relato.tags : []
+  const excerpt = relato.excerpt || relato.microdepoimento || relato.solucao || "Relato anônimo"
+  const imgAntes = imagens.antes || buildImageUrl(relato.image_previews?.antes?.[0]) || placeholder
+  const imgDepois = imagens.depois || buildImageUrl(relato.image_previews?.depois?.[0]) || imgAntes || placeholder
+
+  return {
+    id: relato.id,
+    tituloRelato: relato.tituloRelato || "Relato",
+    classificacao: tags[0] || "Relato",
+    imgAntes,
+    imgDepois,
+    thumbnail: {
+      antes: imgAntes,
+      depois: imgDepois
+    },
+    excerpt,
+    imagensArray: [imgAntes, imgDepois].filter(Boolean),
+    solucao: relato.solucao || "",
+    microdepoimento: relato.microdepoimento || excerpt,
+    tags,
+    likes: 0,
+    curtido: false,
+    regioesAfetadas: relato.regioesAfetadas || [],
+    genero: relato.genero || null,
+    faixaEtaria: relato.age_range || relato.faixaEtaria || null,
+    descricao: relato.microdepoimento || excerpt,
+    ux_effects: relato.ux_effects || [],
+    raw: relato
+  }
+}
+
+async function buildCardFromRelato(relato) {
+  const imagens = await fetchRelatoImagens(relato.id)
+  return mapRelatoParaCard(relato, imagens)
+}
+
+// ------------------------------
+// Fetch galeria pública /feed
 // ------------------------------
 async function carregarGaleria() {
   try {
     const res = await fetch(
-      `${API_URL}/galeria/public/v3?limit=12&page=1`
+      `${API_URL}/feed?page=1&limit=12`
     )
     if (!res.ok) throw new Error("Erro ao carregar galeria pública")
 
     const data = await res.json()
     const items = data.dados || []
 
-    // Transform items to ensure thumbnails
-    relatos.value = items.map(item => {
-      const thumb = item.thumbnail || {}
-      return {
-        ...item,
-        thumbnail: {
-          antes: thumb.antes || null,
-          depois: thumb.depois || null
-        }
-      }
-    })
+    relatos.value = await Promise.all(items.map(buildCardFromRelato))
   } catch (err) {
     error.value = err.message
   } finally {
@@ -60,7 +113,9 @@ onMounted(() => {
     <section class="container mx-auto px-4 pb-16">
       <div v-if="loading" class="text-center py-12 text-gray-500">Carregando relatos...</div>
       <div v-else-if="error" class="text-center py-12 text-red-500">Erro: {{ error }}</div>
-
+      <div v-else-if="relatos.length === 0" class="text-center py-20 text-gray-500 text-lg">
+        Não há relatos na galeria
+      </div>
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-center">
         <CardRelatoPublico v-for="(relato, index) in relatos" :key="relato.id" :relato="relato" :index="index" />
       </div>

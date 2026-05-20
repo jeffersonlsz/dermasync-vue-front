@@ -288,7 +288,8 @@ const textoExpandido = ref(false)
 const textoResumido = computed(() => {
   const texto =
     props.jornadaSelecionada?.descricao ||
-    props.jornadaSelecionada?.excerpt ||
+    props.jornadaSelecionada?.microdepoimento ||
+    props.jornadaSelecionada?.solucao ||
     ""
 
   if (!textoExpandido.value) {
@@ -301,7 +302,8 @@ const textoResumido = computed(() => {
 const temTextoEscondido = computed(() => {
   const texto =
     props.jornadaSelecionada?.descricao ||
-    props.jornadaSelecionada?.excerpt ||
+    props.jornadaSelecionada?.microdepoimento ||
+    props.jornadaSelecionada?.solucao ||
     ""
   return !textoExpandido.value && texto.length > 180;
 });

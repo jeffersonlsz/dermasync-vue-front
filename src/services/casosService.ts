@@ -1,34 +1,20 @@
-
-const URL_DEV = 'http://localhost:8080';
-const URL_PROD = 'https://dermasync-api-319776447667.southamerica-east1.run.app'; // Replace with your actual production URL
-const API_BASE_URL = URL_PROD; // Use URL_PROD for production
-
+import api from '../lib/api';
 
 export const buscarCasosSemelhantesAPI = async (info) => { 
     console.log(`USANDO API PARA BUSCAR: ${info.tags.slice(1)}`);
     
-    let resposta = await fetch(`${API_BASE_URL}/buscar-por-tags`, {
-        method: 'POST', 
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(
-             {
-                "tags": info.tags.slice(1), // Remove the first tag (usually 'coceira')
-                "modo": "or",
-                "k": 5,
-                "collection_name": "string",
-                "log": false
-                }
-        )
-    });
+    try {
+        const resposta = await api.post('/buscar-por-tags', {
+            tags: info.tags.slice(1), // Remove the first tag (usually 'coceira')
+            modo: "or",
+            k: 5,
+            collection_name: "string",
+            log: false
+        });
+        
+        const data = resposta.data;
+        console.log('Dados recebidos:', data);
 
-    if (!resposta.ok) {
-        throw new Error(`HTTP error! status: ${resposta.status}`);
-    }
-
-    const data = await resposta.json();
-    console.log('Dados recebidos:', data);
 
     // Example usage of the query parameter (you can modify this logic as needed)
     let dados: Array<{
@@ -82,7 +68,10 @@ export const buscarCasosSemelhantesAPI = async (info) => {
         },
     ];
 
-    // Filter mock data based on the query (example logic)
     return {'data' : dados};
+    } catch (error) {
+        console.error("Error in buscarCasosSemelhantesAPI:", error);
+        throw error;
+    }
 };
 

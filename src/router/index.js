@@ -29,7 +29,7 @@ const routes = [
     meta: {},
     beforeEnter: (to, from, next) => {
       const authStore = useAuthStore()
-      const authed = !!authStore.accessToken || !!localStorage.getItem('refresh_token')
+      const authed = !!authStore.accessToken
       if (!authed) {
         return next({ name: 'GaleriaPublica' })
       }
@@ -48,6 +48,12 @@ const routes = [
     name: 'ColaboradorDashboard',
     component: ColaboradorDashboard,
     meta: { requiresAuth: true, role: 'colaborador' }
+  },
+  {
+    path: '/moderacao',
+    name: 'Moderacao',
+    component: () => import('../views/Moderacao/ModerationPage.vue'),
+    meta: { requiresAuth: true, roles: ['admin', 'colaborador'] }
   }
 ]
 
@@ -58,11 +64,11 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
+  await authStore.initialize()
   const requiresAuth = to.meta?.requiresAuth === true
   const requiredRole = to.meta?.role
 
-  // Check if authenticated (token exists)
-  const authed = !!authStore.accessToken || !!localStorage.getItem('refresh_token')
+  const authed = !!authStore.accessToken
 
   // If trying to open login but already authed, redirect to dashboard or home
   if ((to.name === 'Login' || to.name === 'Register') && authed) {
@@ -84,7 +90,16 @@ router.beforeEach(async (to, from, next) => {
 
   // Role check
   if (requiredRole) {
-    // Role checks would go here
+    if (authStore.user?.role !== requiredRole) {
+      return next({ name: 'Home' })
+    }
+  }
+
+  const requiredRoles = to.meta?.roles
+  if (requiredRoles) {
+    if (!requiredRoles.includes(authStore.user?.role)) {
+      return next({ name: 'Home' })
+    }
   }
 
   return next()

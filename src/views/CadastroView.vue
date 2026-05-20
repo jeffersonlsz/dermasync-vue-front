@@ -61,7 +61,7 @@ async function handleSubmit() {
         if (result.autoLogin) {
             successMessage.value = 'Cadastro realizado com sucesso! Redirecionando...';
             setTimeout(() => {
-                router.push('/dashboard'); // Or home '/'
+                router.push('/galeria');
             }, 1500);
         } else {
             successMessage.value = 'Cadastro realizado com sucesso! Por favor, faça login.';
@@ -70,11 +70,7 @@ async function handleSubmit() {
             }, 2000);
         }
     } catch (error) {
-        if (error.response && error.response.data && error.response.data.message) {
-            errorMessage.value = error.response.data.message;
-        } else {
-            errorMessage.value = 'Erro ao realizar cadastro. Tente novamente.';
-        }
+        errorMessage.value = 'Erro ao realizar cadastro. Tente novamente.';
         console.error(error);
     } finally {
         isLoading.value = false;

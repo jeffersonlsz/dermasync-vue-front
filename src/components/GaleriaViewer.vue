@@ -62,6 +62,28 @@ import CardJornada from './CardJornada.vue'
 import FiltrosGaleria from './FiltrosGaleria.vue'
 import FormularioJornada from './FormularioJornada.vue'
 
+const API_URL = import.meta.env.VITE_API_URL
+
+const buildImageUrl = (path) => {
+  if (!path) return placeholder
+  if (/^(https?:)?\/\//.test(path)) return path
+  return `${API_URL.replace(/\/$/, '')}/${path.replace(/^\/+/, '')}`
+}
+
+async function fetchRelatoImagens(relatoId) {
+  try {
+    const resp = await api.get(`/relatos/${relatoId}/imagens`)
+    const data = resp.data || {}
+    return {
+      antes: data.antes?.thumb_url || null,
+      depois: data.depois?.thumb_url || null
+    }
+  } catch (err) {
+    console.warn(`Falha ao buscar imagens do relato ${relatoId}:`, err)
+    return { antes: null, depois: null }
+  }
+}
+
 // --- DADOS MOCKADOS (fallback local para desenvolvimento) ---
 const cardsMock = [
   {
@@ -235,65 +257,56 @@ function onSucesso(payload) {
   }
 }
 
-/**
- * Normaliza um relato vindo do backend público para o formato esperado pelos Cards.
- * Lida com documentos legados que possuem campo 'imagens' com URLs (antes/durante/depois),
- * e também com relatos sem imagens ou com formatos inesperados.
- */
-function mapRelatoParaCard(relato) {
-
-  const thumbs = relato.thumbnail || {}
-
-  const imgAntes = thumbs.antes || null
-  const imgDepois = thumbs.depois || null
-
-  const imagensArray = [
-    imgAntes,
-    imgDepois
-  ].filter(Boolean)
+function mapRelatoParaCard(relato, imagens = {}) {
+  const tags = Array.isArray(relato.tags) ? relato.tags : []
+  const excerpt = relato.excerpt || relato.microdepoimento || relato.solucao || "Relato anônimo"
+  const imgAntes = imagens.antes || buildImageUrl(relato.image_previews?.antes?.[0]) || placeholder
+  const imgDepois = imagens.depois || buildImageUrl(relato.image_previews?.depois?.[0]) || imgAntes || placeholder
 
   return {
-
     id: relato.id,
-
-    tituloRelato: "Relato de tratamento",
-
-    classificacao: "Dermatite",
-
-    imgAntes: imgAntes || placeholder,
-
-    imgDepois: imgDepois || imgAntes || placeholder,
-
-    imagensArray,
-
-    solucao: relato.excerpt || "",
-
-    microdepoimento: relato.excerpt || "",
-
-    tags: relato.tags || [],
-
+    tituloRelato: relato.tituloRelato || "Relato",
+    classificacao: tags[0] || "Relato",
+    imgAntes,
+    imgDepois,
+    thumbnail: {
+      antes: imgAntes,
+      depois: imgDepois
+    },
+    excerpt,
+    imagensArray: [imgAntes, imgDepois].filter(Boolean),
+    solucao: relato.solucao || "",
+    microdepoimento: relato.microdepoimento || excerpt,
+    tags,
     likes: 0,
-
     curtido: false,
-
+    regioesAfetadas: relato.regioesAfetadas || [],
+    genero: relato.genero || null,
+    faixaEtaria: relato.age_range || relato.faixaEtaria || null,
+    descricao: relato.microdepoimento || excerpt,
     ux_effects: relato.ux_effects || [],
-
     raw: relato
   }
+}
+
+async function buildCardFromRelato(relato) {
+  const imagens = await fetchRelatoImagens(relato.id)
+  return mapRelatoParaCard(relato, imagens)
 }
 
 /**
  * Busca relatos públicos no endpoint leve criado para a galeria.
  */
-async function fetchRelatosPublicos(limit = 12) {
+async function fetchRelatosPublicos(limit = 14) {
+  //await new Promise(resolve => setTimeout(resolve, 4 * 60 * 1000))
   try {
-    const resp = await api.get('/galeria/public/v3', {
-      params: { limit }
+    const resp = await api.get('/feed', {
+      params: { page: 1, limit }
     })
 
     const relatos = resp.data?.dados || []
 
-    return relatos.map(mapRelatoParaCard)
+    return await Promise.all(relatos.map(buildCardFromRelato))
   } catch (err) {
     console.error('Erro ao buscar relatos públicos:', err)
     return cardsMock.slice(0, 6)
@@ -302,7 +315,7 @@ async function fetchRelatosPublicos(limit = 12) {
 
 // Monta a galeria ao montar o componente
 onMounted(async () => {
-  const resultado = await fetchRelatosPublicos(12)
+  const resultado = await fetchRelatosPublicos(14)
   if (resultado && resultado.length > 0) {
     cards.value = resultado
   } else {

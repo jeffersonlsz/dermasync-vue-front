@@ -21,6 +21,10 @@
         <RouterLink to="/faq" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
           FAQ
         </RouterLink>
+        <RouterLink v-if="canModerate" to="/moderacao"
+          class="text-sm font-bold text-primary hover:text-primary transition-colors">
+          Moderação
+        </RouterLink>
       </div>
 
       <!-- Auth Actions -->
@@ -60,6 +64,9 @@
         Relatos
         em Vídeo</RouterLink>
       <RouterLink to="/faq" class="text-base font-medium text-gray-700" @click="isMenuOpen = false">FAQ</RouterLink>
+      <RouterLink v-if="canModerate" to="/moderacao" class="text-base font-bold text-primary"
+        @click="isMenuOpen = false">
+        Moderação</RouterLink>
       <hr class="border-gray-100">
       <button v-if="!isAuthenticated" @click="openLoginModalMobile"
         class="text-base font-medium text-primary text-left">
@@ -84,6 +91,11 @@ const authStore = useAuthStore()
 
 const isAuthenticated = computed(() => !!authStore.accessToken)
 const userEmail = computed(() => authStore.user?.email || 'Usuário')
+
+const canModerate = computed(() => {
+  const role = authStore.user?.role;
+  return role === 'admin' || role === 'colaborador';
+})
 
 function openLoginModalMobile() {
   isMenuOpen.value = false

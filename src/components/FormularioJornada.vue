@@ -266,7 +266,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onUnmounted } from 'vue'
 import Dropzone from './Dropzone.vue'
-import { getAuthToken } from '../services/auth'
 import api from '../lib/api'
 
 // Tipos
@@ -278,7 +277,6 @@ type RelatoProgressUI = {
 }
 
 // Config
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 const emit = defineEmits(['fechar', 'sucesso'])
 
 // State UI
@@ -406,24 +404,19 @@ async function onSubmit() {
     files.durante.forEach(f => formData.append('imagens_durante', f))
     files.depois.forEach(f => formData.append('imagens_depois', f))
 
-    const token = getAuthToken()
-    const url = `${API_BASE}/relatos/`
-
     try {
-        const resp = await new Promise<any>((resolve, reject) => {
-            const xhr = new XMLHttpRequest()
-            xhr.open('POST', url, true)
-            if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`)
-            xhr.upload.onprogress = ev => {
-                if (ev.lengthComputable) state.progressPct = Math.round((ev.loaded / ev.total) * 100)
-            }
-            xhr.onload = () => {
-                if (xhr.status >= 200 && xhr.status < 300) resolve(JSON.parse(xhr.responseText))
-                else reject(xhr.responseText || 'Erro ao enviar relato')
-            }
-            xhr.onerror = () => reject('Erro de rede durante o upload')
-            xhr.send(formData)
-        })
+        const response = await api.post('/relatos/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            onUploadProgress: (progressEvent) => {
+                if (progressEvent.total) {
+                    state.progressPct = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                }
+            },
+        });
+        
+        const resp = response.data;
 
         state.status = 'idle'
         state.relatoId = resp.data?.relato_id || null

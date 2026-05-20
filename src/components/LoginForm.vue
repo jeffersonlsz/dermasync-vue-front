@@ -5,12 +5,12 @@
     <form @submit.prevent="doLogin">
       <div class="mb-3">
         <label class="form-label">Email</label>
-        <input type="email" class="form-control" v-model="email" required />
+        <input v-model="email" type="email" class="form-control" required />
       </div>
 
       <div class="mb-3">
         <label class="form-label">Senha</label>
-        <input type="password" class="form-control" v-model="password" required />
+        <input v-model="password" type="password" class="form-control" required />
       </div>
 
       <button class="btn btn-primary w-100" type="submit" :disabled="loading">
@@ -24,51 +24,37 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { login } from '../services/authService'
-import { useRouter } from 'vue-router'
-import api from '../lib/api'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
-const email = ref('')
-const password = ref('')
-const loading = ref(false)
-const error = ref(null)
+import { useAuthStore } from '../stores/auth';
+
+const router = useRouter();
+const authStore = useAuthStore();
+const email = ref('');
+const password = ref('');
+const loading = ref(false);
+const error = ref(null);
 
 async function doLogin() {
-  loading.value = true
-  error.value = null
+  loading.value = true;
+  error.value = null;
 
   try {
-    const response = await login(email.value, password.value)
-
-    // Check if token exists in response
-    const token = response.token || response.access_token
-    if (!token) {
-      throw new Error('Token não retornado pelo servidor')
-    }
-
-    // Salvar token no localStorage como authToken como solicitado
-    localStorage.setItem('authToken', token)
-
-    // Get user profile to determine role after login
-    const profile = await api.get('/auth/me').then(r => r.data)
-    const role = profile.role || 'usuario'
-
-    // Decide where to redirect based on user role
+    await authStore.login(email.value, password.value);
+    const role = authStore.user?.role;
     if (role === 'admin') {
-      router.push('/admin')
+      router.push('/admin');
     } else if (role === 'colaborador') {
-      router.push('/colaborador')
+      router.push('/colaborador');
     } else {
-      router.push('/galeria') // Default dashboard page
+      router.push('/galeria');
     }
-  } catch (e) {
-    console.error('Erro no login:', e)
-    // Exibir mensagens de erro vindas da API como solicitado
-    error.value = e.message || 'Credenciais inválidas.'
+  } catch (err) {
+    console.error('Erro no login:', err);
+    error.value = 'Não foi possível entrar. Verifique suas credenciais.';
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 </script>

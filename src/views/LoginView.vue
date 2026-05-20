@@ -76,14 +76,16 @@ const handleLogin = async () => {
 
   try {
     await authStore.login(email.value, password.value);
-    // Redirect to gallery
-    router.push('/galeria');
-  } catch (error) {
-    if (error.response && error.response.status === 401) {
-      errorMessage.value = 'Invalid credentials. Please try again.';
+    const role = authStore.user?.role;
+    if (role === 'admin') {
+      router.push('/admin');
+    } else if (role === 'colaborador') {
+      router.push('/colaborador');
     } else {
-      errorMessage.value = 'An error occurred. Please try again later.';
+      router.push('/galeria');
     }
+  } catch (error) {
+    errorMessage.value = 'Não foi possível entrar. Verifique suas credenciais.';
   } finally {
     isLoading.value = false;
   }

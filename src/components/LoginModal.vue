@@ -124,13 +124,16 @@ async function handleLogin() {
     try {
         await authStore.login(email.value, password.value)
         close()
-        router.push('/galeria')
-    } catch (error) {
-        if (error.response && error.response.status === 401) {
-            errorMessage.value = 'E-mail ou senha incorretos.'
+        const role = authStore.user?.role
+        if (role === 'admin') {
+            router.push('/admin')
+        } else if (role === 'colaborador') {
+            router.push('/colaborador')
         } else {
-            errorMessage.value = 'Erro ao fazer login. Tente novamente.'
+            router.push('/galeria')
         }
+    } catch (error) {
+        errorMessage.value = 'Erro ao fazer login. Tente novamente.'
     } finally {
         isLoading.value = false
     }

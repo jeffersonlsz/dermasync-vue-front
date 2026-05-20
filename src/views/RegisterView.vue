@@ -84,11 +84,7 @@ const handleRegister = async () => {
     }
 
   } catch (error) {
-    if (error.response && error.response.data && error.response.data.message) {
-      errorMessage.value = error.response.data.message;
-    } else {
-      errorMessage.value = 'Registration failed. Please try again.';
-    }
+    errorMessage.value = 'Registration failed. Please try again.';
   } finally {
     isLoading.value = false;
   }
