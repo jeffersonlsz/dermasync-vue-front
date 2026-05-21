@@ -55,7 +55,7 @@ function mapRelatoParaCard(relato, imagens = {}) {
     imagensArray: [imgAntes, imgDepois].filter(Boolean),
     solucao: relato.solucao || "",
     microdepoimento: relato.microdepoimento || excerpt,
-    tags,
+    tags:relato.tags || [],
     likes: 0,
     curtido: false,
     regioesAfetadas: relato.regioesAfetadas || [],
