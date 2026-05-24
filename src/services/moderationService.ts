@@ -2,7 +2,7 @@ import api from '../lib/api';
 
 export const getPendingRelatos = async () => {
     const response = await api.get('/relatos/moderation/pending');
-    return response.data;
+    return response.data.data || [];
 };
 
 export const getRelatoById = async (id: string) => {

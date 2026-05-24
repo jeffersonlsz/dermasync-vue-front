@@ -4,7 +4,6 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import GaleriaView from '../views/GaleriaView.vue'
 import AdminDashboard from '../views/AdminDashboard.vue'
-import ColaboradorDashboard from '../views/ColaboradorDashboard.vue'
 import HomeView from '../views/HomeView.vue'
 import VideosExplicativosView from '../views/VideosExplicativosView.vue'
 import CadastroView from '../views/CadastroView.vue'
@@ -43,12 +42,7 @@ const routes = [
     component: AdminDashboard,
     meta: { requiresAuth: true, role: 'admin' }
   },
-  {
-    path: '/colaborador',
-    name: 'ColaboradorDashboard',
-    component: ColaboradorDashboard,
-    meta: { requiresAuth: true, role: 'colaborador' }
-  },
+  
   {
     path: '/moderacao',
     name: 'Moderacao',

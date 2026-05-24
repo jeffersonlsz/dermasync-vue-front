@@ -79,8 +79,6 @@ const handleLogin = async () => {
     const role = authStore.user?.role;
     if (role === 'admin') {
       router.push('/admin');
-    } else if (role === 'colaborador') {
-      router.push('/colaborador');
     } else {
       router.push('/galeria');
     }

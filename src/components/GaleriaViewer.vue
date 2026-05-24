@@ -27,13 +27,8 @@
     </div>
 
     <!-- Estado vazio -->
-    <div v-else class="text-center py-16 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-      <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white shadow-sm mb-6">
-        <i class="bi bi-search text-3xl text-gray-300"></i>
-      </div>
-      <h3 class="text-xl font-bold text-gray-900 mb-2">Nenhum relato encontrado</h3>
-      <p class="text-gray-500 max-w-md mx-auto">Tente ajustar seus filtros para ver mais resultados ou seja o primeiro a
-        postar nesta categoria!</p>
+    <div v-else class="flex flex-col items-center justify-center min-h-[40vh] w-full">
+      <h3 class="text-2xl font-semibold text-gray-900">não há relatos na galeria</h3>
     </div>
 
     <!-- Modal Formulario Jornada -->
@@ -84,89 +79,7 @@ async function fetchRelatoImagens(relatoId) {
   }
 }
 
-// --- DADOS MOCKADOS (fallback local para desenvolvimento) ---
-const cardsMock = [
-  {
-    id: 1,
-    tituloRelato: 'Jornada de Clarissa',
-    classificacao: 'Dermatite Atópica',
-    imgAntes: 'https://placehold.co/400x400/e2e8f0/64748b?text=Antes',
-    imgDepois: 'https://placehold.co/400x400/f0fdf4/15803d?text=Depois',
-    solucao: 'Uso consistente de hidratantes e redução de banhos quentes.',
-    microdepoimento: 'Mudou minha vida completamente, finalmente posso dormir sem coceira.',
-    tags: ['dermatite', 'hidratação', 'cuidados-diários'],
-    likes: 34,
-    curtido: false,
-    regioesAfetadas: ['Braços', 'Pescoço'],
-    genero: 'Feminino',
-    faixaEtaria: '20-30',
-    descricao: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
-  },
-  {
-    id: 2,
-    tituloRelato: 'Tratamento do João',
-    classificacao: 'Psoríase',
-    imgAntes: 'https://placehold.co/400x400/e2e8f0/64748b?text=Antes',
-    imgDepois: 'https://placehold.co/400x400/f0fdf4/15803d?text=Depois',
-    solucao: 'Fototerapia e mudança na alimentação.',
-    microdepoimento: 'A fototerapia foi essencial para o controle das manchas.',
-    tags: ['psoríase', 'fototerapia', 'alimentação'],
-    likes: 12,
-    curtido: true,
-    regioesAfetadas: ['Cotovelos', 'Joelhos'],
-    genero: 'Masculino',
-    faixaEtaria: '30-40',
-    descricao: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-  },
-  {
-    id: 3,
-    tituloRelato: 'Rotina da Ana',
-    classificacao: 'Acne Adulta',
-    imgAntes: 'https://placehold.co/400x400/e2e8f0/64748b?text=Antes',
-    imgDepois: 'https://placehold.co/400x400/f0fdf4/15803d?text=Depois',
-    solucao: 'Ácido retinóico e protetor solar rigoroso.',
-    microdepoimento: 'Paciência é a chave. Os resultados demoraram mas chegaram.',
-    tags: ['acne', 'skincare', 'rosto'],
-    likes: 56,
-    curtido: false,
-    regioesAfetadas: ['Rosto'],
-    genero: 'Feminino',
-    faixaEtaria: '25-35',
-    descricao: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.'
-  },
-  {
-    id: 4,
-    tituloRelato: 'Recuperação do Marcos',
-    classificacao: 'Eczema',
-    imgAntes: 'https://placehold.co/400x400/e2e8f0/64748b?text=Antes',
-    imgDepois: 'https://placehold.co/400x400/f0fdf4/15803d?text=Depois',
-    solucao: 'Identificação de alergênicos e pomadas específicas.',
-    microdepoimento: 'Descobrir que era alergia a níquel facilitou tudo.',
-    tags: ['eczema', 'alergia', 'contato'],
-    likes: 8,
-    curtido: false,
-    regioesAfetadas: ['Mãos'],
-    genero: 'Masculino',
-    faixaEtaria: '40-50',
-    descricao: 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.'
-  },
-  {
-    id: 5,
-    tituloRelato: 'Jornada de Sofia',
-    classificacao: 'Rosácea',
-    imgAntes: 'https://placehold.co/400x400/e2e8f0/64748b?text=Antes',
-    imgDepois: 'https://placehold.co/400x400/f0fdf4/15803d?text=Depois',
-    solucao: 'Laser e evitar gatilhos como calor e pimenta.',
-    microdepoimento: 'O laser ajudou muito na vermelhidão.',
-    tags: ['rosácea', 'laser', 'pele-sensível'],
-    likes: 90,
-    curtido: true,
-    regioesAfetadas: ['Bochechas', 'Nariz'],
-    genero: 'Feminino',
-    faixaEtaria: '30-40',
-    descricao: 'Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.'
-  }
-];
+// Mock data removed — production/empty state will show message instead
 
 const cards = ref([])
 const filtrosAtivos = ref({})
@@ -229,18 +142,26 @@ function onUploadFinalizado(id) {
   console.log("Upload finalizado com ID:", id)
 }
 
-function onSucesso(payload) {
+async function onSucesso(payload) {
   // Payload pode ser objeto { id, message } ou string (legado)
   const id = (typeof payload === 'object' && payload.id) ? payload.id : null
 
   if (id) {
-    // Adicionar novo card placeholder no topo
+    // Buscar imagens do relato recém-criado
+    let imagens = { antes: null, depois: null }
+    try {
+      imagens = await fetchRelatoImagens(id)
+    } catch (err) {
+      console.warn('Falha ao obter imagens do relato após sucesso:', err)
+    }
+
+    // Adicionar novo card com as imagens retornadas (thumb_url)
     const novoCard = {
       id: id,
       tituloRelato: id, // ID como título por enquanto
       classificacao: 'Em análise',
-      imgAntes: placeholder, // Placeholder
-      imgDepois: placeholder, // Placeholder
+      imgAntes: imagens.antes || placeholder,
+      imgDepois: imagens.depois || placeholder,
       solucao: 'Relato em processamento...',
       microdepoimento: 'Seu relato foi enviado e está sendo analisado.',
       tags: [],
@@ -250,6 +171,7 @@ function onSucesso(payload) {
       genero: '...',
       faixaEtaria: '...'
     }
+
     cards.value.unshift(novoCard)
 
     // Rolar para o topo suavemente
@@ -309,21 +231,14 @@ async function fetchRelatosPublicos(limit = 14) {
     return await Promise.all(relatos.map(buildCardFromRelato))
   } catch (err) {
     console.error('Erro ao buscar relatos públicos:', err)
-    return cardsMock.slice(0, 6)
+    return []
   }
 }
 
 // Monta a galeria ao montar o componente
 onMounted(async () => {
   const resultado = await fetchRelatosPublicos(14)
-  if (resultado && resultado.length > 0) {
-    cards.value = resultado
-  } else {
-    // Se não trouxe nada, mantemos fallback (cardsMock) ou deixamos vazio
-    // Para UX de desenvolvimento manteremos alguns mocks como fallback:
-    cards.value = cardsMock.slice(0, 6)
-    console.info('Nenhum relato público retornado — usando fallback mock.')
-  }
+  cards.value = (resultado && resultado.length > 0) ? resultado : []
 })
 </script>
 

@@ -3,7 +3,7 @@
         <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
             <h2 class="text-lg font-bold text-gray-800">Fila de Moderação</h2>
             <span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full">
-                {{ relatos.length }} pendentes
+                {{ normalizedRelatos.length }} pendentes
             </span>
         </div>
 
@@ -17,7 +17,7 @@
             </svg>
         </div>
 
-        <div v-else-if="relatos.length === 0" class="flex-1 flex flex-col items-center justify-center p-8 text-center">
+        <div v-else-if="normalizedRelatos.length === 0" class="flex-1 flex flex-col items-center justify-center p-8 text-center">
             <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4">
                 <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -28,14 +28,14 @@
         </div>
 
         <div v-else class="flex-1 overflow-y-auto p-4 space-y-3">
-            <button v-for="relato in relatos" :key="relato.id" @click="$emit('select', relato)" :class="[
+            <button v-for="relato in normalizedRelatos" :key="relato.id" @click="$emit('select', relato.__raw)" :class="[
                 'w-full text-left p-4 rounded-xl border transition-all duration-200 flex flex-col gap-3',
                 selectedId === relato.id
                     ? 'border-primary ring-2 ring-primary/20 bg-primary/5 shadow-sm'
                     : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
             ]">
                 <div class="flex justify-between items-start gap-2">
-                    <span class="text-xs font-mono text-gray-500">#{{ relato.id.slice(0, 7) }}</span>
+                    <span class="text-xs font-mono text-gray-500">#{{ relato.id }}</span>
                     <span class="text-xs text-gray-400">{{ formatDate(relato.created_at) }}</span>
                 </div>
 
@@ -67,13 +67,69 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed, ref } from 'vue';
+import api from '@/lib/api'
+
+const props = defineProps({
     relatos: { type: Array, required: true },
     selectedId: { type: String, default: null },
     isLoading: { type: Boolean, default: false }
 });
 
-defineEmits(['select']);
+const emit = defineEmits(['select']);
+
+const relatos = computed(() => props.relatos || []);
+const selectedId = computed(() => props.selectedId);
+const isLoading = computed(() => props.isLoading);
+
+const imagensCache = ref({})
+
+const normalizedRelatos = computed(() => relatos.value.map(normalizeRelato));
+
+function normalizeRelato(raw) {
+    const cached = imagensCache.value[raw.id]
+
+    const imagens = cached || {
+        antes: raw.imagens?.antes || raw.image_refs?.antes?.[0] || null,
+        durante: raw.imagens?.durante || raw.image_refs?.durante?.[0] || null,
+        depois: raw.imagens?.depois || raw.image_refs?.depois?.[0] || null,
+    };
+
+    // Se não houver cache, buscar em background e popular o cache
+    if (!cached && raw.id) {
+        fetchRelatoImagens(raw.id).then(result => {
+            imagensCache.value = { ...imagensCache.value, [raw.id]: result }
+        }).catch(err => {
+            console.warn('Falha ao buscar imagens do relato (moderação):', raw.id, err)
+        })
+    }
+
+    return {
+        __raw: raw,
+        id: raw.id,
+        descricao: raw.descricao || raw.conteudo_original || '',
+        created_at: raw.created_at || raw.updated_at || raw.createdAt || null,
+        imagens,
+        classificacao: raw.classificacao || raw.classificacao_manual || null,
+        genero: raw.genero || null,
+        regioesAfetadas: raw.regioesAfetadas || raw.regios || raw.regiao || []
+    };
+}
+
+async function fetchRelatoImagens(relatoId) {
+    try {
+        const resp = await api.get(`/relatos/${relatoId}/imagens`)
+        const data = resp.data || {}
+        return {
+            antes: data.antes?.thumb_url || null,
+            durante: Array.isArray(data.durante) ? (data.durante[0]?.thumb_url || null) : null,
+            depois: data.depois?.thumb_url || null
+        }
+    } catch (err) {
+        console.warn('Erro ao buscar imagens do relato:', relatoId, err)
+        return { antes: null, durante: null, depois: null }
+    }
+}
 
 function formatDate(dateStr) {
     if (!dateStr) return '';

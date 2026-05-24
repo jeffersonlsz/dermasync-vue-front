@@ -46,7 +46,7 @@ async function doLogin() {
     if (role === 'admin') {
       router.push('/admin');
     } else if (role === 'colaborador') {
-      router.push('/colaborador');
+      router.push('/moderacao');
     } else {
       router.push('/galeria');
     }

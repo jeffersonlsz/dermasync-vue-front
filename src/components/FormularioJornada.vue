@@ -294,7 +294,6 @@ const state = reactive({
 
 const isUploading = computed(() => state.status === 'uploading')
 const isTerminalState = computed(() => !!state.progress?.is_complete || !!state.progress?.has_error)
-const isProcessing = computed(() => !!state.relatoId && state.status !== 'error')
 
 // Form Data
 const form = reactive({
