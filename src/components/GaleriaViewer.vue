@@ -1,34 +1,38 @@
 <template>
-  <div class="galeria-viewer max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-32">
+  <div class="galeria-viewer max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-16 mt-24">
 
     <!-- Cabeçalho: CTA Centralizado e Filtros -->
-    <div class="flex flex-col items-center gap-10 mb-12">
+    <div class="flex flex-col items-center gap-12 mb-16">
 
-      <!-- CTA Button Centralizado e Maior -->
+      <!-- CTA Button Centralizado -->
       <button @click="mostrarFormulario = true"
-        class="group relative inline-flex items-center justify-center px-10 py-4 text-xl font-bold text-white transition-all duration-300 bg-primary font-heading rounded-2xl shadow-xl shadow-primary/30 hover:bg-primary-600 hover:shadow-2xl hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-primary/20">
-        <span
-          class="absolute inset-0 w-full h-full bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></span>
-        <i class="bi bi-pencil-square mr-3 text-2xl group-hover:rotate-12 transition-transform"></i>
-        Envie seu relato e aprenda
+        class="group inline-flex items-center justify-center px-8 py-3.5 text-[15px] font-medium tracking-wide text-white transition-all duration-400 bg-gray-900 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.08)] hover:bg-gray-800 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
+        <span class="flex items-center gap-3">
+          <svg class="w-4 h-4 opacity-70 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+          Compartilhe sua jornada
+        </span>
       </button>
 
       <!-- Linha de Filtros (Alinhado à esquerda do Grid) -->
-      <div class="w-full flex justify-start border-b border-gray-100 pb-4">
+      <div class="w-full flex justify-start border-b border-gray-200/60 pb-6">
         <FiltrosGaleria :contadores="contadores" @filtrosAlterados="aplicarFiltros" />
       </div>
 
     </div>
 
     <!-- Grid de Cards -->
-    <div v-if="cardsFiltrados.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div v-if="cardsFiltrados.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
       <CardJornada v-for="card in cardsFiltrados" :key="card.id" :card="card" :tags_extraidas="card.tags"
         :microdepoimento="card.microdepoimento" />
     </div>
 
     <!-- Estado vazio -->
-    <div v-else class="flex flex-col items-center justify-center min-h-[40vh] w-full">
-      <h3 class="text-2xl font-semibold text-gray-900">não há relatos na galeria</h3>
+    <div v-else class="flex flex-col items-center justify-center min-h-[40vh] w-full text-center">
+      <div class="w-16 h-16 mb-6 rounded-2xl bg-gray-50/80 border border-gray-100 flex items-center justify-center">
+        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+      </div>
+      <h3 class="text-[17px] font-medium text-gray-900 mb-2 tracking-tight">Nenhuma experiência registrada</h3>
+      <p class="text-[15px] text-gray-500 max-w-sm font-light leading-relaxed">Ainda não há relatos compartilhados com estes filtros. Tente ajustar sua busca ou seja o primeiro a adicionar uma jornada.</p>
     </div>
 
     <!-- Modal Formulario Jornada -->

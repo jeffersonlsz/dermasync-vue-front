@@ -101,82 +101,84 @@ console.log('Card recebido:', props.card);
 <template>
   <div
     v-intersect="ativarAnimacao"
-    :class="['bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1', { 'opacity-100 translate-y-0': visivel, 'opacity-0 translate-y-4': !visivel }]"
+    :class="['group bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.06)] hover:border-gray-200/60 transition-all duration-500', { 'opacity-100 translate-y-0': visivel, 'opacity-0 translate-y-6': !visivel }]"
   >
-    <div class="px-4 py-3 bg-white border-b border-gray-100 flex justify-between items-center">
-      <div class="flex items-center">
-      <h6 class="mb-0 text-gray-900 font-semibold">{{ card.tituloRelato || card.classificacao }}</h6>
-      </div>
-      <div>
-      <i class="bi bi-info-circle text-gray-400"></i>
+    <!-- Semantic Metadata Header -->
+    <div class="px-6 pt-6 pb-4 flex justify-between items-start">
+      <div class="flex flex-col gap-1">
+        <h6 class="text-[15px] text-gray-900 font-medium tracking-tight">{{ card.tituloRelato || card.classificacao || 'Experiência' }}</h6>
+        <div class="flex items-center text-[13px] text-gray-400 font-light gap-2">
+          <span>{{ card.faixaEtaria || 'Idade n/a' }}</span>
+          <span class="w-1 h-1 rounded-full bg-gray-200"></span>
+          <span>{{ card.genero || 'Gênero n/a' }}</span>
+          <span v-if="card.regioesAfetadas && card.regioesAfetadas.length > 0" class="w-1 h-1 rounded-full bg-gray-200"></span>
+          <span v-if="card.regioesAfetadas && card.regioesAfetadas.length > 0" class="truncate max-w-[120px]">{{ card.regioesAfetadas.join(', ') }}</span>
+        </div>
       </div>
     </div>
-    <div class="flex h-[140px]">
-      
+
+    <!-- Imagens: Antes / Depois -->
+    <div class="px-6 flex gap-2 h-[160px] cursor-pointer" @click.prevent="verJornada(card)">
       <!-- ANTES -->
-      <div class="w-1/2 position-relative relative">
+      <div class="w-1/2 relative rounded-2xl overflow-hidden bg-gray-50 group-hover:opacity-95 transition-opacity">
+        <span class="absolute top-2 left-2 z-10 bg-white/80 backdrop-blur-md px-2 py-1 rounded-lg text-[10px] font-medium tracking-wide text-gray-600 uppercase shadow-sm">Antes</span>
         <img
           :src="card.imgAntes"
           @load="imagemCarregou('antes')"
           @error="imagemCarregou('antes')"
-          class="thumb-jornada p-0.5 w-full h-full object-cover rounded-bl-sm fade-in-img"
+          class="w-full h-full object-cover fade-in-img"
           :class="{ loaded: !carregandoAntes }"
-          @click.prevent="verJornada(card)"
         />
         <div v-if="carregandoAntes" class="w-full h-full bg-gray-100 shimmer absolute top-0 left-0"></div>
       </div>
 
       <!-- DEPOIS -->
-      <div class="w-1/2 position-relative relative">
+      <div class="w-1/2 relative rounded-2xl overflow-hidden bg-gray-50 group-hover:opacity-95 transition-opacity">
+        <span class="absolute top-2 left-2 z-10 bg-white/80 backdrop-blur-md px-2 py-1 rounded-lg text-[10px] font-medium tracking-wide text-gray-600 uppercase shadow-sm">Depois</span>
         <img
           :src="card.imgDepois"
           @load="imagemCarregou('depois')"
           @error="imagemCarregou('depois')"
-          class="thumb-jornada p-0.5 w-full h-full object-cover rounded-br-sm fade-in-img"
+          class="w-full h-full object-cover fade-in-img"
           :class="{ loaded: !carregandoDepois }"
-          @click.prevent="verJornada(card)"
         />
         <div v-if="carregandoDepois" class="w-full h-full bg-gray-100 shimmer absolute top-0 left-0"></div>
       </div>
     </div>
 
-    <div class="p-5">
+    <!-- Depoimento e Conteúdo -->
+    <div class="p-6">
+      <p class="text-[15px] leading-relaxed text-gray-700 font-light mb-5 line-clamp-3">
+        "{{ card.microdepoimento || card.solucao }}"
+      </p>
       
-      <p class="text-sm text-gray-500 mb-2 line-clamp-2">{{ card.solucao }}</p>
-      <p class="text-sm text-gray-600 mb-3 italic">"{{ card.microdepoimento }}"</p>
-      
-      <div class="mb-4 flex flex-wrap gap-2">
-        <span v-for="tag in tagz" :key="tag" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">{{ tag }}</span>
-        <button v-if="tagz.length < card.tags.length" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-skin-100 text-primary hover:bg-skin-200 transition-colors cursor-pointer" @click.prevent="verMaisTags(card, $event)" >+Mais tags</button>
+      <!-- Tags Semânticas -->
+      <div class="mb-6 flex flex-wrap gap-1.5">
+        <span v-for="tag in tagz" :key="tag" class="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-medium bg-gray-50 text-gray-500 border border-gray-100/80 transition-colors hover:bg-gray-100 hover:text-gray-700">{{ tag }}</span>
+        <button v-if="tagz.length < card.tags.length" class="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-medium bg-gray-50/50 text-gray-400 hover:text-gray-700 transition-colors cursor-pointer" @click.prevent="verMaisTags(card, $event)" >+{{ card.tags.length - tagz.length }}</button>
       </div>
       
-      <div class="h-px bg-gray-100 my-4"></div>
-      
-      <div class="flex justify-between items-center">
-        <a href="#" class="inline-flex items-center text-primary font-bold text-sm hover:text-primary-600 transition-colors" @click.prevent="verJornada(card)">
-          Ver jornada
+      <!-- Footer Actions -->
+      <div class="flex justify-between items-center pt-2">
+        <a href="#" class="inline-flex items-center text-[13px] font-medium text-gray-900 transition-colors group-hover:text-gray-600" @click.prevent="verJornada(card)">
+          Explorar jornada
+          <svg class="w-3.5 h-3.5 ml-1.5 opacity-0 -translate-x-2 transition-all group-hover:opacity-100 group-hover:translate-x-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
         </a>
 
-        <div class="flex items-center gap-1 like-button px-2 py-1 rounded-full hover:bg-gray-50 bg-opacity-50 transition-all" 
+        <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-gray-50 transition-all focus:outline-none" 
             :class="{ active: card.curtido }"
-            @click.prevent="curtir(card)"
-            style="cursor: pointer;">
-          <i :class="card.curtido ? 'bi bi-heart-fill text-red-500' : 'bi bi-heart text-gray-400'"
-            class="fs-5"></i>
-          <span class="text-xs font-medium" :class="card.curtido ? 'text-red-500' : 'text-gray-500'">{{ card.likes }}</span>
-        </div>
+            @click.prevent="curtir(card)">
+          <svg :class="card.curtido ? 'text-rose-500 fill-rose-500' : 'text-gray-300 fill-transparent'" class="w-4 h-4 transition-colors duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+          <span class="text-[12px] font-medium" :class="card.curtido ? 'text-rose-500' : 'text-gray-400'">{{ card.likes }}</span>
+        </button>
       </div>
     </div>
   </div>
-
-  <!--CardJornadaOverlay :jornadaSelecionada="jornadaSelecionada" @close="jornadaSelecionada = null" /-->
 
   <CardJornadaOverlay 
       :jornadaSelecionada="jornadaSelecionada" 
       @update:jornadaSelecionada="jornadaSelecionada = $event" 
        />
-  
-
 </template>
 
 

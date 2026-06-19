@@ -2,41 +2,41 @@
 
 @theme {
   /* Brand */
-  --color-primary: #4CAF86;
-  --color-primary-500: #4CAF86;
-  --color-primary-600: #3C8A6C;
-  --color-primary-300: #89D1B4;
-  --color-primary-100: #DDF3EB;
-  --color-primary-hover: #3C8A6C;
+  --color-primary: #2D5A43;
+  --color-primary-500: #2D5A43;
+  --color-primary-600: #244835;
+  --color-primary-300: #7DA690;
+  --color-primary-100: #E8F0EA;
+  --color-primary-hover: #244835;
 
-  /* Skin */
-  --color-skin: #F7EDE3;
-  --color-skin-100: #F7EDE3;
-  --color-skin-200: #EEDFCC;
+  /* Skin & Backgrounds */
+  --color-cream: #F9F7F2;
+  --color-skin: #F9F7F2;
+  --color-skin-100: #F9F7F2;
+  --color-skin-200: #E9E6DF;
 
   /* Earth */
-  --color-earth-300: #CBAA8F;
+  --color-earth-300: #8C735E;
 
   /* Neutral */
-  --color-gray-900: #2F2F2F;
-  --color-gray-700: #5E5E5E;
-  --color-gray-300: #DADADA;
-  --color-gray-100: #F5F6F7;
+  --color-gray-900: #1A1A1A;
+  --color-gray-700: #4A4A4A;
+  --color-gray-300: #D1D1D1;
+  --color-gray-100: #F3F4F6;
   --color-white: #FFFFFF;
-  --color-cream: #F7EDE3;
 
   /* Feedback */
-  --color-success: #4CAF86;
-  --color-warning: #E5B85A;
-  --color-error: #D97A7A;
+  --color-success: #2D5A43;
+  --color-warning: #D9A05B;
+  --color-error: #B04A4A;
 
-  /* Font Family - Ensure these match what's imported */
+  /* Font Family */
   --font-sans: 'Inter', sans-serif;
-  --font-heading: 'Nunito', sans-serif;
+  --font-heading: 'Outfit', sans-serif;
 }
 
 /* Import Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {

@@ -1,59 +1,59 @@
 <template>
-  <div class="flex items-center mb-3 cursor-pointer group" @click="mostrarOverlay = true">
+  <div class="flex items-center cursor-pointer group" @click="mostrarOverlay = true">
     <div
-      class="p-2 rounded-full bg-primary-100 text-primary group-hover:bg-primary group-hover:text-white transition-colors mr-3">
-      <i class="bi bi-filter text-xl"></i>
+      class="flex items-center gap-2.5 px-4 py-2 rounded-full bg-gray-50 border border-gray-100/80 text-gray-600 transition-all duration-300 group-hover:bg-gray-100 group-hover:text-gray-900 group-hover:border-gray-200">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+      <span class="text-[13px] font-medium tracking-wide">Refinar experiências</span>
     </div>
-    <span class="font-semibold text-gray-700 group-hover:text-primary transition-colors">Filtrar Galeria</span>
   </div>
 
   <Teleport to="body">
-    <div v-if="mostrarOverlay" class="fixed inset-0 z-[1050] flex items-center justify-center px-4">
+    <div v-if="mostrarOverlay" class="fixed inset-0 z-[1050] flex items-center justify-center px-4 sm:px-0">
       <!-- Backdrop -->
-      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="mostrarOverlay = false">
+      <div class="absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity" @click="mostrarOverlay = false">
       </div>
 
       <!-- Modal Content -->
-      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up">
+      <div class="relative bg-white sm:rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] w-full max-w-xl overflow-hidden animate-fade-in-up">
 
         <!-- Header -->
-        <div class="flex items-center justify-between p-6 border-b border-gray-100">
-          <h3 class="text-xl font-heading font-bold text-gray-900">Filtros</h3>
+        <div class="flex items-center justify-between px-8 py-6 border-b border-gray-100/60">
+          <h3 class="text-lg font-medium text-gray-900 tracking-tight">Filtros</h3>
           <button @click="mostrarOverlay = false"
-            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
-            <i class="bi bi-x-lg text-lg"></i>
+            class="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-full transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
         </div>
 
         <!-- Body -->
-        <div class="p-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+        <div class="px-8 py-8 max-h-[70vh] overflow-y-auto custom-scrollbar flex flex-col gap-10">
 
           <!-- Faixa Etária -->
-          <div class="mb-8">
-            <label class="block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Faixa Etária</label>
-            <div class="flex flex-wrap gap-2">
+          <div>
+            <label class="block text-[11px] font-semibold text-gray-400 mb-4 uppercase tracking-[0.1em]">Momento da vida</label>
+            <div class="flex flex-wrap gap-2.5">
               <button v-for="item in ['crianca', 'adolescente', 'adulto']" :key="item"
                 @click="toggleItem('faixaEtaria', item)" :class="[
-                  'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border',
+                  'px-4 py-2 rounded-xl text-[13px] font-medium transition-all duration-300 border',
                   filtrosPendentes.faixaEtaria.includes(item)
-                    ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                    : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary'
+                    ? 'bg-gray-900 text-white border-gray-900 shadow-md shadow-gray-900/10'
+                    : 'bg-white text-gray-600 border-gray-200/80 hover:bg-gray-50 hover:text-gray-900'
                 ]">
-                {{ item.toUpperCase() }}
+                {{ item.charAt(0).toUpperCase() + item.slice(1) }}
               </button>
             </div>
           </div>
 
           <!-- Região Afetada -->
-          <div class="mb-4">
-            <label class="block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Região Afetada</label>
-            <div class="flex flex-wrap gap-2">
+          <div>
+            <label class="block text-[11px] font-semibold text-gray-400 mb-4 uppercase tracking-[0.1em]">Região Afetada</label>
+            <div class="flex flex-wrap gap-2.5">
               <button v-for="item in ['rosto', 'pescoço', 'tronco', 'braços', 'pernas', 'mãos', 'costas', 'pés']"
                 :key="item" @click="toggleItem('regiao', item)" :class="[
-                  'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border',
+                  'px-4 py-2 rounded-xl text-[13px] font-medium transition-all duration-300 border',
                   filtrosPendentes.regiao.includes(item)
-                    ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                    : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary'
+                    ? 'bg-gray-900 text-white border-gray-900 shadow-md shadow-gray-900/10'
+                    : 'bg-white text-gray-600 border-gray-200/80 hover:bg-gray-50 hover:text-gray-900'
                 ]">
                 {{ item.charAt(0).toUpperCase() + item.slice(1) }}
               </button>
@@ -63,16 +63,16 @@
         </div>
 
         <!-- Footer -->
-        <div class="p-6 border-t border-gray-100 flex justify-between items-center bg-gray-50">
+        <div class="px-8 py-5 border-t border-gray-100/60 flex justify-between items-center bg-white">
           <button
-            class="px-4 py-2 text-sm font-medium text-error hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+            class="text-[13px] font-medium text-gray-500 hover:text-gray-900 transition-colors"
             @click="limparFiltros">
-            Limpar filtros
+            Limpar tudo
           </button>
           <button
-            class="px-6 py-2.5 bg-primary text-white text-sm font-bold rounded-xl shadow-lg shadow-primary/30 hover:bg-primary-600 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+            class="px-7 py-2.5 bg-gray-900 text-white text-[14px] font-medium tracking-wide rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.08)] hover:bg-gray-800 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] transition-all duration-300"
             @click="aplicarFiltros">
-            Aplicar Filtros
+            Aplicar
           </button>
         </div>
 
