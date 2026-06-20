@@ -41,7 +41,7 @@
 
                 <div class="flex items-center gap-2 flex-wrap">
                     <span class="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-medium rounded">
-                        {{ relato.classificacao || 'N/A' }}
+                        {{ relato.idade || 'N/A' }}
                     </span>
                     <span class="text-gray-300">•</span>
                     <span class="text-xs text-gray-600 font-medium">{{ relato.genero || 'N/A' }}</span>
@@ -90,9 +90,9 @@ function normalizeRelato(raw) {
     const cached = imagensCache.value[raw.id]
 
     const imagens = cached || {
-        antes: raw.imagens?.antes || raw.image_refs?.antes?.[0] || null,
-        durante: raw.imagens?.durante || raw.image_refs?.durante?.[0] || null,
-        depois: raw.imagens?.depois || raw.image_refs?.depois?.[0] || null,
+        antes: raw.imagens?.antes || (Array.isArray(raw.image_refs?.antes) ? raw.image_refs.antes[0] : raw.image_refs?.antes) || null,
+        durante: raw.imagens?.durante || (Array.isArray(raw.image_refs?.durante) ? raw.image_refs.durante[0] : raw.image_refs?.durante) || null,
+        depois: raw.imagens?.depois || (Array.isArray(raw.image_refs?.depois) ? raw.image_refs.depois[0] : raw.image_refs?.depois) || null,
     };
 
     // Se não houver cache, buscar em background e popular o cache
@@ -111,8 +111,10 @@ function normalizeRelato(raw) {
         created_at: raw.created_at || raw.updated_at || raw.createdAt || null,
         imagens,
         classificacao: raw.classificacao || raw.classificacao_manual || null,
-        genero: raw.genero || null,
-        regioesAfetadas: raw.regioesAfetadas || raw.regios || raw.regiao || []
+        // map metadata fields when present
+        idade: raw.metadados?.idade ?? raw.idade ?? null,
+        genero: raw.metadados?.genero ?? raw.genero ?? null,
+        regioesAfetadas: raw.metadados?.regioes_afetadas || raw.regioesAfetadas || raw.regios || raw.regiao || []
     };
 }
 

@@ -32,7 +32,7 @@
                 <div>
                     <span
                         class="block text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Classificação</span>
-                    <span class="text-gray-900 font-semibold">{{ relato.classificacao || 'Não informada' }}</span>
+                    <span class="text-gray-900 font-semibold">{{ relato.classificacao_etaria || 'Não informada' }}</span>
                 </div>
                 <div class="w-px h-8 bg-gray-200 mx-2"></div>
                 <div>
@@ -43,7 +43,7 @@
                 <div>
                     <span class="block text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Regiões
                         Afetadas</span>
-                    <span class="text-gray-900 font-semibold">{{ formatRegions(relato.regioesAfetadas) }}</span>
+                    <span class="text-gray-900 font-semibold">{{ formatRegions(relato.regioes_afetadas) }}</span>
                 </div>
                 <div class="w-px h-8 bg-gray-200 mx-2"></div>
                 <div>
@@ -68,31 +68,45 @@
             </div>
 
             <!-- Imagens -->
-            <div v-if="hasImages(relato.imagens)" class="space-y-3">
+            <div v-if="hasAnyImages()" class="space-y-3">
                 <h3 class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-3">Evidências Visuais</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div v-if="relato.imagens?.antes" class="space-y-2">
+                    <div v-if="effectiveImages.antes.length" class="space-y-2">
                         <div class="flex items-center gap-2 mb-2">
                             <span
                                 class="px-2.5 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-lg uppercase tracking-wider">Antes</span>
                             <span class="text-sm text-gray-500">Início do tratamento</span>
                         </div>
-                        <div class="aspect-square rounded-2xl overflow-hidden bg-gray-100 border border-gray-200">
-                            <img :src="relato.imagens.antes" alt="Imagem Antes do Tratamento"
-                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                        <div class="flex gap-3 overflow-x-auto py-2">
+                            <div v-for="(src, i) in effectiveImages.antes" :key="`antes-${i}`" class="w-40 h-40 rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0">
+                                <img :src="src" alt="Antes" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                            </div>
                         </div>
                     </div>
 
-                    <div v-if="relato.imagens?.depois" class="space-y-2">
+                    <div v-if="effectiveImages.durante.length" class="space-y-2">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span
+                                class="px-2.5 py-1 bg-yellow-100 text-yellow-700 text-xs font-bold rounded-lg uppercase tracking-wider">Durante</span>
+                            <span class="text-sm text-gray-500">Durante o tratamento</span>
+                        </div>
+                        <div class="flex gap-3 overflow-x-auto py-2">
+                            <div v-for="(src, i) in effectiveImages.durante" :key="`durante-${i}`" class="w-40 h-40 rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0">
+                                <img :src="src" alt="Durante" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="effectiveImages.depois.length" class="space-y-2">
                         <div class="flex items-center gap-2 mb-2">
                             <span
                                 class="px-2.5 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-lg uppercase tracking-wider">Depois</span>
                             <span class="text-sm text-gray-500">Resultado alcançado</span>
                         </div>
-                        <div
-                            class="aspect-[4/3] md:aspect-square rounded-2xl overflow-hidden bg-gray-100 border border-gray-200">
-                            <img :src="relato.imagens.depois" alt="Imagem Depois do Tratamento"
-                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                        <div class="flex gap-3 overflow-x-auto py-2">
+                            <div v-for="(src, i) in effectiveImages.depois" :key="`depois-${i}`" class="w-40 h-40 rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0">
+                                <img :src="src" alt="Depois" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -103,7 +117,8 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
+import api from '@/lib/api';
 import { getRelatoById } from '../../services/moderationService';
 
 const props = defineProps({
@@ -114,6 +129,57 @@ const relato = ref(null);
 const isLoading = ref(false);
 const error = ref('');
 
+const API_URL = import.meta.env.VITE_API_URL || '';
+
+const buildImageUrl = (path) => {
+    if (!path) return null;
+    if (/^(https?:)?\/\//.test(path)) return path;
+    return `${API_URL.replace(/\/$/, '')}/${String(path).replace(/^\/+/, '')}`;
+}
+
+const images = computed(() => {
+    if (!relato.value) return { antes: [], durante: [], depois: [] };
+    const raw = relato.value;
+
+    // prefer explicit image arrays if provided, otherwise try relato.imagens single values
+    const mapArray = (arr) => {
+        if (!arr) return [];
+        if (Array.isArray(arr)) return arr.map(buildImageUrl).filter(Boolean);
+        // if single string
+        return [buildImageUrl(arr)].filter(Boolean);
+    };
+
+    return {
+        antes: mapArray(raw.image_refs?.antes || raw.imagens?.antes || raw.imagens?.antes_urls || []),
+        durante: mapArray(raw.image_refs?.durante || raw.imagens?.durante || raw.imagens?.durante_urls || []),
+        depois: mapArray(raw.image_refs?.depois || raw.imagens?.depois || raw.imagens?.depois_urls || [])
+    };
+});
+
+    const effectiveImages = computed(() => ({
+        antes: imagensDoServidor.value.antes.length ? imagensDoServidor.value.antes : images.value.antes,
+        durante: imagensDoServidor.value.durante.length ? imagensDoServidor.value.durante : images.value.durante,
+        depois: imagensDoServidor.value.depois.length ? imagensDoServidor.value.depois : images.value.depois
+    }));
+
+// imagens retornadas pelo endpoint /relatos/:id/imagens — preferir estas quando disponíveis
+const imagensDoServidor = ref({ antes: [], durante: [], depois: [] });
+
+async function fetchImagensDoServidor(id) {
+    if (!id) return;
+    try {
+        const resp = await api.get(`/relatos/${id}/imagens`);
+        const data = resp.data || {};
+        imagensDoServidor.value = {
+            antes: Array.isArray(data.antes) ? data.antes.map(i => i.thumb_url || i.url || i) : (data.antes?.thumb_url ? [data.antes.thumb_url] : []),
+            durante: Array.isArray(data.durante) ? data.durante.map(i => i.thumb_url || i.url || i) : (data.durante?.thumb_url ? [data.durante.thumb_url] : []),
+            depois: Array.isArray(data.depois) ? data.depois.map(i => i.thumb_url || i.url || i) : (data.depois?.thumb_url ? [data.depois.thumb_url] : [])
+        };
+    } catch (err) {
+        console.warn('Falha ao buscar imagens do servidor para relato', id, err);
+    }
+}
+
 const fetchRelatoDetails = async () => {
     if (!props.relatoId) return;
 
@@ -122,6 +188,8 @@ const fetchRelatoDetails = async () => {
         error.value = '';
         const data = await getRelatoById(props.relatoId);
         relato.value = data;
+        // buscar URLs das imagens diretamente do backend (retorna links completos para storage)
+        fetchImagensDoServidor(props.relatoId);
     } catch (err) {
         console.error('Failed to fetch relato details:', err);
         error.value = 'Houve um erro ao carregar os dados completos do relato.';
@@ -151,7 +219,9 @@ function formatDate(dateStr) {
     }).format(d);
 }
 
-function hasImages(imagens) {
-    return imagens && (imagens.antes || imagens.depois);
+function hasAnyImages() {
+    const imgs = images.value;
+    const server = imagensDoServidor.value;
+    return (server.antes.length || server.durante.length || server.depois.length) || (imgs && (imgs.antes.length || imgs.durante.length || imgs.depois.length));
 }
 </script>

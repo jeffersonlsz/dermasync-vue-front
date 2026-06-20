@@ -28,6 +28,9 @@
         <RouterLink to="/faq" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors py-2">
           FAQ
         </RouterLink>
+        <RouterLink v-if="canModerate" to="/moderacao" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors py-2">
+          Moderação
+        </RouterLink>
       </div>
 
       <!-- Auth Actions -->
