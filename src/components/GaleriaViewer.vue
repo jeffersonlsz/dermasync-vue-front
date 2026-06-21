@@ -8,7 +8,12 @@
       <button @click="mostrarFormulario = true"
         class="group inline-flex items-center justify-center px-8 py-3.5 text-[15px] font-medium tracking-wide text-white transition-all duration-400 bg-gray-900 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.08)] hover:bg-gray-800 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
         <span class="flex items-center gap-3">
-          <svg class="w-4 h-4 opacity-70 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+          <svg class="w-4 h-4 opacity-70 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+            fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+            </path>
+          </svg>
           Compartilhe sua jornada
         </span>
       </button>
@@ -29,10 +34,15 @@
     <!-- Estado vazio -->
     <div v-else class="flex flex-col items-center justify-center min-h-[40vh] w-full text-center">
       <div class="w-16 h-16 mb-6 rounded-2xl bg-gray-50/80 border border-gray-100 flex items-center justify-center">
-        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+          </path>
+        </svg>
       </div>
       <h3 class="text-[17px] font-medium text-gray-900 mb-2 tracking-tight">Nenhuma experiência registrada</h3>
-      <p class="text-[15px] text-gray-500 max-w-sm font-light leading-relaxed">Ainda não há relatos compartilhados com estes filtros. Tente ajustar sua busca ou seja o primeiro a adicionar uma jornada.</p>
+      <p class="text-[15px] text-gray-500 max-w-sm font-light leading-relaxed">Ainda não há relatos compartilhados com
+        estes filtros. Tente ajustar sua busca ou seja o primeiro a adicionar uma jornada.</p>
     </div>
 
     <!-- Modal Formulario Jornada -->
@@ -162,7 +172,7 @@ async function onSucesso(payload) {
     // Adicionar novo card com as imagens retornadas (thumb_url)
     const novoCard = {
       id: id,
-      tituloRelato: id, // ID como título por enquanto
+      tituloRelato: 'Seu relato aqui em breve. Aguarde um instante.', // ID como título por enquanto
       classificacao: 'Em análise',
       imgAntes: imagens.antes || placeholder,
       imgDepois: imagens.depois || placeholder,
@@ -191,7 +201,7 @@ function mapRelatoParaCard(relato, imagens = {}) {
 
   return {
     id: relato.id,
-    tituloRelato: relato.tituloRelato || "Relato",
+    tituloRelato: relato.titulo_resumido || "Relato",
     classificacao: tags[0] || "Relato",
     imgAntes,
     imgDepois,
@@ -203,7 +213,8 @@ function mapRelatoParaCard(relato, imagens = {}) {
     imagensArray: [imgAntes, imgDepois].filter(Boolean),
     solucao: relato.solucao || "",
     microdepoimento: relato.microdepoimento || excerpt,
-    tags:relato.tags || [],
+    resumoPublico: relato.resumo_publico || 'Sem resumo',
+    tags: relato.tags || [],
     likes: 0,
     curtido: false,
     regioesAfetadas: relato.regioes_afetadas || [],
