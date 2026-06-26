@@ -25,8 +25,62 @@
 
     </div>
 
+    <!-- Estado de Carregamento -->
+    <div v-if="loading" class="space-y-12">
+      <!-- Mensagem de Carregamento Moderna -->
+      <div class="flex flex-col items-center justify-center py-8">
+        <div class="relative w-16 h-16 mb-4 flex items-center justify-center">
+          <!-- Efeito de anel giratório moderno -->
+          <div class="absolute inset-0 rounded-full border-4 border-gray-100"></div>
+          <div class="absolute inset-0 rounded-full border-4 border-t-gray-900 border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
+        </div>
+        <p class="text-[16px] font-medium text-gray-600 tracking-wide text-center transition-all duration-300 animate-pulse">
+          {{ mensagemAtual }}
+        </p>
+      </div>
+
+      <!-- Grid de Skeletons (Esqueleto dos Cards) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+        <div v-for="i in 6" :key="i" class="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.02)] p-6 space-y-5">
+          <!-- Cabeçalho do Card -->
+          <div class="space-y-2">
+            <div class="h-5 bg-gray-100 rounded-md w-2/3 shimmer"></div>
+            <div class="flex gap-2">
+              <div class="h-3 bg-gray-100 rounded-md w-12 shimmer"></div>
+              <div class="h-3 bg-gray-100 rounded-md w-16 shimmer"></div>
+            </div>
+          </div>
+
+          <!-- Imagens Antes/Depois -->
+          <div class="flex gap-2 h-[160px]">
+            <div class="w-1/2 bg-gray-100 rounded-2xl shimmer"></div>
+            <div class="w-1/2 bg-gray-100 rounded-2xl shimmer"></div>
+          </div>
+
+          <!-- Texto de Depoimento -->
+          <div class="space-y-2">
+            <div class="h-4 bg-gray-100 rounded-md w-full shimmer"></div>
+            <div class="h-4 bg-gray-100 rounded-md w-5/6 shimmer"></div>
+            <div class="h-4 bg-gray-100 rounded-md w-4/6 shimmer"></div>
+          </div>
+
+          <!-- Tags -->
+          <div class="flex gap-1.5 pt-2">
+            <div class="h-6 bg-gray-100 rounded-lg w-16 shimmer"></div>
+            <div class="h-6 bg-gray-100 rounded-lg w-20 shimmer"></div>
+          </div>
+
+          <!-- Rodapé do Card -->
+          <div class="flex justify-between items-center pt-4 border-t border-gray-50">
+            <div class="h-4 bg-gray-100 rounded-md w-24 shimmer"></div>
+            <div class="h-8 bg-gray-100 rounded-full w-12 shimmer"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Grid de Cards -->
-    <div v-if="cardsFiltrados.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+    <div v-else-if="cardsFiltrados.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
       <CardJornada v-for="card in cardsFiltrados" :key="card.id" :card="card" :tags_extraidas="card.tags"
         :microdepoimento="card.microdepoimento" />
     </div>
@@ -64,7 +118,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import api from '@/lib/api'               // helper axios com baseURL do backend
 import placeholder from '@/assets/placeholder.png'
 import CardJornada from './CardJornada.vue'
@@ -95,7 +149,18 @@ async function fetchRelatoImagens(relatoId) {
 
 // Mock data removed — production/empty state will show message instead
 
+const loading = ref(true)
 const cards = ref([])
+
+const mensagensCarregamento = [
+  'Carregando os relatos...',
+  'Buscando histórias reais de superação...',
+  'Preparando depoimentos inspiradores...',
+  'Conectando experiências de cuidado...',
+  'Sincronizando as jornadas de pele...',
+  'Quase pronto para exibir...'
+]
+const mensagemAtual = ref(mensagensCarregamento[0])
 const filtrosAtivos = ref({})
 const mostrarFormulario = ref(false)
 
@@ -250,10 +315,33 @@ async function fetchRelatosPublicos(limit = 14) {
   }
 }
 
+let mensagemInterval = null
+
 // Monta a galeria ao montar o componente
 onMounted(async () => {
-  const resultado = await fetchRelatosPublicos(14)
-  cards.value = (resultado && resultado.length > 0) ? resultado : []
+  let msgIndex = 0
+  mensagemInterval = setInterval(() => {
+    msgIndex = (msgIndex + 1) % mensagensCarregamento.length
+    mensagemAtual.value = mensagensCarregamento[msgIndex]
+  }, 2000)
+
+  try {
+    const resultado = await fetchRelatosPublicos(14)
+    cards.value = (resultado && resultado.length > 0) ? resultado : []
+  } catch (err) {
+    console.error('Erro ao buscar relatos públicos:', err)
+  } finally {
+    loading.value = false
+    if (mensagemInterval) {
+      clearInterval(mensagemInterval)
+    }
+  }
+})
+
+onUnmounted(() => {
+  if (mensagemInterval) {
+    clearInterval(mensagemInterval)
+  }
 })
 </script>
 
@@ -273,5 +361,21 @@ onMounted(async () => {
 
 .animate-fade-in-up {
   animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Efeito Shimmer para Skeletons */
+.shimmer {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 </style>
