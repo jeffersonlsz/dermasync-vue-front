@@ -104,16 +104,16 @@
     </section>
 
     <!-- Engagement Section: Breaking the Grid -->
-    <section class="py-32 bg-white relative">
+    <!--section class="py-32 bg-white relative">
       <div class="container mx-auto px-4">
         <div class="flex flex-col lg:flex-row items-center gap-24">
-          <!-- Illustration with background bleed -->
+         
           <div class="lg:w-1/2 relative order-2 lg:order-1">
             <div class="absolute -inset-12 bg-primary-100/30 rounded-full blur-3xl -z-10"></div>
             <img src="/img/compartilhe.png" alt="Ilustração" class="w-full max-w-md mx-auto animate-float opacity-90" />
           </div>
 
-          <!-- Content: Offset left -->
+          
           <div class="lg:w-1/2 text-left space-y-12 order-1 lg:order-2 lg:pl-12">
             <div class="space-y-6">
               <h2 class="text-5xl font-heading font-semibold text-gray-900 leading-tight tracking-tight">
@@ -145,7 +145,7 @@
           </div>
         </div>
       </div>
-    </section>
+    </section-->
 
     <!-- Privacy Ribbon -->
     <section class="container mx-auto px-4 pb-24">

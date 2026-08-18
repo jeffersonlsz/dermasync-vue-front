@@ -32,16 +32,20 @@
         <div class="relative w-16 h-16 mb-4 flex items-center justify-center">
           <!-- Efeito de anel giratório moderno -->
           <div class="absolute inset-0 rounded-full border-4 border-gray-100"></div>
-          <div class="absolute inset-0 rounded-full border-4 border-t-gray-900 border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
+          <div
+            class="absolute inset-0 rounded-full border-4 border-t-gray-900 border-r-transparent border-b-transparent border-l-transparent animate-spin">
+          </div>
         </div>
-        <p class="text-[16px] font-medium text-gray-600 tracking-wide text-center transition-all duration-300 animate-pulse">
+        <p
+          class="text-[16px] font-medium text-gray-600 tracking-wide text-center transition-all duration-300 animate-pulse">
           {{ mensagemAtual }}
         </p>
       </div>
 
       <!-- Grid de Skeletons (Esqueleto dos Cards) -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-        <div v-for="i in 6" :key="i" class="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.02)] p-6 space-y-5">
+        <div v-for="i in 6" :key="i"
+          class="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.02)] p-6 space-y-5">
           <!-- Cabeçalho do Card -->
           <div class="space-y-2">
             <div class="h-5 bg-gray-100 rounded-md w-2/3 shimmer"></div>
@@ -260,7 +264,7 @@ async function onSucesso(payload) {
 
 function mapRelatoParaCard(relato, imagens = {}) {
   const tags = Array.isArray(relato.tags) ? relato.tags : []
-  const excerpt = relato.excerpt || relato.microdepoimento || relato.solucao || "Relato anônimo"
+  const excerpt = relato.excerpt || "Relato anônimo"
   const imgAntes = imagens.antes || buildImageUrl(relato.image_previews?.antes?.[0]) || placeholder
   const imgDepois = imagens.depois || buildImageUrl(relato.image_previews?.depois?.[0]) || imgAntes || placeholder
 
@@ -279,6 +283,8 @@ function mapRelatoParaCard(relato, imagens = {}) {
     solucao: relato.solucao || "",
     microdepoimento: relato.microdepoimento || excerpt,
     resumoPublico: relato.resumo_publico || 'Sem resumo',
+    conteudo_anonimizado: relato.conteudo_anonimizado || null,
+    conteudo_original: relato.conteudo_original || null,
     tags: relato.tags || [],
     likes: 0,
     curtido: false,
@@ -374,6 +380,7 @@ onUnmounted(() => {
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
