@@ -50,7 +50,7 @@
                     Relato de experiência
                 </h3>
                 <p class="text-gray-500 text-sm leading-relaxed italic line-clamp-3 font-serif">
-                    "{{ relato.excerpt }}"
+                    "{{ relato.conteudo_anonimizado   }}"
                 </p>
             </div>
 

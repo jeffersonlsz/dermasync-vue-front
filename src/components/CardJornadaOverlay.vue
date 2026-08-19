@@ -242,26 +242,23 @@
                     </h3>
                     <p class="text-[11px] text-gray-400 mb-5">Histórico de progresso reportado</p>
                     
-                    <div class="relative pl-5 border-l border-gray-100 space-y-4 ml-1">
-                      <div class="relative">
-                        <span class="absolute -left-[27px] top-0.5 w-3 h-3 bg-red-400 rounded-full border-2 border-white flex items-center justify-center shadow-sm"></span>
-                        <h4 class="text-xs font-bold text-gray-900 leading-tight">Antes da mudança</h4>
-                        <p class="text-[11px] text-gray-500 leading-normal">Crises frequentes. Coceira intensa e vermelhidão no tronco.</p>
-                      </div>
-                      <div class="relative">
+                    <p v-if="loadingTimeline" class="text-[11px] text-gray-400">
+                      Carregando evolução da jornada...
+                    </p>
+                    <p v-else-if="erroTimeline" class="text-[11px] text-gray-400">
+                      Não foi possível carregar a evolução desta jornada.
+                    </p>
+                    <p v-else-if="timeline.length === 0" class="text-[11px] text-gray-400">
+                      Não foram identificados eventos temporais suficientes neste relato.
+                    </p>
+                    <div v-else class="relative pl-5 border-l border-gray-100 space-y-4 ml-1">
+                      <div v-for="evento in timeline" :key="evento.id" class="relative">
                         <span class="absolute -left-[27px] top-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white flex items-center justify-center shadow-sm"></span>
-                        <h4 class="text-xs font-bold text-gray-900 leading-tight">Primeiras ações</h4>
-                        <p class="text-[11px] text-gray-500 leading-normal">Começou hidratação intensa e colágeno hidrogenado em pó.</p>
-                      </div>
-                      <div class="relative">
-                        <span class="absolute -left-[27px] top-0.5 w-3 h-3 bg-blue-400 rounded-full border-2 border-white flex items-center justify-center shadow-sm"></span>
-                        <h4 class="text-xs font-bold text-gray-900 leading-tight">Após 1 semana</h4>
-                        <p class="text-[11px] text-gray-500 leading-normal">Redução da coceira e pele menos irritada.</p>
-                      </div>
-                      <div class="relative">
-                        <span class="absolute -left-[27px] top-0.5 w-3 h-3 bg-purple-400 rounded-full border-2 border-white flex items-center justify-center shadow-sm"></span>
-                        <h4 class="text-xs font-bold text-gray-900 leading-tight">Atual (em andamento)</h4>
-                        <p class="text-[11px] text-gray-500 leading-normal">Melhora nas regiões do tronco e mais equilíbrio emocional.</p>
+                        <p v-if="evento.approximate_date" class="text-[11px] text-gray-400 leading-normal">
+                          {{ evento.approximate_date }}
+                        </p>
+                        <h4 class="text-xs font-bold text-gray-900 leading-tight">{{ evento.event }}</h4>
+                        <p class="text-[11px] text-gray-500 leading-normal">{{ evento.description }}</p>
                       </div>
                     </div>
 
@@ -279,23 +276,53 @@
                       <p class="text-[11px] text-gray-400 mb-5">Principais hábitos/produtos de sucesso</p>
                       
                       <div class="space-y-3.5 my-2">
-                        <div class="flex items-center gap-2 text-xs font-bold text-gray-655">
-                          <span class="text-emerald-500 text-base">✓</span>
-                          <span>Colágeno hidrogenado em pó</span>
+                          <div
+                            v-if="loadingTimeline"
+                            class="text-[11px] text-gray-400"
+                          >
+                            Analisando tratamentos relatados...
+                          </div>
+
+                          <div
+                            v-else-if="tratamentosQueAjudaram.length === 0"
+                            class="text-[11px] text-gray-400"
+                          >
+                            Não foram identificados tratamentos com resultado positivo neste relato.
+                          </div>
+
+                          <div
+                            v-for="(tratamento, index) in tratamentosQueAjudaram"
+                            v-else
+                            :key="tratamento.id || tratamento.name"
+                            class="flex items-start gap-2 text-xs font-bold text-gray-655"
+                            :class="{ 'border-t border-gray-50 pt-2.5': index > 0 }"
+                          >
+                            <span class="text-emerald-500 text-base leading-none">✓</span>
+
+                            <div class="min-w-0">
+                              <span class="block">
+                                {{ tratamento.name }}
+                              </span>
+
+                              <span
+                                v-if="tratamento.category"
+                                class="block mt-0.5 text-[10px] font-normal text-gray-400"
+                              >
+                                {{ tratamento.category }}
+                                <span v-if="tratamento.frequency">
+                                  · {{ tratamento.frequency }}
+                                </span>
+                              </span>
+
+                              <span
+                                v-if="tratamento.outcome"
+                                class="block mt-0.5 text-[10px] font-normal text-emerald-600"
+                              >
+                                {{ tratamento.outcome }}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                        <div class="flex items-center gap-2 text-xs font-bold text-gray-655 border-t border-gray-50 pt-2.5">
-                          <span class="text-emerald-500 text-base">✓</span>
-                          <span>Hidratante Neutrogena</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-xs font-bold text-gray-655 border-t border-gray-50 pt-2.5">
-                          <span class="text-emerald-500 text-base">✓</span>
-                          <span>Práticas de oração / meditação</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-xs font-bold text-gray-655 border-t border-gray-50 pt-2.5">
-                          <span class="text-emerald-500 text-base">✓</span>
-                          <span>Controle do estresse</span>
-                        </div>
-                      </div>
                     </div>
                   </div>
 
@@ -1069,6 +1096,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { buscarCasosSemelhantesAPI } from '../services/casosService'
+import { getRelatoById } from '../services/moderationService'
 
 const props = defineProps({
   jornadaSelecionada: Object
@@ -1079,6 +1107,36 @@ const emit = defineEmits(['update:jornadaSelecionada'])
 const casos = ref([])
 const loadingCasos = ref(false)
 const textoExpandido = ref(false)
+const relatoCompleto = ref(null)
+const loadingTimeline = ref(false)
+const erroTimeline = ref(false)
+
+const timeline = computed(() =>
+  relatoCompleto.value?.enrichment?.data?.metadata?.knowledge?.timeline || []
+)
+
+const tratamentosQueAjudaram = computed(() => {
+  const tratamentos =
+    relatoCompleto.value?.enrichment?.data?.metadata?.knowledge?.entities?.treatments
+
+  if (!Array.isArray(tratamentos)) {
+    return []
+  }
+
+  return tratamentos
+    .filter((tratamento) => {
+      const outcome = String(tratamento.outcome || '').toLowerCase()
+
+      return (
+        outcome.includes('melhora') ||
+        outcome.includes('melhorou') ||
+        outcome.includes('positivo') ||
+        outcome.includes('controle') ||
+        outcome.includes('sucesso')
+      )
+    })
+    .sort((a, b) => (b.confidence || 0) - (a.confidence || 0))
+})
 
 const textoResumido = computed(() => {
   const texto = props.jornadaSelecionada?.conteudo_original
@@ -1106,11 +1164,38 @@ const expandirTexto = () => {
   textoExpandido.value = true;
 }
 
-// Reset text state when journey changes
-watch(() => props.jornadaSelecionada, () => {
+// Reset component state and load the complete report when journey changes
+watch(() => props.jornadaSelecionada, async (novaJornada) => {
   textoExpandido.value = false;
   fotoAtual.value = 0;
   activeTab.value = tabs['info'];
+
+  relatoCompleto.value = null;
+  erroTimeline.value = false;
+
+  if (!novaJornada?.id) {
+    loadingTimeline.value = false;
+    return;
+  }
+
+  const relatoId = novaJornada.id;
+  loadingTimeline.value = true;
+
+  try {
+    const relato = await getRelatoById(relatoId);
+    if (props.jornadaSelecionada?.id === relatoId) {
+      relatoCompleto.value = relato;
+    }
+  } catch (error) {
+    console.error('Erro ao carregar evolução da jornada:', error);
+    if (props.jornadaSelecionada?.id === relatoId) {
+      erroTimeline.value = true;
+    }
+  } finally {
+    if (props.jornadaSelecionada?.id === relatoId) {
+      loadingTimeline.value = false;
+    }
+  }
 });
 
 const buscarCasosSemelhantes = async () => {
